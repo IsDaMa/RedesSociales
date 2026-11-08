@@ -337,8 +337,9 @@ def registrar_accion_manual():
     return jsonify({'success': True})
 
 if __name__ == '__main__':
+    port = int(os.environ.get('PORT', 5000))
     print("🏀 SERVIDOR SEGURO Y CONTROLADO ACTIVO (START.PY) 🏀")
-    print("👉 Abre tu navegador en: http://localhost:5000")
+    print(f"👉 Abre tu navegador en: http://localhost:{port}")
     print(f"🔑 Credenciales -> Usuario: {ADMIN_USERNAME} | Contraseña: {ADMIN_PASSWORD}")
-    app.run(host='0.0.0.0', port=5000, debug=False)
+    app.run(host='0.0.0.0', port=port, debug=False)
 
