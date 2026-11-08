@@ -325,6 +325,40 @@ def publicar_web():
     registrar_auditoria(user, "PUBLICACION_WEB", f"Noticia publicada en web: '{titulo}'")
     return jsonify({'success': True, 'id': id_noticia, 'message': 'Noticia publicada con éxito en la web del club.'})
 
+@app.route('/api/publicar_red', methods=['POST'])
+@login_required
+def publicar_red():
+    """Envía la publicación a un Webhook (ej. Make.com / Zapier) si está configurado en las variables de entorno."""
+    user = session.get('user', 'Admin')
+    data = request.json or {}
+    red = data.get('red', '').lower()
+    texto = data.get('texto', '').strip()
+    url_imagen = data.get('url_imagen', '')
+
+    webhook_url = os.environ.get('WEBHOOK_PUBLICACION', '').strip()
+    
+    if not webhook_url:
+        return jsonify({'has_webhook': False, 'message': 'No hay webhook configurado, usando método directo.'})
+
+    import requests
+    try:
+        payload = {
+            "club": "Club Baloncesto Cártama",
+            "red": red,
+            "texto": texto,
+            "imagen": url_imagen,
+            "usuario": user,
+            "fecha": datetime.now().isoformat()
+        }
+        resp = requests.post(webhook_url, json=payload, timeout=12)
+        if resp.status_code < 400:
+            registrar_auditoria(user, f"PUBLICACION_AUTO_{red.upper()}", f"Publicado automáticamente en {red} vía Make.com")
+            return jsonify({'has_webhook': True, 'success': True, 'message': f'Publicado con éxito en {red} vía Make.com'})
+        else:
+            return jsonify({'has_webhook': True, 'success': False, 'error': f'Error en el webhook (código {resp.status_code})'}), 500
+    except Exception as e:
+        return jsonify({'has_webhook': True, 'success': False, 'error': str(e)}), 500
+
 @app.route('/api/registrar_accion', methods=['POST'])
 @login_required
 def registrar_accion_manual():

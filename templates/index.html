@@ -975,25 +975,65 @@
     // 2. Publicar en Instagram
     function publicarEnInstagram() {
       const texto = document.getElementById('preview-instagram-text').innerText;
-      navigator.clipboard.writeText(texto).then(() => {
-        registrarAccionEnServidor('PUBLICACION_INSTAGRAM', 'Apertura de Meta Suite con caption copiado');
-        descargarFoto();
-        mostrarToast('📸 Caption copiado y foto descargada. ¡Pégalo en Instagram!');
-        setTimeout(() => {
+      
+      // Intentar publicación automática si hay webhook configurado
+      fetch('/api/publicar_red', {
+        method: 'POST',
+        headers: { 'Content-Type': 'application/json' },
+        body: JSON.stringify({ red: 'instagram', texto: texto, url_imagen: urlImagenActual })
+      })
+      .then(r => r.json())
+      .then(res => {
+        if (res.has_webhook && res.success) {
+          mostrarToast('🎉 ¡Publicado automáticamente en Instagram vía Make.com!');
+        } else {
+          navigator.clipboard.writeText(texto).then(() => {
+            registrarAccionEnServidor('PUBLICACION_INSTAGRAM', 'Apertura de Meta Suite con caption copiado');
+            descargarFoto();
+            mostrarToast('📸 Caption copiado y foto descargada. ¡Pégalo en Instagram!');
+            setTimeout(() => {
+              window.open('https://business.facebook.com/latest/composer', '_blank');
+            }, 600);
+          });
+        }
+      })
+      .catch(() => {
+        navigator.clipboard.writeText(texto).then(() => {
+          registrarAccionEnServidor('PUBLICACION_INSTAGRAM', 'Apertura de Meta Suite con caption copiado');
+          descargarFoto();
           window.open('https://business.facebook.com/latest/composer', '_blank');
-        }, 600);
+        });
       });
     }
 
     // 3. Publicar en Facebook
     function publicarEnFacebook() {
       const texto = document.getElementById('preview-facebook-text').innerText;
-      navigator.clipboard.writeText(texto).then(() => {
-        registrarAccionEnServidor('PUBLICACION_FACEBOOK', `Facebook: '${texto.substring(0, 60)}...'`);
-        mostrarToast('📘 Texto copiado. Abriendo Facebook para publicar...');
-        setTimeout(() => {
+      
+      fetch('/api/publicar_red', {
+        method: 'POST',
+        headers: { 'Content-Type': 'application/json' },
+        body: JSON.stringify({ red: 'facebook', texto: texto, url_imagen: urlImagenActual })
+      })
+      .then(r => r.json())
+      .then(res => {
+        if (res.has_webhook && res.success) {
+          mostrarToast('🎉 ¡Publicado automáticamente en Facebook vía Make.com!');
+        } else {
+          navigator.clipboard.writeText(texto).then(() => {
+            registrarAccionEnServidor('PUBLICACION_FACEBOOK', `Facebook: '${texto.substring(0, 60)}...'`);
+            mostrarToast('📘 Texto copiado. Abriendo Facebook para publicar...');
+            setTimeout(() => {
+              window.open('https://www.facebook.com/', '_blank');
+            }, 400);
+          });
+        }
+      })
+      .catch(() => {
+        navigator.clipboard.writeText(texto).then(() => {
+          registrarAccionEnServidor('PUBLICACION_FACEBOOK', `Facebook: '${texto.substring(0, 60)}...'`);
           window.open('https://www.facebook.com/', '_blank');
-        }, 400);
+        });
       });
     }
 
