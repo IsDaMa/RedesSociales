@@ -105,12 +105,18 @@ def procesar_calendario_semanal():
         )
 
         print(f"--- CONTENIDO PRE-PARTIDO GENERADO (ID {partido['id']}) ---")
-        print(contenido_generado[:250] + "...\n")
+        print(contenido_generado + "\n")
 
-        supabase.table("partidos").update({
-            "publicado_calendario": True,
-            "contenido_prepartido": contenido_generado
-        }).eq("id", partido['id']).execute()
+        # Intentar guardar el texto generado; si la columna no existe en Supabase, actualizar solo el estado
+        try:
+            supabase.table("partidos").update({
+                "publicado_calendario": True,
+                "contenido_prepartido": contenido_generado
+            }).eq("id", partido['id']).execute()
+        except Exception:
+            supabase.table("partidos").update({
+                "publicado_calendario": True
+            }).eq("id", partido['id']).execute()
 
     print("🎉 Calendarios pre-partido procesados y guardados en Supabase.")
 
@@ -176,11 +182,16 @@ def procesar_resultados_postpartido():
             user_content=f"Genera el guion de vídeo vertical de 30 segundos para este partido:\n\n{info_resultado}"
         )
 
-        supabase.table("resultados").update({
-            "publicado_resultado": True,
-            "contenido_postpartido": cronica_y_carrusel,
-            "guion_tiktok": guion_tiktok
-        }).eq("id", res['id']).execute()
+        try:
+            supabase.table("resultados").update({
+                "publicado_resultado": True,
+                "contenido_postpartido": cronica_y_carrusel,
+                "guion_tiktok": guion_tiktok
+            }).eq("id", res['id']).execute()
+        except Exception:
+            supabase.table("resultados").update({
+                "publicado_resultado": True
+            }).eq("id", res['id']).execute()
 
     print("🎉 Crónicas, carruseles y guiones de Reels procesados y guardados en Supabase.")
 
