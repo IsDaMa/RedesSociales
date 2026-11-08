@@ -36,7 +36,7 @@ except ImportError:
     genai_legacy.configure(api_key=GEMINI_API_KEY)
     USE_MODERN_SDK = False
 
-MODEL_NAME = "gemini-2.5-flash"
+MODEL_NAME = "gemini-3.1-flash-lite"
 
 def llamar_gemini(system_prompt: str, user_content: str) -> str:
     """Invoca el modelo Gemini con instrucciones de sistema y contenido del usuario."""

@@ -47,3 +47,13 @@ CREATE TABLE IF NOT EXISTS noticias (
     publicado_noticia BOOLEAN DEFAULT FALSE
 );
 
+-- ================================================================
+-- PERMISOS Y ACCESO (RLS) PARA SCRIPTS Y GITHUB ACTIONS
+-- Permite que los scripts de automatización puedan leer y escribir
+-- ================================================================
+ALTER TABLE IF EXISTS equipos DISABLE ROW LEVEL SECURITY;
+ALTER TABLE IF EXISTS partidos DISABLE ROW LEVEL SECURITY;
+ALTER TABLE IF EXISTS resultados DISABLE ROW LEVEL SECURITY;
+ALTER TABLE IF EXISTS noticias DISABLE ROW LEVEL SECURITY;
+
+
