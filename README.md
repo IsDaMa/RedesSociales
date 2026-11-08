@@ -1,86 +1,59 @@
-# 🏀 SISTEMA INTEGRAL DE AUTOMATIZACIÓN DE REDES SOCIALES (GOOGLE GEMINI)
+# 🏀 CB CÁRTAMA | SISTEMA DE REDES SOCIALES Y COMUNICACIÓN (IA GEMINI)
 
-Infraestructura completa y 100% gratuita ($0) para automatizar la comunicación y redes sociales de un club de baloncesto en **X (Twitter), Facebook, Instagram, WhatsApp, TikTok y Página Web** utilizando **Supabase, Google Gemini AI y GitHub Actions**.
+Plataforma oficial de gestión, redacción con IA y publicación supervisada de contenidos deportivos para el **Club Baloncesto Cártama** (Málaga).
 
----
-
-## 📁 ESTRUCTURA DEL PROYECTO
-
-```text
-RedesSociales/
-├── .agents/skills/              # Habilidades y subagentes de Antigravity / Gemini CLI
-│   ├── generador-calendarios/   # Agente 1: Pre-Partido
-│   ├── cronica-postpartido/     # Agente 2: Post-Partido + Carrusel
-│   ├── guionista-tiktok-reels/  # Agente 3: TikTok / Reels (30s)
-│   └── jugador-jornada-mvp/     # Agente 4: MVP y Valores de Cantera
-├── .github/workflows/
-│   └── automatizacion_club.yml  # Automatización periódica en la nube (GitHub Actions)
-├── database/
-│   ├── schema.sql               # Tablas Supabase (equipos, partidos, resultados, auditoria)
-│   └── auditoria_local.db       # Base de datos SQLite local de registro de actividad
-├── prompts/                     # Prompts maestros optimizados para Gemini
-│   ├── agente_1_calendario_prepartido.md
-│   ├── agente_2_cronica_postpartido.md
-│   ├── agente_3_guionista_tiktok_reels.md
-│   └── agente_4_jugador_jornada_mvp.md
-├── templates/
-│   ├── login.html               # Pantalla de acceso seguro controlado
-│   └── index.html               # Panel responsive multiplataforma con visor de auditoría
-├── start.py                     # Servidor seguro y controlado (Flask + Gemini + Auditoría)
-├── start.ps1                    # Script de inicio rápido para Windows
-├── stop.py                      # Script de parada limpia en Python
-├── stop.ps1                     # Script de parada rápida para Windows
-├── script_agentes.py            # Motor de automatización en lote con Gemini SDK
-├── requirements.txt             # Dependencias del proyecto
-├── .env.example                 # Plantilla de variables de entorno
-└── README.md
-```
+* 🌐 **URL Oficial en Producción:** [https://redes.cbcartama.com](https://redes.cbcartama.com)
+* 🌐 **Web del Club:** [https://www.cbcartama.com](https://www.cbcartama.com) | [https://www.cbcartama.es](https://www.cbcartama.es)
+* 📍 **Sede:** Ciudad Deportiva de Cártama, Málaga
+* 🎨 **Colores:** Verde (#15803d) y Amarillo/Dorado (#eab308)
 
 ---
 
-## 🚀 CÓMO ARRANCAR Y DETENER EL PANEL WEB
+## 📱 CANALES Y REDES SOCIALES CUBIERTAS
 
-### 1. Iniciar el servidor:
-- **En PowerShell:** Ejecuta `./start.ps1` (o haz doble clic en `start.ps1`).
-- **En Python directo:** `python start.py`
-- *Se abrirá automáticamente tu navegador en `http://localhost:5000`*.
+1. **🐦 X (Twitter):** Mensajes con gancho, emoticonos, límite controlado de 280 caracteres y hashtags `#CBCártama #BaloncestoMálaga`.
+2. **📸 Instagram:** Copy emotivo para la afición, estructura para fotos y carruseles de 4 diapositivas.
+3. **📘 Facebook:** Redacción completa orientada a familias, socios y patrocinadores locales.
+4. **💬 WhatsApp:** Convocatorias y comunicados listos para compartir con 1 clic en grupos de padres y cantera.
+5. **🎬 TikTok / Reels / Shorts:** Guion vertical dinámico de 30 segundos estructurado en tabla temporal (`0-3s`, `3-15s`, `15-25s`, `25-30s`).
+6. **🌐 Web Oficial del Club:** Titular formal y cuerpo de noticia que se publica con 1 clic en la base de datos Supabase de `cbcartama.com`.
 
-### 2. Detener el servidor:
-- **En PowerShell:** Ejecuta `./stop.ps1`.
-- **En Python directo:** `python stop.py`
+---
+
+## 🛡️ PROTOCOLO DE SUPERVISIÓN Y SEGURIDAD
+
+> **Regla de Oro:** Ningún contenido se publica en redes sociales sin aprobación humana previa.
+
+1. **Previsualización Real:** El entrenador o coordinador ve en pantalla exactamente cómo lucirá el post en cada red.
+2. **Publicación 1 a 1:** Cada red social se gestiona en su propia pestaña de forma totalmente independiente.
+3. **Casilla de Confirmación Obligatoria:** Debajo de cada red existe el check `[ ] He revisado el texto y autorizo la publicación en [Red]`. El botón permanece bloqueado en gris hasta que se marca.
+4. **Edición en Caliente:** Cualquier texto de la maqueta se puede corregir directamente pulsando sobre él antes de publicar.
+5. **Auditoría Permanente:** Cada inicio de sesión, foto subida y publicación queda registrada con fecha, hora, usuario e IP (visible desde el botón *Auditoría* del panel).
+
+---
+
+## 🚀 ARQUITECTURA Y DESPLIEGUE EN LA NUBE ($0)
+
+* **Servidor en la Nube:** Alojado en **Render.com** (Plan Free $0) conectado automáticamente al repositorio de GitHub `IsDaMa/RedesSociales`.
+* **Dominio Corporativo:** Registro CNAME en **IONOS** apuntando `redes.cbcartama.com` hacia Render con certificado SSL automático (Let's Encrypt).
+* **Motor de IA:** Google Gemini (`gemini-3.1-flash-lite`) con latencia ultra-rápida (<2s).
+* **Publicación Automática:** Webhook en **Make.com** para publicar directamente en Facebook e Instagram sin tocar APIs complejas.
+
+---
+
+## 💻 EJECUCIÓN LOCAL (DESARROLLO O RESPALDO)
+
+Si se desea ejecutar el servidor en un ordenador local:
+
+### 1. Iniciar:
+* **En PowerShell:** `.\start.ps1`
+* **En Python:** `python start.py`
+* *(Abre automáticamente `http://localhost:5000` o en la red local `http://192.168.x.x:5000`)*
+
+### 2. Detener:
+* **En PowerShell:** `.\stop.ps1`
+* **En Python:** `python stop.py`
 
 ### 🔑 Credenciales por Defecto:
-- **Usuario:** `admin`
-- **Contraseña:** `basketclub2026`
-*(Modificables en tu archivo local `.env`)*
-
----
-
-## 🛡️ TABLA DE AUDITORÍA Y CONTROL DE ACTIVIDAD
-
-El sistema incorpora un registro que guarda de forma inmutable **quién se ha conectado y qué operación ha realizado**:
-- **Fecha y Hora exacta (UTC)**
-- **Usuario conectado**
-- **Operación:** `LOGIN`, `LOGIN_FALLIDO`, `LOGOUT`, `SUPERVISION_IA`, `SUBIDA_FOTO`, `PUBLICACION`, `MODIFICACION`, `BORRADO`.
-- **Detalles:** Información de la acción (modo, texto analizado, nombre de archivo).
-- **Dirección IP** del dispositivo.
-
-### Visualización:
-Desde el propio panel web, pulsa en el botón superior **🛡️ Auditoría** para ver la tabla en tiempo real con las últimas 50 operaciones.
-
-### Para activar la tabla en Supabase:
-Pega esto en el **SQL Editor** de Supabase y dale a **Run**:
-
-```sql
-CREATE TABLE IF NOT EXISTS auditoria (
-    id SERIAL PRIMARY KEY,
-    usuario VARCHAR(100) NOT NULL,
-    accion VARCHAR(50) NOT NULL,
-    detalles TEXT,
-    ip VARCHAR(50),
-    fecha TIMESTAMP WITH TIME ZONE DEFAULT CURRENT_TIMESTAMP
-);
-
-ALTER TABLE IF EXISTS auditoria DISABLE ROW LEVEL SECURITY;
-```
-*(El sistema además guarda una copia local en SQLite `database/auditoria_local.db` para que el registro nunca falle aunque no haya conexión a internet).*
+* **Usuario:** `admin` *(o `Admin`)*
+* **Contraseña:** `basketclub2026`
