@@ -1,45 +1,49 @@
-﻿# ================================================================
-# SCRIPT DE INICIO RÁPIDO PARA CLUB DE BALONCESTO (CB SOCIAL HUB)
+# ================================================================
+# SCRIPT DE INICIO RAPIDO - CB SOCIAL HUB
 # ================================================================
 
 Write-Host ""
 Write-Host "==========================================================" -ForegroundColor DarkYellow
-Write-Host "🏀 INICIANDO SERVIDOR WEB CB SOCIAL HUB (START.PS1) 🏀" -ForegroundColor Yellow
+Write-Host ">>> INICIANDO SERVIDOR WEB CB SOCIAL HUB (START.PS1) <<<" -ForegroundColor Yellow
 Write-Host "==========================================================" -ForegroundColor DarkYellow
 Write-Host ""
 
-# 1. Comprobar Python
+# 1. Comprobar que Python este disponible
 if (-not (Get-Command python -ErrorAction SilentlyContinue)) {
-    Write-Host "❌ Error: Python no está instalado o no se encuentra en el PATH." -ForegroundColor Red
+    Write-Host "[ERROR] Python no esta instalado o no se encuentra en el PATH." -ForegroundColor Red
     Exit 1
 }
 
-# 2. Detener instancias previas en el puerto 5000 para evitar conflictos
-$portConnection = Get-NetTCPConnection -LocalPort 5000 -ErrorAction SilentlyContinue
-if ($portConnection) {
-    Write-Host "⚠️ Puerto 5000 ocupado. Liberando puerto..." -ForegroundColor DarkGray
+# 2. Directorio del proyecto
+$directorio = $PSScriptRoot
+if (-not $directorio) {
+    $directorio = (Get-Location).Path
+}
+Set-Location $directorio
+
+# 3. Liberar puerto 5000 si estuviera ocupado
+$conn = Get-NetTCPConnection -LocalPort 5000 -ErrorAction SilentlyContinue
+if ($conn) {
+    Write-Host "[INFO] Liberando puerto 5000..." -ForegroundColor DarkGray
     python stop.py | Out-Null
     Start-Sleep -Seconds 1
 }
 
-# 3. Iniciar el servidor start.py en segundo plano en la carpeta del proyecto
-Write-Host "🚀 Arrancando servidor seguro en segundo plano..." -ForegroundColor Cyan
-$directorioProyecto = $PSScriptRoot
-if (-not $directorioProyecto) { $directorioProyecto = (Get-Location).Path }
+# 4. Arrancar start.py en segundo plano
+Write-Host "[INFO] Arrancando servidor seguro en segundo plano..." -ForegroundColor Cyan
+Start-Process -FilePath "python" -ArgumentList "start.py" -WorkingDirectory $directorio -WindowStyle Minimized
 
-Start-Process -FilePath "python" -ArgumentList "start.py" -WorkingDirectory $directorioProyecto -WindowStyle Minimized
-
-# 4. Esperar a que el servidor esté listo
-Write-Host "⏳ Esperando confirmación de inicio..." -ForegroundColor Gray
+# 5. Esperar confirmacion de arranque
+Write-Host "[INFO] Esperando conexion..." -ForegroundColor Gray
 $intentos = 0
-$servidorListo = $false
+$listo = $false
 
-while ($intentos -lt 10) {
-    Start-Sleep -Milliseconds 700
+while ($intentos -lt 12) {
+    Start-Sleep -Milliseconds 600
     try {
-        $test = Invoke-WebRequest -Uri "http://127.0.0.1:5000/login" -UseBasicParsing -TimeoutSec 2
-        if ($test.StatusCode -eq 200) {
-            $servidorListo = $true
+        $req = Invoke-WebRequest -Uri "http://127.0.0.1:5000/login" -UseBasicParsing -TimeoutSec 2
+        if ($req.StatusCode -eq 200) {
+            $listo = $true
             break
         }
     } catch {
@@ -47,15 +51,17 @@ while ($intentos -lt 10) {
     }
 }
 
-if ($servidorListo) {
+Write-Host ""
+if ($listo) {
+    Write-Host "[EXITO] Servidor iniciado correctamente." -ForegroundColor Green
+    Write-Host "URL Local:   http://localhost:5000" -ForegroundColor White
+    Write-Host "Usuario:     admin" -ForegroundColor White
+    Write-Host "Password:    basketclub2026" -ForegroundColor White
     Write-Host ""
-    Write-Host "🎉 ¡SERVIDOR INICIADO CORRECTAMENTE!" -ForegroundColor Green
-    Write-Host "👉 URL Local: " -NoNewline; Write-Host "http://localhost:5000" -ForegroundColor White
-    Write-Host "🔑 Usuario: " -NoNewline; Write-Host "admin" -ForegroundColor White
-    Write-Host "🔑 Contraseña: " -NoNewline; Write-Host "basketclub2026" -ForegroundColor White
-    Write-Host ""
-    Write-Host "Abriendo en tu navegador predeterminado..." -ForegroundColor Yellow
+    Write-Host "Abriendo en tu navegador..." -ForegroundColor Yellow
     Start-Process "http://localhost:5000"
 } else {
-    Write-Host "⚠️ El servidor está arrancando. Abre manualmente: http://localhost:5000" -ForegroundColor Yellow
+    Write-Host "[AVISO] El servidor se esta iniciando. Abre: http://localhost:5000" -ForegroundColor Yellow
 }
+
+Write-Host ""
