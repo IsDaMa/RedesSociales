@@ -17,5 +17,7 @@ services:
         value: admin
       - key: ADMIN_PASSWORD
         sync: false
+      - key: WEBHOOK_PUBLICACION
+        sync: false
       - key: SECRET_KEY
         generateValue: true
