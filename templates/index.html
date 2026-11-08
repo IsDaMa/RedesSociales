@@ -301,6 +301,14 @@
               <span><i class="fas fa-arrow-up-from-bracket"></i></span>
             </div>
           </div>
+
+          <!-- BOTÓN DE PUBLICACIÓN DIRECTA EN X -->
+          <div class="mt-4 flex flex-col sm:flex-row gap-2 justify-center max-w-md mx-auto">
+            <button onclick="publicarEnX()" class="w-full bg-slate-800 hover:bg-slate-700 text-white font-bold py-3 px-4 rounded-2xl border border-slate-700 shadow-xl flex items-center justify-center gap-2 text-xs transition transform active:scale-[0.98]">
+              <i class="fab fa-x-twitter text-sm"></i>
+              <span>🚀 Publicar Directamente en X (Twitter)</span>
+            </button>
+          </div>
         </div>
 
         <!-- ============================================================== -->
@@ -351,6 +359,17 @@
               </div>
             </div>
           </div>
+
+          <!-- BOTÓN DE PUBLICACIÓN EN INSTAGRAM -->
+          <div class="mt-4 flex flex-col sm:flex-row gap-2 justify-center max-w-md mx-auto">
+            <button onclick="publicarEnInstagram()" class="w-full bg-gradient-to-r from-amber-500 via-pink-600 to-purple-600 hover:opacity-95 text-white font-bold py-3 px-4 rounded-2xl shadow-xl flex items-center justify-center gap-2 text-xs transition transform active:scale-[0.98]">
+              <i class="fab fa-instagram text-sm"></i>
+              <span>📸 Publicar en Instagram (Meta Suite)</span>
+            </button>
+            <button onclick="descargarFoto()" class="bg-slate-800 hover:bg-slate-700 text-slate-200 font-semibold py-3 px-3.5 rounded-2xl border border-slate-700 text-xs flex items-center justify-center gap-1.5 transition whitespace-nowrap" title="Descargar foto del post">
+              <i class="fas fa-download"></i> Foto
+            </button>
+          </div>
         </div>
 
         <!-- ============================================================== -->
@@ -396,6 +415,17 @@
               <span class="py-1 flex items-center justify-center gap-1.5"><i class="far fa-comment"></i> Comentar</span>
               <span class="py-1 flex items-center justify-center gap-1.5"><i class="fas fa-share"></i> Compartir</span>
             </div>
+          </div>
+
+          <!-- BOTÓN DE PUBLICACIÓN EN FACEBOOK -->
+          <div class="mt-4 flex flex-col sm:flex-row gap-2 justify-center max-w-md mx-auto">
+            <button onclick="publicarEnFacebook()" class="w-full bg-blue-600 hover:bg-blue-700 text-white font-bold py-3 px-4 rounded-2xl shadow-xl flex items-center justify-center gap-2 text-xs transition transform active:scale-[0.98]">
+              <i class="fab fa-facebook text-sm"></i>
+              <span>📘 Publicar en Facebook</span>
+            </button>
+            <button onclick="descargarFoto()" class="bg-slate-800 hover:bg-slate-700 text-slate-200 font-semibold py-3 px-3.5 rounded-2xl border border-slate-700 text-xs flex items-center justify-center gap-1.5 transition whitespace-nowrap" title="Descargar foto del post">
+              <i class="fas fa-download"></i> Foto
+            </button>
           </div>
         </div>
 
@@ -449,6 +479,14 @@
                 </div>
               </div>
             </div>
+          </div>
+
+          <!-- BOTÓN DE PUBLICACIÓN EN WHATSAPP -->
+          <div class="mt-4 flex flex-col sm:flex-row gap-2 justify-center max-w-md mx-auto">
+            <button onclick="publicarEnWhatsApp()" class="w-full bg-emerald-600 hover:bg-emerald-700 text-white font-bold py-3 px-4 rounded-2xl shadow-xl flex items-center justify-center gap-2 text-xs transition transform active:scale-[0.98]">
+              <i class="fab fa-whatsapp text-sm"></i>
+              <span>💬 Enviar a Grupos de WhatsApp</span>
+            </button>
           </div>
         </div>
 
@@ -543,6 +581,17 @@
             </div>
 
           </div>
+
+          <!-- BOTÓN DE SUBIDA EN TIKTOK -->
+          <div class="mt-4 flex flex-col sm:flex-row gap-2 justify-center max-w-lg mx-auto">
+            <button onclick="publicarEnTikTok()" class="w-full bg-slate-950 hover:bg-slate-800 text-white font-bold py-3 px-4 rounded-2xl border border-slate-700 shadow-xl flex items-center justify-center gap-2 text-xs transition transform active:scale-[0.98]">
+              <i class="fab fa-tiktok text-sm"></i>
+              <span>🎵 Subir a TikTok Creator Center</span>
+            </button>
+            <button onclick="descargarFoto()" class="bg-slate-800 hover:bg-slate-700 text-slate-200 font-semibold py-3 px-3.5 rounded-2xl border border-slate-700 text-xs flex items-center justify-center gap-1.5 transition whitespace-nowrap" title="Descargar imagen para el vídeo">
+              <i class="fas fa-download"></i> Foto
+            </button>
+          </div>
         </div>
 
         <!-- ============================================================== -->
@@ -588,6 +637,14 @@
                 Hacemos un llamamiento a toda la afición y cantera para acudir al pabellón. ¡Vuestro aliento es decisivo!
               </div>
             </div>
+          </div>
+
+          <!-- BOTÓN DE PUBLICACIÓN EN LA WEB DEL CLUB (SUPABASE) -->
+          <div class="mt-4 flex flex-col sm:flex-row gap-2 justify-center max-w-xl mx-auto">
+            <button id="btnPublicarWeb" onclick="publicarEnWebDirecto()" class="w-full bg-gradient-to-r from-cyan-600 to-blue-600 hover:from-cyan-500 hover:to-blue-500 text-white font-bold py-3.5 px-4 rounded-2xl shadow-xl flex items-center justify-center gap-2 text-xs sm:text-sm transition transform active:scale-[0.98]">
+              <i class="fas fa-globe"></i>
+              <span id="btnPublicarWebText">🌐 Publicar Noticia en la Web del Club (Supabase)</span>
+            </button>
           </div>
         </div>
 
@@ -852,6 +909,128 @@
       }
     }
 
+    // ==============================================================
+    // FUNCIONES DE PUBLICACIÓN DIRECTA EN REDES SOCIALES
+    // ==============================================================
+    function registrarAccionEnServidor(accion, detalles) {
+      fetch('/api/registrar_accion', {
+        method: 'POST',
+        headers: { 'Content-Type': 'application/json' },
+        body: JSON.stringify({ accion: accion, detalles: detalles })
+      }).catch(() => {});
+    }
+
+    function mostrarToast(mensaje, tipo = 'success') {
+      const toast = document.getElementById('toastNotificacion');
+      const toastMsg = document.getElementById('toastMensaje');
+      toastMsg.innerHTML = mensaje;
+      toast.classList.remove('hidden', 'translate-y-12', 'opacity-0');
+      toast.classList.add('translate-y-0', 'opacity-100');
+
+      setTimeout(() => {
+        toast.classList.add('translate-y-12', 'opacity-0');
+        setTimeout(() => toast.classList.add('hidden'), 300);
+      }, 3500);
+    }
+
+    function descargarFoto() {
+      if (!urlImagenActual) return;
+      const a = document.createElement('a');
+      a.href = urlImagenActual;
+      a.download = `baloncesto_post_${Date.now()}.jpg`;
+      document.body.appendChild(a);
+      a.click();
+      document.body.removeChild(a);
+      mostrarToast('📥 Fotografía descargada lista para adjuntar.');
+    }
+
+    // 1. Publicar en X (Twitter)
+    function publicarEnX() {
+      const texto = datosGenerados?.x || document.getElementById('preview-x-text').innerText;
+      navigator.clipboard.writeText(texto).then(() => {
+        registrarAccionEnServidor('PUBLICACION_X', `Publicación en X: '${texto.substring(0, 60)}...'`);
+        mostrarToast('🚀 ¡Texto copiado! Abriendo X con tu publicación lista...');
+        const intentUrl = `https://twitter.com/intent/tweet?text=${encodeURIComponent(texto)}`;
+        window.open(intentUrl, '_blank');
+      });
+    }
+
+    // 2. Publicar en Instagram (Meta Suite)
+    function publicarEnInstagram() {
+      const texto = datosGenerados?.instagram || document.getElementById('preview-instagram-text').innerText;
+      navigator.clipboard.writeText(texto).then(() => {
+        registrarAccionEnServidor('PUBLICACION_INSTAGRAM', 'Apertura de Meta Suite / Instagram con caption copiado');
+        descargarFoto();
+        mostrarToast('📸 Caption copiado e imagen descargada. ¡Pégalo en el compositor de Instagram!');
+        // Abre Meta Business Suite si está disponible, o Instagram Web
+        setTimeout(() => {
+          window.open('https://business.facebook.com/latest/composer', '_blank');
+        }, 600);
+      });
+    }
+
+    // 3. Publicar en Facebook
+    function publicarEnFacebook() {
+      const texto = datosGenerados?.facebook || document.getElementById('preview-facebook-text').innerText;
+      navigator.clipboard.writeText(texto).then(() => {
+        registrarAccionEnServidor('PUBLICACION_FACEBOOK', `Publicación en Facebook: '${texto.substring(0, 60)}...'`);
+        mostrarToast('📘 Texto copiado. Abriendo Facebook para publicar...');
+        setTimeout(() => {
+          window.open('https://www.facebook.com/', '_blank');
+        }, 400);
+      });
+    }
+
+    // 4. Publicar en WhatsApp
+    function publicarEnWhatsApp() {
+      const texto = datosGenerados?.whatsapp || document.getElementById('preview-whatsapp-text').innerText;
+      registrarAccionEnServidor('PUBLICACION_WHATSAPP', 'Envío a WhatsApp de convocatoria/crónica');
+      mostrarToast('💬 Abriendo WhatsApp con el mensaje preparado...');
+      const waUrl = `https://api.whatsapp.com/send?text=${encodeURIComponent(texto)}`;
+      window.open(waUrl, '_blank');
+    }
+
+    // 5. Publicar en TikTok
+    function publicarEnTikTok() {
+      const copy = datosGenerados?.tiktok?.copy || document.getElementById('preview-tiktok-caption').innerText;
+      navigator.clipboard.writeText(copy).then(() => {
+        registrarAccionEnServidor('PUBLICACION_TIKTOK', 'Acceso a TikTok Creator Center con descripción copiada');
+        mostrarToast('🎵 Descripción copiada. Abriendo TikTok Creator Center...');
+        setTimeout(() => {
+          window.open('https://www.tiktok.com/creator-center/upload', '_blank');
+        }, 500);
+      });
+    }
+
+    // 6. Publicar en la Web Oficial (Supabase)
+    function publicarEnWebDirecto() {
+      const titulo = datosGenerados?.web?.titulo || document.getElementById('preview-web-title').innerText;
+      const cuerpo = datosGenerados?.web?.cuerpo || document.getElementById('preview-web-body').innerText;
+
+      const btn = document.getElementById('btnPublicarWebText');
+      const origText = btn.textContent;
+      btn.innerHTML = '<i class="fas fa-spinner fa-spin mr-1"></i> Publicando en Supabase...';
+
+      fetch('/api/publicar_web', {
+        method: 'POST',
+        headers: { 'Content-Type': 'application/json' },
+        body: JSON.stringify({ titulo: titulo, contenido: cuerpo })
+      })
+      .then(r => r.json())
+      .then(res => {
+        btn.textContent = origText;
+        if (res.success) {
+          mostrarToast('🎉 ¡Noticia publicada en la base de datos de la Web oficial!');
+        } else {
+          alert('Error: ' + res.error);
+        }
+      })
+      .catch(err => {
+        btn.textContent = origText;
+        alert('Error al conectar: ' + err);
+      });
+    }
+
     // Modal de Auditoría
     function abrirModalAuditoria() {
       document.getElementById('modalAuditoria').classList.remove('hidden');
@@ -961,6 +1140,14 @@
       </div>
 
     </div>
+  </div>
+
+  <!-- TOAST NOTIFICACIÓN FLOTANTE -->
+  <div id="toastNotificacion" class="hidden fixed bottom-5 right-5 z-50 transform translate-y-12 opacity-0 transition-all duration-300 max-w-sm bg-slate-900 border border-slate-700 text-white px-4 py-3 rounded-2xl shadow-2xl flex items-center space-x-3">
+    <div class="w-8 h-8 rounded-xl bg-orange-500/20 text-orange-400 flex items-center justify-center flex-shrink-0">
+      <i class="fas fa-paper-plane text-xs"></i>
+    </div>
+    <div class="text-xs text-slate-200" id="toastMensaje">Acción completada</div>
   </div>
 
 </body>

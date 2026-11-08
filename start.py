@@ -293,6 +293,34 @@ def obtener_auditoria():
     except Exception as e:
         return jsonify({'error': str(e)}), 500
 
+@app.route('/api/publicar_web', methods=['POST'])
+@login_required
+def publicar_web():
+    """Publica una noticia o comunicado directamente en la base de datos de la Web (Supabase)."""
+    user = session.get('user', 'Admin')
+    data = request.json or {}
+    titulo = data.get('titulo', '').strip()
+    contenido = data.get('contenido', '').strip()
+
+    if not titulo or not contenido:
+        return jsonify({'error': 'Título y contenido requeridos'}), 400
+
+    id_noticia = None
+    if client_supabase:
+        try:
+            res = client_supabase.table("noticias").insert({
+                "titulo": titulo,
+                "contenido": contenido,
+                "publicado_noticia": True
+            }).execute()
+            if res.data:
+                id_noticia = res.data[0].get('id')
+        except Exception as e:
+            print(f"Error al publicar en Supabase: {e}")
+
+    registrar_auditoria(user, "PUBLICACION_WEB", f"Noticia publicada en web: '{titulo}'")
+    return jsonify({'success': True, 'id': id_noticia, 'message': 'Noticia publicada con éxito en la web del club.'})
+
 @app.route('/api/registrar_accion', methods=['POST'])
 @login_required
 def registrar_accion_manual():
@@ -310,3 +338,4 @@ if __name__ == '__main__':
     print("👉 Abre tu navegador en: http://localhost:5000")
     print(f"🔑 Credenciales -> Usuario: {ADMIN_USERNAME} | Contraseña: {ADMIN_PASSWORD}")
     app.run(host='0.0.0.0', port=5000, debug=False)
+
