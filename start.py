@@ -22,9 +22,9 @@ app.config['DB_PATH'] = os.path.join(os.path.dirname(__file__), 'database', 'aud
 app.config['MAX_CONTENT_LENGTH'] = 16 * 1024 * 1024  # Máximo 16 MB por subida
 ALLOWED_EXTENSIONS = {'png', 'jpg', 'jpeg', 'webp', 'gif'}
 
-# Credenciales de Administrador
-ADMIN_USERNAME = os.environ.get("ADMIN_USERNAME", "admin")
-ADMIN_PASSWORD = os.environ.get("ADMIN_PASSWORD", "basketclub2026")
+# Credenciales de Administrador (limpiando posibles espacios accidentales)
+ADMIN_USERNAME = os.environ.get("ADMIN_USERNAME", "admin").strip()
+ADMIN_PASSWORD = os.environ.get("ADMIN_PASSWORD", "basketclub2026").strip()
 
 os.makedirs(app.config['UPLOAD_FOLDER'], exist_ok=True)
 os.makedirs(os.path.dirname(app.config['DB_PATH']), exist_ok=True)
@@ -174,12 +174,13 @@ def login():
         user = request.form.get('username', '').strip()
         pwd = request.form.get('password', '').strip()
 
-        val_user = hmac.compare_digest(user.encode('utf-8'), ADMIN_USERNAME.encode('utf-8'))
+        # Tolerante a mayúsculas/minúsculas en el usuario (los teclados de móvil suelen poner la primera letra en mayúscula)
+        val_user = hmac.compare_digest(user.lower().encode('utf-8'), ADMIN_USERNAME.lower().encode('utf-8'))
         val_pwd = hmac.compare_digest(pwd.encode('utf-8'), ADMIN_PASSWORD.encode('utf-8'))
 
         if val_user and val_pwd:
             session['logged_in'] = True
-            session['user'] = user
+            session['user'] = user.lower()
             registrar_auditoria(user, "LOGIN", "Inicio de sesión exitoso en el panel web")
             return redirect(url_for('index'))
         else:
