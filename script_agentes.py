@@ -6,9 +6,13 @@ from supabase import create_client, Client
 # Cargar variables de entorno locales si existen
 load_dotenv()
 
-SUPABASE_URL = os.environ.get("SUPABASE_URL")
-SUPABASE_KEY = os.environ.get("SUPABASE_KEY")
-GEMINI_API_KEY = os.environ.get("GEMINI_API_KEY")
+SUPABASE_URL = os.environ.get("SUPABASE_URL", "")
+SUPABASE_KEY = os.environ.get("SUPABASE_KEY", "")
+GEMINI_API_KEY = os.environ.get("GEMINI_API_KEY", "")
+
+# Limpiar URL en caso de que incluya /rest/v1
+if SUPABASE_URL:
+    SUPABASE_URL = SUPABASE_URL.replace("/rest/v1/", "").replace("/rest/v1", "").rstrip("/")
 
 if not SUPABASE_URL or not SUPABASE_KEY:
     print("❌ ERROR: Faltan las variables SUPABASE_URL o SUPABASE_KEY.")
