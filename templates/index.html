@@ -3,7 +3,7 @@
 <head>
   <meta charset="UTF-8">
   <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no">
-  <title>🏀 Centro de Mando y Previsualizador de Redes Sociales | Club Baloncesto</title>
+  <title>🏀 CB Cártama | Centro de Mando y Redes Sociales</title>
   <!-- Tailwind CSS CDN -->
   <script src="https://cdn.tailwindcss.com"></script>
   <!-- FontAwesome Icons -->
@@ -14,11 +14,16 @@
       theme: {
         extend: {
           colors: {
-            brand: {
-              orange: '#f97316',
-              blue: '#2563eb',
-              dark: '#0b0f19',
-              card: '#131b2e'
+            cartama: {
+              green: '#15803d',     /* Verde principal Cártama */
+              greenHover: '#166534',
+              greenLight: '#22c55e',
+              yellow: '#eab308',    /* Amarillo Cártama */
+              yellowHover: '#ca8a04',
+              yellowLight: '#fde047',
+              dark: '#06160e',      /* Fondo verde muy oscuro */
+              card: '#0c2417',
+              border: '#143825'
             }
           }
         }
@@ -26,56 +31,71 @@
     }
   </script>
   <style>
-    /* WhatsApp Background Pattern */
+    /* Fondo WhatsApp */
     .whatsapp-bg {
       background-color: #0b141a;
       background-image: radial-gradient(#1f2c34 1px, transparent 1px);
       background-size: 16px 16px;
     }
-    /* Scrollbars elegantes */
+    /* Scrollbars elegantes verde/amarillo */
     ::-webkit-scrollbar { width: 5px; height: 5px; }
-    ::-webkit-scrollbar-track { background: #0b0f19; }
-    ::-webkit-scrollbar-thumb { background: #334155; border-radius: 4px; }
-    ::-webkit-scrollbar-thumb:hover { background: #f97316; }
-    /* Evitar zoom molesto en inputs en Safari iOS */
+    ::-webkit-scrollbar-track { background: #06160e; }
+    ::-webkit-scrollbar-thumb { background: #15803d; border-radius: 4px; }
+    ::-webkit-scrollbar-thumb:hover { background: #eab308; }
+    /* Prevenir zoom iOS */
     input, textarea, select { font-size: 16px !important; }
     @media (min-width: 640px) {
       input, textarea, select { font-size: 14px !important; }
     }
+    /* Estilo para textos editables */
+    [contenteditable="true"]:hover {
+      outline: 1px dashed #eab308;
+      border-radius: 4px;
+    }
+    [contenteditable="true"]:focus {
+      outline: 2px solid #22c55e;
+      background-color: rgba(6, 22, 14, 0.4);
+      border-radius: 4px;
+    }
   </style>
 </head>
-<body class="bg-slate-950 text-slate-100 min-h-screen font-sans selection:bg-orange-500 selection:text-white pb-16 lg:pb-6">
+<body class="bg-[#050f0a] text-slate-100 min-h-screen font-sans selection:bg-emerald-600 selection:text-white pb-16 lg:pb-6">
 
-  <!-- NAVBAR SUPERIOR RESPONSIVE -->
-  <header class="border-b border-slate-800 bg-slate-900/90 backdrop-blur sticky top-0 z-50">
+  <!-- NAVBAR SUPERIOR - IDENTIDAD CB CÁRTAMA -->
+  <header class="border-b border-emerald-950/80 bg-[#071910]/90 backdrop-blur sticky top-0 z-50">
     <div class="max-w-7xl mx-auto px-3 sm:px-6 h-16 flex items-center justify-between">
       
-      <!-- LOGO Y TÍTULO -->
-      <div class="flex items-center space-x-2.5">
-        <div class="w-9 h-9 sm:w-10 sm:h-10 rounded-xl bg-gradient-to-tr from-orange-600 to-amber-500 flex items-center justify-center shadow-lg shadow-orange-500/20 text-white font-black text-lg">
-          🏀
+      <!-- LOGO Y ESCUDO CB CÁRTAMA -->
+      <div class="flex items-center space-x-3">
+        <div class="w-10 h-10 rounded-2xl bg-gradient-to-tr from-emerald-700 via-green-600 to-yellow-500 p-[2px] shadow-lg shadow-emerald-950/50 flex items-center justify-center">
+          <div class="w-full h-full bg-[#071910] rounded-[14px] flex items-center justify-center text-xl font-black text-yellow-400">
+            🏀
+          </div>
         </div>
         <div>
-          <div class="flex items-center gap-1.5">
-            <h1 class="font-extrabold text-sm sm:text-base text-white leading-tight">CB Social Hub</h1>
+          <div class="flex items-center gap-2">
+            <h1 class="font-black text-sm sm:text-base text-white tracking-tight flex items-center gap-1.5">
+              <span>CB CÁRTAMA</span>
+              <span class="text-[10px] font-bold px-1.5 py-0.5 rounded bg-yellow-500/10 text-yellow-400 border border-yellow-500/30">MÁLAGA</span>
+            </h1>
             <span class="text-[10px] font-semibold px-1.5 py-0.5 rounded-full bg-emerald-500/10 text-emerald-400 border border-emerald-500/20 flex items-center gap-1">
               <span class="w-1.5 h-1.5 rounded-full bg-emerald-400 animate-pulse"></span> Gemini 3.1
             </span>
           </div>
-          <p class="text-[10px] sm:text-xs text-slate-400 truncate">Supervisión IA & Previsualizador 6 Canales</p>
+          <p class="text-[10px] sm:text-xs text-emerald-400/80 font-medium truncate">Ciudad Deportiva de Cártama · Redes Oficiales</p>
         </div>
       </div>
 
       <!-- ZONA DE ACCESO CONTROLADO Y PERFIL -->
       <div class="flex items-center space-x-2 sm:space-x-3">
         <button type="button" onclick="abrirModalAuditoria()" title="Ver registro de actividad y accesos" 
-          class="text-xs px-2.5 sm:px-3 py-1.5 rounded-xl border border-slate-700 bg-slate-800 hover:bg-slate-700 text-slate-200 transition flex items-center gap-1.5 font-medium shadow-sm">
-          <i class="fas fa-list-check text-orange-400"></i>
+          class="text-xs px-2.5 sm:px-3 py-1.5 rounded-xl border border-emerald-900 bg-emerald-950/60 hover:bg-emerald-900/60 text-emerald-300 transition flex items-center gap-1.5 font-medium shadow-sm">
+          <i class="fas fa-list-check text-yellow-400"></i>
           <span class="hidden sm:inline">Auditoría</span>
         </button>
 
-        <div class="hidden sm:flex items-center gap-2 px-3 py-1 bg-slate-800/80 rounded-xl border border-slate-700/60 text-xs">
-          <i class="fas fa-shield-halved text-emerald-400"></i>
+        <div class="hidden sm:flex items-center gap-2 px-3 py-1 bg-emerald-950/40 rounded-xl border border-emerald-800/40 text-xs">
+          <i class="fas fa-shield-halved text-yellow-400"></i>
           <span class="text-slate-300 font-medium">{{ username }}</span>
         </div>
 
@@ -88,46 +108,50 @@
     </div>
 
     <!-- SELECTOR DE VISTA EN MÓVILES (REDACTAR VS PREVISUALIZAR) -->
-    <div class="grid grid-cols-2 p-1 bg-slate-950 border-t border-slate-800 lg:hidden">
+    <div class="grid grid-cols-2 p-1 bg-[#050f0a] border-t border-emerald-950 lg:hidden">
       <button type="button" onclick="setMobileView('editor')" id="mobileTabEditor" 
-        class="py-2 text-xs font-bold rounded-lg bg-orange-500 text-white transition flex items-center justify-center gap-1.5">
+        class="py-2 text-xs font-bold rounded-lg bg-emerald-600 text-white transition flex items-center justify-center gap-1.5">
         <i class="fas fa-pen-nib"></i> 1. Redactar & Foto
       </button>
       <button type="button" onclick="setMobileView('preview')" id="mobileTabPreview" 
-        class="py-2 text-xs font-bold rounded-lg text-slate-400 hover:text-white transition flex items-center justify-center gap-1.5">
+        class="py-2 text-xs font-bold rounded-lg text-emerald-300/60 hover:text-white transition flex items-center justify-center gap-1.5">
         <i class="fas fa-mobile-screen"></i> 2. Previsualizar (6)
       </button>
     </div>
   </header>
 
-  <!-- CONTENIDO PRINCIPAL ADAPTATIVO (MÓVIL, TABLET, ESCRITORIO) -->
+  <!-- CONTENIDO PRINCIPAL ADAPTATIVO -->
   <main class="max-w-7xl mx-auto px-3 sm:px-6 py-4 sm:py-6 grid grid-cols-1 lg:grid-cols-12 gap-5 sm:gap-6">
 
     <!-- ============================================================== -->
-    <!-- COLUMNA 1: ENTRADA DE DATOS, FOTO Y SUPERVISIÓN (EDITOR) -->
+    <!-- COLUMNA 1: ENTRADA DE DATOS, FOTO Y SUPERVISIÓN -->
     <!-- ============================================================== -->
     <section id="pane-editor" class="lg:col-span-5 space-y-4">
       
-      <div class="bg-slate-900 border border-slate-800 rounded-3xl p-4 sm:p-5 shadow-xl">
+      <div class="bg-[#092015] border border-emerald-900/60 rounded-3xl p-4 sm:p-5 shadow-2xl relative overflow-hidden">
+        
+        <!-- Detalle de fondo verde/amarillo sutil -->
+        <div class="absolute -top-12 -right-12 w-28 h-28 bg-yellow-500/5 rounded-full blur-xl pointer-events-none"></div>
+
         <div class="flex items-center justify-between mb-3">
-          <h2 class="text-xs sm:text-sm font-bold uppercase tracking-wider text-slate-200 flex items-center gap-2">
-            <i class="fas fa-pen-nib text-orange-500"></i> Tu Texto o Borrador
+          <h2 class="text-xs sm:text-sm font-bold uppercase tracking-wider text-emerald-200 flex items-center gap-2">
+            <i class="fas fa-pen-nib text-yellow-400"></i> Notas o Borrador del Partido
           </h2>
-          <span class="text-[11px] text-slate-400">Paso 1 de 2</span>
+          <span class="text-[11px] text-yellow-400/80 font-semibold">Paso 1: Redactar</span>
         </div>
 
-        <!-- SELECTOR DE MODOS CON SCROLL SUAVE EN MÓVIL -->
+        <!-- SELECTOR DE MODOS CB CÁRTAMA -->
         <div class="grid grid-cols-2 sm:grid-cols-4 gap-1.5 mb-3">
-          <button type="button" onclick="setModo('prepartido', this)" class="modo-btn text-xs font-medium py-2.5 px-2 rounded-xl border border-orange-500/50 bg-orange-500/10 text-orange-400 flex items-center justify-center gap-1.5 transition">
+          <button type="button" onclick="setModo('prepartido', this)" class="modo-btn text-xs font-medium py-2.5 px-2 rounded-xl border border-yellow-500/50 bg-yellow-500/10 text-yellow-400 flex items-center justify-center gap-1.5 transition">
             <i class="fas fa-calendar-day"></i> Pre-Partido
           </button>
-          <button type="button" onclick="setModo('postpartido', this)" class="modo-btn text-xs font-medium py-2.5 px-2 rounded-xl border border-slate-800 bg-slate-800 text-slate-400 hover:text-white flex items-center justify-center gap-1.5 transition">
+          <button type="button" onclick="setModo('postpartido', this)" class="modo-btn text-xs font-medium py-2.5 px-2 rounded-xl border border-emerald-900 bg-emerald-950/80 text-emerald-300 hover:text-white flex items-center justify-center gap-1.5 transition">
             <i class="fas fa-trophy"></i> Resultado
           </button>
-          <button type="button" onclick="setModo('mvp', this)" class="modo-btn text-xs font-medium py-2.5 px-2 rounded-xl border border-slate-800 bg-slate-800 text-slate-400 hover:text-white flex items-center justify-center gap-1.5 transition">
+          <button type="button" onclick="setModo('mvp', this)" class="modo-btn text-xs font-medium py-2.5 px-2 rounded-xl border border-emerald-900 bg-emerald-950/80 text-emerald-300 hover:text-white flex items-center justify-center gap-1.5 transition">
             <i class="fas fa-star"></i> MVP Cantera
           </button>
-          <button type="button" onclick="setModo('noticia', this)" class="modo-btn text-xs font-medium py-2.5 px-2 rounded-xl border border-slate-800 bg-slate-800 text-slate-400 hover:text-white flex items-center justify-center gap-1.5 transition">
+          <button type="button" onclick="setModo('noticia', this)" class="modo-btn text-xs font-medium py-2.5 px-2 rounded-xl border border-emerald-900 bg-emerald-950/80 text-emerald-300 hover:text-white flex items-center justify-center gap-1.5 transition">
             <i class="fas fa-bullhorn"></i> Noticia
           </button>
         </div>
@@ -135,40 +159,39 @@
         <!-- CAJA DE TEXTO PRINCIPAL -->
         <div class="relative">
           <textarea id="textoBase" rows="6" 
-            placeholder="Introduce las notas del partido, audio transcrito del entrenador o comunicado del club...&#10;&#10;Ejemplo: 'Jugamos el sábado a las 18:30h contra Baloncesto Alcalá en nuestro pabellón. Entrada gratuita.'" 
-            class="w-full bg-slate-950 border border-slate-800 rounded-2xl p-3.5 text-sm text-slate-100 placeholder-slate-500 focus:outline-none focus:ring-2 focus:ring-orange-500 focus:border-transparent transition resize-none"></textarea>
+            placeholder="Escribe aquí los datos del partido, las notas del entrenador o el anuncio del club...&#10;&#10;Ejemplo: 'Jugamos este sábado a las 18:30h en la Ciudad Deportiva de Cártama contra CB El Palo. Entrada libre.'" 
+            class="w-full bg-[#05110a] border border-emerald-900/80 rounded-2xl p-3.5 text-sm text-slate-100 placeholder-emerald-700/60 focus:outline-none focus:ring-2 focus:ring-yellow-400 focus:border-transparent transition resize-none"></textarea>
           
-          <button type="button" onclick="cargarEjemplo()" class="absolute bottom-3 right-3 text-xs text-orange-400/90 hover:text-orange-300 bg-slate-900/90 border border-slate-700 px-2.5 py-1 rounded-lg transition flex items-center gap-1 shadow">
+          <button type="button" onclick="cargarEjemplo()" class="absolute bottom-3 right-3 text-xs text-yellow-400 hover:text-yellow-300 bg-[#092015]/90 border border-emerald-800 px-2.5 py-1 rounded-lg transition flex items-center gap-1 shadow">
             <i class="fas fa-magic"></i> Cargar Ejemplo
           </button>
         </div>
 
-        <!-- SUBIDA DE FOTOGRAFÍAS CON SOPORTE DE CÁMARA MÓVIL -->
+        <!-- SUBIDA DE FOTOGRAFÍAS -->
         <div class="mt-4">
-          <label class="block text-xs font-semibold text-slate-300 mb-2 flex items-center justify-between">
-            <span><i class="fas fa-camera text-blue-400 mr-1.5"></i> Fotografía para publicar</span>
-            <span class="text-[10px] text-slate-500">Cámara o Galería</span>
+          <label class="block text-xs font-semibold text-emerald-200 mb-2 flex items-center justify-between">
+            <span><i class="fas fa-camera text-yellow-400 mr-1.5"></i> Fotografía del Encuentro</span>
+            <span class="text-[10px] text-emerald-400/60">Cámara o Archivo</span>
           </label>
 
           <div id="dropzone" onclick="document.getElementById('fileInput').click()" 
-            class="border-2 border-dashed border-slate-800 hover:border-orange-500/50 bg-slate-950/50 hover:bg-slate-950 rounded-2xl p-4 text-center cursor-pointer transition group">
+            class="border-2 border-dashed border-emerald-900/80 hover:border-yellow-400/60 bg-[#05110a]/60 hover:bg-[#05110a] rounded-2xl p-4 text-center cursor-pointer transition group">
             
-            <!-- Input que permite galería Y cámara directa en smartphones -->
             <input type="file" id="fileInput" accept="image/*" class="hidden" onchange="handleFileSelect(event)">
             
             <div id="uploadPlaceholder">
-              <i class="fas fa-cloud-arrow-up text-2xl text-slate-500 group-hover:text-orange-400 transition mb-1"></i>
-              <p class="text-xs text-slate-300 font-medium">Toca para abrir <span class="text-orange-400 underline">Cámara o Galería</span></p>
-              <p class="text-[10px] text-slate-500 mt-0.5">JPG, PNG o WEBP (Máx. 16 MB)</p>
+              <i class="fas fa-cloud-arrow-up text-2xl text-emerald-600 group-hover:text-yellow-400 transition mb-1"></i>
+              <p class="text-xs text-emerald-200 font-medium">Toca para abrir <span class="text-yellow-400 underline">Cámara o Galería</span></p>
+              <p class="text-[10px] text-emerald-500 mt-0.5">JPG, PNG o WEBP</p>
             </div>
 
             <!-- PREVIEW DE IMAGEN CARGADA -->
-            <div id="uploadPreviewContainer" class="hidden flex items-center justify-between bg-slate-900 p-2.5 rounded-xl border border-slate-800">
+            <div id="uploadPreviewContainer" class="hidden flex items-center justify-between bg-[#071a10] p-2.5 rounded-xl border border-emerald-900">
               <div class="flex items-center space-x-3 overflow-hidden">
-                <img id="uploadPreviewImg" src="" alt="Foto" class="w-12 h-12 object-cover rounded-lg border border-slate-700">
+                <img id="uploadPreviewImg" src="" alt="Foto" class="w-12 h-12 object-cover rounded-lg border border-emerald-700">
                 <div class="text-left truncate">
                   <p id="uploadFilename" class="text-xs font-semibold text-slate-200 truncate">foto.jpg</p>
-                  <p class="text-[10px] text-emerald-400 flex items-center gap-1"><i class="fas fa-circle-check"></i> Imagen cargada con éxito</p>
+                  <p class="text-[10px] text-yellow-400 flex items-center gap-1"><i class="fas fa-circle-check"></i> Foto lista para las redes</p>
                 </div>
               </div>
               <button type="button" onclick="removeImage(event)" class="text-slate-400 hover:text-red-400 p-2 text-sm transition">
@@ -178,105 +201,107 @@
           </div>
         </div>
 
-        <!-- BOTÓN PRINCIPAL DE SUPERVISIÓN IA -->
+        <!-- BOTÓN PRINCIPAL: SUPERVISAR CON GEMINI -->
         <button id="btnSupervisar" onclick="supervisarConGemini()" 
-          class="mt-5 w-full bg-gradient-to-r from-orange-500 via-amber-500 to-orange-600 hover:from-orange-600 hover:to-orange-700 text-white font-extrabold py-3.5 px-4 rounded-2xl shadow-xl shadow-orange-500/20 transition transform active:scale-[0.98] flex items-center justify-center gap-2 text-sm sm:text-base">
-          <i class="fas fa-wand-magic-sparkles text-amber-200"></i>
+          class="mt-5 w-full bg-gradient-to-r from-emerald-600 via-green-600 to-yellow-500 hover:from-emerald-500 hover:to-yellow-400 text-slate-950 font-black py-3.5 px-4 rounded-2xl shadow-xl shadow-emerald-950/40 transition transform active:scale-[0.98] flex items-center justify-center gap-2 text-sm sm:text-base">
+          <i class="fas fa-wand-magic-sparkles text-yellow-950"></i>
           <span>✨ Supervisar y Adaptar con Gemini</span>
         </button>
 
       </div>
 
-      <!-- TARJETA DE SEGURIDAD Y CONSEJOS -->
-      <div class="bg-slate-900/60 border border-slate-800/80 rounded-2xl p-3.5 text-xs text-slate-400 flex items-start gap-2.5">
-        <i class="fas fa-shield-check text-emerald-400 mt-0.5 text-sm"></i>
+      <!-- NOTA DE FILOSOFÍA DEL CLUB -->
+      <div class="bg-[#092015]/60 border border-emerald-900/40 rounded-2xl p-3.5 text-xs text-emerald-300/80 flex items-start gap-2.5">
+        <i class="fas fa-shield-halved text-yellow-400 mt-0.5 text-sm"></i>
         <div>
-          <p class="font-semibold text-slate-300">Seguridad & Multiplataforma</p>
-          <p class="text-[11px] text-slate-400 mt-0.5">Tus contenidos se procesan de forma privada mediante la API oficial de Google Gemini y quedan listos para compartir directamente en tus apps.</p>
+          <p class="font-bold text-slate-200">Protocolo de Publicación Segura CB Cártama</p>
+          <p class="text-[11px] text-emerald-400/80 mt-0.5">Nada se publica automáticamente. Cada canal se revisa de uno en uno y requiere marcar un check explícito de confirmación antes del envío.</p>
         </div>
       </div>
 
     </section>
 
     <!-- ============================================================== -->
-    <!-- COLUMNA 2: PREVISUALIZADOR MULTIPLATAFORMA (6 CANALES) -->
+    <!-- COLUMNA 2: PREVISUALIZADOR Y PUBLICACIÓN 1 A 1 CON CONFIRMACIÓN -->
     <!-- ============================================================== -->
     <section id="pane-preview" class="lg:col-span-7 space-y-4 hidden lg:block">
       
-      <!-- BARRA DE PESTAÑAS RESPONSIVE -->
+      <!-- PESTAÑAS DE CANALES -->
       <div class="flex items-center justify-between flex-wrap gap-2">
-        <div class="flex items-center space-x-1 bg-slate-900 p-1.5 rounded-2xl border border-slate-800 overflow-x-auto max-w-full no-scrollbar">
-          <button onclick="switchTab('x')" id="tab-x" class="tab-btn px-2.5 sm:px-3 py-1.5 rounded-xl text-xs font-bold transition flex items-center gap-1.5 bg-slate-800 text-white shadow whitespace-nowrap">
+        <div class="flex items-center space-x-1 bg-[#092015] p-1.5 rounded-2xl border border-emerald-900/60 overflow-x-auto max-w-full no-scrollbar">
+          <button onclick="switchTab('x')" id="tab-x" class="tab-btn px-2.5 sm:px-3 py-1.5 rounded-xl text-xs font-bold transition flex items-center gap-1.5 bg-emerald-800 text-white shadow whitespace-nowrap">
             <i class="fab fa-x-twitter"></i> X
           </button>
-          <button onclick="switchTab('instagram')" id="tab-instagram" class="tab-btn px-2.5 sm:px-3 py-1.5 rounded-xl text-xs font-medium text-slate-400 hover:text-white transition flex items-center gap-1.5 whitespace-nowrap">
-            <i class="fab fa-instagram text-pink-500"></i> Instagram
+          <button onclick="switchTab('instagram')" id="tab-instagram" class="tab-btn px-2.5 sm:px-3 py-1.5 rounded-xl text-xs font-medium text-emerald-300/70 hover:text-white transition flex items-center gap-1.5 whitespace-nowrap">
+            <i class="fab fa-instagram text-pink-400"></i> Instagram
           </button>
-          <button onclick="switchTab('facebook')" id="tab-facebook" class="tab-btn px-2.5 sm:px-3 py-1.5 rounded-xl text-xs font-medium text-slate-400 hover:text-white transition flex items-center gap-1.5 whitespace-nowrap">
-            <i class="fab fa-facebook text-blue-500"></i> Facebook
+          <button onclick="switchTab('facebook')" id="tab-facebook" class="tab-btn px-2.5 sm:px-3 py-1.5 rounded-xl text-xs font-medium text-emerald-300/70 hover:text-white transition flex items-center gap-1.5 whitespace-nowrap">
+            <i class="fab fa-facebook text-blue-400"></i> Facebook
           </button>
-          <button onclick="switchTab('whatsapp')" id="tab-whatsapp" class="tab-btn px-2.5 sm:px-3 py-1.5 rounded-xl text-xs font-medium text-slate-400 hover:text-white transition flex items-center gap-1.5 whitespace-nowrap">
+          <button onclick="switchTab('whatsapp')" id="tab-whatsapp" class="tab-btn px-2.5 sm:px-3 py-1.5 rounded-xl text-xs font-medium text-emerald-300/70 hover:text-white transition flex items-center gap-1.5 whitespace-nowrap">
             <i class="fab fa-whatsapp text-emerald-400"></i> WhatsApp
           </button>
-          <button onclick="switchTab('tiktok')" id="tab-tiktok" class="tab-btn px-2.5 sm:px-3 py-1.5 rounded-xl text-xs font-medium text-slate-400 hover:text-white transition flex items-center gap-1.5 whitespace-nowrap">
+          <button onclick="switchTab('tiktok')" id="tab-tiktok" class="tab-btn px-2.5 sm:px-3 py-1.5 rounded-xl text-xs font-medium text-emerald-300/70 hover:text-white transition flex items-center gap-1.5 whitespace-nowrap">
             <i class="fab fa-tiktok"></i> TikTok
           </button>
-          <button onclick="switchTab('web')" id="tab-web" class="tab-btn px-2.5 sm:px-3 py-1.5 rounded-xl text-xs font-medium text-slate-400 hover:text-white transition flex items-center gap-1.5 whitespace-nowrap">
-            <i class="fas fa-globe text-cyan-400"></i> Web
+          <button onclick="switchTab('web')" id="tab-web" class="tab-btn px-2.5 sm:px-3 py-1.5 rounded-xl text-xs font-medium text-emerald-300/70 hover:text-white transition flex items-center gap-1.5 whitespace-nowrap">
+            <i class="fas fa-globe text-yellow-400"></i> Web Club
           </button>
         </div>
 
-        <!-- ACCIONES RÁPIDAS: COPIAR Y COMPARTIR NATIVO -->
+        <!-- ACCIONES RÁPIDAS -->
         <div class="flex items-center space-x-1.5">
-          <button onclick="compartirNativo()" title="Compartir directamente desde móvil o tablet" 
-            class="text-xs font-semibold px-3 py-2 rounded-xl bg-blue-500/10 hover:bg-blue-500/20 border border-blue-500/30 text-blue-400 transition flex items-center gap-1.5">
+          <button onclick="compartirNativo()" title="Compartir nativo desde tablet o móvil" 
+            class="text-xs font-semibold px-3 py-2 rounded-xl bg-emerald-500/10 hover:bg-emerald-500/20 border border-emerald-500/30 text-emerald-300 transition flex items-center gap-1.5">
             <i class="fas fa-share-nodes"></i> <span class="hidden sm:inline">Compartir</span>
           </button>
           <button onclick="copiarContenidoActual()" 
-            class="text-xs font-semibold px-3 py-2 rounded-xl bg-orange-500/10 hover:bg-orange-500/20 border border-orange-500/30 text-orange-400 transition flex items-center gap-1.5">
+            class="text-xs font-semibold px-3 py-2 rounded-xl bg-yellow-500/10 hover:bg-yellow-500/20 border border-yellow-500/30 text-yellow-400 transition flex items-center gap-1.5">
             <i class="fas fa-copy"></i> <span id="copyBtnText">Copiar</span>
           </button>
         </div>
       </div>
 
-      <!-- CONTENEDOR DE LAS 6 VISTAS MOCKUP -->
-      <div class="bg-slate-900 border border-slate-800 rounded-3xl p-3 sm:p-5 shadow-2xl min-h-[500px] relative">
+      <!-- CONTENEDOR DE LAS 6 VISTAS MOCKUP (IDENTIDAD CB CÁRTAMA) -->
+      <div class="bg-[#092015] border border-emerald-900/60 rounded-3xl p-3 sm:p-5 shadow-2xl min-h-[520px] relative">
 
         <!-- OVERLAY DE CARGA -->
-        <div id="loadingOverlay" class="hidden absolute inset-0 bg-slate-950/85 backdrop-blur-sm rounded-3xl z-30 flex flex-col items-center justify-center p-4 text-center space-y-3">
-          <div class="w-12 h-12 border-4 border-orange-500 border-t-transparent rounded-full animate-spin"></div>
-          <p class="text-sm font-bold text-slate-100 animate-pulse">Gemini está supervisando el contenido y adaptando los 6 canales...</p>
-          <p class="text-xs text-slate-400">Verificando tono de club, ortografía y hashtags oficiales</p>
+        <div id="loadingOverlay" class="hidden absolute inset-0 bg-[#050f0a]/90 backdrop-blur-sm rounded-3xl z-30 flex flex-col items-center justify-center p-4 text-center space-y-3">
+          <div class="w-12 h-12 border-4 border-yellow-400 border-t-transparent rounded-full animate-spin"></div>
+          <p class="text-sm font-bold text-slate-100 animate-pulse">Gemini está supervisando el contenido para el CB Cártama...</p>
+          <p class="text-xs text-yellow-400/80">Adaptando a los 6 canales con el estilo y valores de Cártama</p>
         </div>
 
         <!-- ============================================================== -->
-        <!-- 1. MOCKUP DE X (TWITTER) -->
+        <!-- 1. MOCKUP DE X (TWITTER) - CB CÁRTAMA -->
         <!-- ============================================================== -->
         <div id="view-x" class="platform-view">
           <div class="max-w-md mx-auto bg-black text-white rounded-2xl border border-neutral-800 p-4 shadow-xl font-sans">
             <!-- Header Tweet -->
             <div class="flex items-start justify-between">
               <div class="flex items-center space-x-3">
-                <div class="w-10 h-10 rounded-full bg-gradient-to-tr from-orange-600 to-amber-500 flex items-center justify-center font-bold text-lg">🏀</div>
+                <div class="w-10 h-10 rounded-full bg-gradient-to-tr from-green-600 to-yellow-500 flex items-center justify-center font-black text-base text-black">
+                  🏀
+                </div>
                 <div>
                   <div class="flex items-center gap-1">
-                    <span class="font-bold text-sm text-white">Club Baloncesto</span>
-                    <i class="fas fa-certificate text-sky-400 text-xs"></i>
+                    <span class="font-bold text-sm text-white">CB Cártama</span>
+                    <i class="fas fa-certificate text-yellow-400 text-xs"></i>
                   </div>
-                  <span class="text-xs text-neutral-500">@ClubBasket · Ahora</span>
+                  <span class="text-xs text-neutral-500">@cbcartama · Ahora</span>
                 </div>
               </div>
               <i class="fas fa-ellipsis text-neutral-500"></i>
             </div>
 
-            <!-- Cuerpo Tweet -->
-            <div class="mt-3 text-sm text-neutral-100 whitespace-pre-line leading-relaxed" id="preview-x-text">
-              ¡Día de partido en casa! 🏀 Este fin de semana nuestro Senior Masculino A recibe a CB Los Leones en un choque crucial. ¡Llenemos el Esperanza y empujemos al equipo! 💪🔥
+            <!-- Cuerpo Tweet (Editable in situ) -->
+            <div contenteditable="true" spellcheck="false" class="mt-3 text-sm text-neutral-100 whitespace-pre-line leading-relaxed focus:outline-none p-1" id="preview-x-text" oninput="actualizarContadorX()">
+              ¡Día de partido en la Ciudad Deportiva de Cártama! 🏀 Nuestro equipo recibe este fin de semana a un gran rival. ¡Necesitamos que la grada ruja de verde y amarillo! 💪🔥
 
               📅 Sábado | ⏱️ 18:30h
-              📍 Pabellón Esperanza
+              📍 Ciudad Deportiva de Cártama
 
-              ¡No faltes! #VamosBasket #OrgulloDeClub
+              ¡A por la victoria! #CBCártama #BaloncestoCártama
             </div>
 
             <!-- Imagen Tweet -->
@@ -284,45 +309,50 @@
               <img id="preview-x-img" src="https://images.unsplash.com/photo-1546519638-68e109498ffc?w=800&auto=format&fit=crop" alt="Basket" class="w-full h-full object-cover">
             </div>
 
-            <!-- Contador de caracteres y Botón directo a X -->
+            <!-- Contador de caracteres -->
             <div class="mt-3 flex items-center justify-between text-xs text-neutral-500 border-b border-neutral-800 pb-2.5">
-              <span id="charCountX" class="text-emerald-400 font-mono font-semibold">198 / 280 caracteres</span>
-              <a id="btnDirectX" href="#" target="_blank" class="text-sky-400 hover:underline flex items-center gap-1 text-[11px]">
-                <i class="fab fa-x-twitter"></i> Abrir en X
-              </a>
+              <span id="charCountX" class="text-emerald-400 font-mono font-semibold">210 / 280 caracteres</span>
+              <span class="text-[11px] text-neutral-400"><i class="fas fa-pen text-[10px] mr-1 text-yellow-400"></i> Puedes editar el texto arriba</span>
             </div>
 
             <!-- Barra Interacciones X -->
             <div class="flex justify-between items-center text-neutral-500 text-xs pt-2 px-1">
-              <span class="flex items-center gap-1.5"><i class="far fa-comment"></i> 14</span>
-              <span class="flex items-center gap-1.5"><i class="fas fa-retweet"></i> 28</span>
-              <span class="flex items-center gap-1.5"><i class="far fa-heart"></i> 142</span>
-              <span class="flex items-center gap-1.5"><i class="far fa-bookmark"></i> 9</span>
+              <span class="flex items-center gap-1.5"><i class="far fa-comment"></i> 18</span>
+              <span class="flex items-center gap-1.5"><i class="fas fa-retweet"></i> 34</span>
+              <span class="flex items-center gap-1.5"><i class="far fa-heart text-yellow-400"></i> 185</span>
               <span><i class="fas fa-arrow-up-from-bracket"></i></span>
             </div>
           </div>
 
-          <!-- BOTÓN DE PUBLICACIÓN DIRECTA EN X -->
-          <div class="mt-4 flex flex-col sm:flex-row gap-2 justify-center max-w-md mx-auto">
-            <button onclick="publicarEnX()" class="w-full bg-slate-800 hover:bg-slate-700 text-white font-bold py-3 px-4 rounded-2xl border border-slate-700 shadow-xl flex items-center justify-center gap-2 text-xs transition transform active:scale-[0.98]">
+          <!-- PANEL DE SUPERVISIÓN Y PUBLICACIÓN SEGURA 1 A 1 EN X -->
+          <div class="mt-4 p-3.5 bg-[#05110a] border border-emerald-900/80 rounded-2xl space-y-2.5 max-w-md mx-auto">
+            <label class="flex items-start gap-2.5 text-xs text-emerald-200 cursor-pointer select-none">
+              <input type="checkbox" id="checkSeguridad_x" onchange="toggleBotonPublicar('x')" class="w-4 h-4 mt-0.5 rounded text-emerald-600 focus:ring-emerald-500 bg-slate-900 border-emerald-800">
+              <span class="font-medium">He revisado el texto y confirmo la publicación en <strong>X (Twitter)</strong></span>
+            </label>
+            <button id="btnPublicar_x" disabled onclick="publicarEnX()" 
+              class="w-full py-3 px-4 rounded-xl font-bold flex items-center justify-center gap-2 text-xs transition bg-slate-800 text-slate-500 border border-slate-700/60 cursor-not-allowed">
               <i class="fab fa-x-twitter text-sm"></i>
-              <span>🚀 Publicar Directamente en X (Twitter)</span>
+              <span>🚀 Publicar en X (Twitter)</span>
             </button>
           </div>
         </div>
 
         <!-- ============================================================== -->
-        <!-- 2. MOCKUP DE INSTAGRAM -->
+        <!-- 2. MOCKUP DE INSTAGRAM - CB CÁRTAMA -->
         <!-- ============================================================== -->
         <div id="view-instagram" class="platform-view hidden">
           <div class="max-w-md mx-auto bg-black text-white rounded-2xl border border-neutral-800 overflow-hidden shadow-xl">
             <!-- IG Header -->
             <div class="flex items-center justify-between p-3 border-b border-neutral-900">
               <div class="flex items-center space-x-2.5">
-                <div class="w-8 h-8 rounded-full p-[2px] bg-gradient-to-tr from-amber-500 via-pink-500 to-purple-600">
-                  <div class="w-full h-full bg-black rounded-full flex items-center justify-center text-xs">🏀</div>
+                <div class="w-8 h-8 rounded-full p-[2px] bg-gradient-to-tr from-green-600 via-emerald-500 to-yellow-400">
+                  <div class="w-full h-full bg-black rounded-full flex items-center justify-center text-xs font-bold text-yellow-400">🏀</div>
                 </div>
-                <span class="text-xs font-bold">clubbaloncesto_oficial</span>
+                <div>
+                  <span class="text-xs font-bold">cbcartama_oficial</span>
+                  <p class="text-[9px] text-neutral-400">Ciudad Deportiva de Cártama</p>
+                </div>
               </div>
               <i class="fas fa-ellipsis text-neutral-400"></i>
             </div>
@@ -336,54 +366,61 @@
             <div class="p-3 pb-2">
               <div class="flex justify-between items-center text-lg mb-2">
                 <div class="flex space-x-4">
-                  <i class="far fa-heart"></i>
+                  <i class="far fa-heart text-yellow-400"></i>
                   <i class="far fa-comment"></i>
                   <i class="far fa-paper-plane"></i>
                 </div>
                 <i class="far fa-bookmark"></i>
               </div>
-              <p class="text-xs font-bold mb-1">328 Me gusta</p>
+              <p class="text-xs font-bold mb-1">364 Me gusta</p>
               
-              <!-- IG Caption -->
-              <div class="text-xs leading-relaxed whitespace-pre-line text-neutral-200" id="preview-instagram-text">
-                <span class="font-bold text-white">clubbaloncesto_oficial</span> 🏀 ¡ESTE FIN DE SEMANA TOCA VIBRAR JUNTOS! 🏀
+              <!-- IG Caption (Editable) -->
+              <div contenteditable="true" spellcheck="false" class="text-xs leading-relaxed whitespace-pre-line text-neutral-200 focus:outline-none p-1" id="preview-instagram-text">
+                <span class="font-bold text-white">cbcartama_oficial</span> 🏀 ¡ESTE FIN DE SEMANA TOCA VIBRAR CON EL CB CÁRTAMA! 💚💛
 
-                Llega una jornada clave y nuestro equipo te necesita más que nunca en las gradas. Ven a dejarte la voz y empujar a los nuestros desde el salto inicial.
+                Llega una jornada clave para nuestra cantera y os necesitamos a todos en las gradas de la Ciudad Deportiva de Cártama. Ven a dejarte la voz y empujar a los nuestros desde el salto inicial.
 
-                📍 Pabellón Municipal Esperanza
+                📍 Ciudad Deportiva de Cártama
                 ⏱️ Sábado a las 18:30h
 
-                🎟️ Entrada libre hasta completar aforo. ¡Hazte oír! 🥁👏
+                🎟️ Entrada libre hasta completar aforo. ¡Que retumbe nuestro pabellón! 🥁👏
 
-                #Baloncesto #Cantera #OrgulloBasket #FamiliaDeportiva #JornadaDeLiga
+                #CBCártama #BaloncestoCártama #CanteraCártama #SomosVerdeYAmarillo #FamiliaCBCártama
               </div>
             </div>
           </div>
 
-          <!-- BOTÓN DE PUBLICACIÓN EN INSTAGRAM -->
-          <div class="mt-4 flex flex-col sm:flex-row gap-2 justify-center max-w-md mx-auto">
-            <button onclick="publicarEnInstagram()" class="w-full bg-gradient-to-r from-amber-500 via-pink-600 to-purple-600 hover:opacity-95 text-white font-bold py-3 px-4 rounded-2xl shadow-xl flex items-center justify-center gap-2 text-xs transition transform active:scale-[0.98]">
-              <i class="fab fa-instagram text-sm"></i>
-              <span>📸 Publicar en Instagram (Meta Suite)</span>
-            </button>
-            <button onclick="descargarFoto()" class="bg-slate-800 hover:bg-slate-700 text-slate-200 font-semibold py-3 px-3.5 rounded-2xl border border-slate-700 text-xs flex items-center justify-center gap-1.5 transition whitespace-nowrap" title="Descargar foto del post">
-              <i class="fas fa-download"></i> Foto
-            </button>
+          <!-- PANEL DE SUPERVISIÓN Y PUBLICACIÓN SEGURA 1 A 1 EN INSTAGRAM -->
+          <div class="mt-4 p-3.5 bg-[#05110a] border border-emerald-900/80 rounded-2xl space-y-2.5 max-w-md mx-auto">
+            <label class="flex items-start gap-2.5 text-xs text-emerald-200 cursor-pointer select-none">
+              <input type="checkbox" id="checkSeguridad_instagram" onchange="toggleBotonPublicar('instagram')" class="w-4 h-4 mt-0.5 rounded text-emerald-600 focus:ring-emerald-500 bg-slate-900 border-emerald-800">
+              <span class="font-medium">He revisado el texto y confirmo la publicación en <strong>Instagram</strong></span>
+            </label>
+            <div class="flex gap-2">
+              <button id="btnPublicar_instagram" disabled onclick="publicarEnInstagram()" 
+                class="flex-1 py-3 px-4 rounded-xl font-bold flex items-center justify-center gap-2 text-xs transition bg-slate-800 text-slate-500 border border-slate-700/60 cursor-not-allowed">
+                <i class="fab fa-instagram text-sm"></i>
+                <span>📸 Publicar en Instagram (Meta Suite)</span>
+              </button>
+              <button onclick="descargarFoto()" class="bg-emerald-950/80 hover:bg-emerald-900 text-emerald-300 font-semibold py-3 px-3 rounded-xl border border-emerald-800 text-xs flex items-center justify-center gap-1.5 transition whitespace-nowrap" title="Descargar foto del post">
+                <i class="fas fa-download"></i> Foto
+              </button>
+            </div>
           </div>
         </div>
 
         <!-- ============================================================== -->
-        <!-- 3. MOCKUP DE FACEBOOK -->
+        <!-- 3. MOCKUP DE FACEBOOK - CB CÁRTAMA -->
         <!-- ============================================================== -->
         <div id="view-facebook" class="platform-view hidden">
           <div class="max-w-md mx-auto bg-slate-900 rounded-2xl border border-slate-800 p-4 shadow-xl">
             <!-- Header Facebook -->
             <div class="flex items-center space-x-3 mb-3">
-              <div class="w-10 h-10 rounded-full bg-blue-600 flex items-center justify-center font-bold text-lg text-white">🏀</div>
+              <div class="w-10 h-10 rounded-full bg-gradient-to-tr from-emerald-600 to-yellow-500 flex items-center justify-center font-bold text-base text-black">🏀</div>
               <div>
                 <h4 class="font-bold text-sm text-slate-100 flex items-center gap-1.5">
-                  Club Baloncesto Oficial
-                  <i class="fas fa-circle-check text-blue-500 text-xs"></i>
+                  Club Baloncesto Cártama
+                  <i class="fas fa-circle-check text-yellow-400 text-xs"></i>
                 </h4>
                 <p class="text-xs text-slate-400 flex items-center gap-1">
                   <span>Hace 10 min</span> · <i class="fas fa-earth-americas text-[10px]"></i>
@@ -391,13 +428,13 @@
               </div>
             </div>
 
-            <!-- Texto Facebook -->
-            <div class="text-sm text-slate-200 leading-relaxed whitespace-pre-line mb-3" id="preview-facebook-text">
-              ¡La emoción de la competición vuelve a nuestro pabellón!
+            <!-- Texto Facebook (Editable) -->
+            <div contenteditable="true" spellcheck="false" class="text-sm text-slate-200 leading-relaxed whitespace-pre-line mb-3 focus:outline-none p-1" id="preview-facebook-text">
+              ¡La emoción del mejor baloncesto regresa a la Ciudad Deportiva de Cártama!
 
-              Invitamos a todas las familias, socios y aficionados al baloncesto a acompañar a nuestro equipo en una nueva e intensa jornada de liga.
+              Invitamos a todas las familias de Cártama, aficionados y simpatizantes a acompañar a nuestro equipo en una nueva jornada de liga.
 
-              ¡No te quedes en casa y ven a animar al club de nuestro barrio!
+              ¡Vuestro apoyo desde la grada es fundamental para seguir creciendo juntos como club! 💚💛
             </div>
 
             <!-- Imagen Facebook -->
@@ -407,8 +444,8 @@
 
             <!-- Barra Likes y Compartir -->
             <div class="flex items-center justify-between text-xs text-slate-400 border-t border-b border-slate-800 py-2 my-2">
-              <span class="flex items-center gap-1"><i class="fas fa-thumbs-up text-blue-500"></i> 64 personas</span>
-              <span>12 comentarios · 7 veces compartido</span>
+              <span class="flex items-center gap-1"><i class="fas fa-thumbs-up text-blue-500"></i> 72 personas</span>
+              <span>15 comentarios · 9 veces compartido</span>
             </div>
             <div class="grid grid-cols-3 text-center text-xs text-slate-400 pt-1 font-semibold">
               <span class="py-1 flex items-center justify-center gap-1.5"><i class="far fa-thumbs-up"></i> Me gusta</span>
@@ -417,60 +454,61 @@
             </div>
           </div>
 
-          <!-- BOTÓN DE PUBLICACIÓN EN FACEBOOK -->
-          <div class="mt-4 flex flex-col sm:flex-row gap-2 justify-center max-w-md mx-auto">
-            <button onclick="publicarEnFacebook()" class="w-full bg-blue-600 hover:bg-blue-700 text-white font-bold py-3 px-4 rounded-2xl shadow-xl flex items-center justify-center gap-2 text-xs transition transform active:scale-[0.98]">
-              <i class="fab fa-facebook text-sm"></i>
-              <span>📘 Publicar en Facebook</span>
-            </button>
-            <button onclick="descargarFoto()" class="bg-slate-800 hover:bg-slate-700 text-slate-200 font-semibold py-3 px-3.5 rounded-2xl border border-slate-700 text-xs flex items-center justify-center gap-1.5 transition whitespace-nowrap" title="Descargar foto del post">
-              <i class="fas fa-download"></i> Foto
-            </button>
+          <!-- PANEL DE SUPERVISIÓN Y PUBLICACIÓN SEGURA 1 A 1 EN FACEBOOK -->
+          <div class="mt-4 p-3.5 bg-[#05110a] border border-emerald-900/80 rounded-2xl space-y-2.5 max-w-md mx-auto">
+            <label class="flex items-start gap-2.5 text-xs text-emerald-200 cursor-pointer select-none">
+              <input type="checkbox" id="checkSeguridad_facebook" onchange="toggleBotonPublicar('facebook')" class="w-4 h-4 mt-0.5 rounded text-emerald-600 focus:ring-emerald-500 bg-slate-900 border-emerald-800">
+              <span class="font-medium">He revisado el texto y confirmo la publicación en <strong>Facebook</strong></span>
+            </label>
+            <div class="flex gap-2">
+              <button id="btnPublicar_facebook" disabled onclick="publicarEnFacebook()" 
+                class="flex-1 py-3 px-4 rounded-xl font-bold flex items-center justify-center gap-2 text-xs transition bg-slate-800 text-slate-500 border border-slate-700/60 cursor-not-allowed">
+                <i class="fab fa-facebook text-sm"></i>
+                <span>📘 Publicar en Facebook</span>
+              </button>
+              <button onclick="descargarFoto()" class="bg-emerald-950/80 hover:bg-emerald-900 text-emerald-300 font-semibold py-3 px-3 rounded-xl border border-emerald-800 text-xs flex items-center justify-center gap-1.5 transition whitespace-nowrap">
+                <i class="fas fa-download"></i> Foto
+              </button>
+            </div>
           </div>
         </div>
 
         <!-- ============================================================== -->
-        <!-- 4. MOCKUP DE WHATSAPP -->
+        <!-- 4. MOCKUP DE WHATSAPP - CB CÁRTAMA -->
         <!-- ============================================================== -->
         <div id="view-whatsapp" class="platform-view hidden">
           <div class="max-w-md mx-auto rounded-3xl overflow-hidden border border-slate-800 shadow-2xl">
             <!-- Header WhatsApp -->
             <div class="bg-[#1f2c34] text-white p-3 flex items-center justify-between">
               <div class="flex items-center space-x-3 truncate">
-                <div class="w-9 h-9 rounded-full bg-emerald-600 flex items-center justify-center font-bold text-sm">🏀</div>
+                <div class="w-9 h-9 rounded-full bg-emerald-600 flex items-center justify-center font-bold text-xs text-yellow-300">CB</div>
                 <div class="truncate">
-                  <p class="text-xs sm:text-sm font-bold truncate">Familias & Cantera CB</p>
+                  <p class="text-xs sm:text-sm font-bold truncate">CB Cártama - Cantera & Familias</p>
                   <p class="text-[10px] text-slate-400">tú, Entrenador, Directiva...</p>
                 </div>
               </div>
-              <a id="btnDirectWhatsApp" href="#" target="_blank" 
-                class="text-xs bg-emerald-500/20 hover:bg-emerald-500/30 text-emerald-400 border border-emerald-500/30 px-2.5 py-1 rounded-lg font-medium flex items-center gap-1">
-                <i class="fab fa-whatsapp"></i> <span class="hidden sm:inline">Enviar</span>
-              </a>
             </div>
 
             <!-- Pantalla Chat -->
             <div class="whatsapp-bg p-3.5 min-h-[350px] flex flex-col justify-end">
-              <!-- Burbuja Verde -->
               <div class="bg-[#005c4b] text-white p-3.5 rounded-2xl rounded-tr-none max-w-[92%] self-end shadow-md">
                 
-                <!-- Imagen si existe -->
                 <div class="mb-2 rounded-xl overflow-hidden border border-emerald-800/50 max-h-48">
                   <img id="preview-whatsapp-img" src="https://images.unsplash.com/photo-1546519638-68e109498ffc?w=800&auto=format&fit=crop" class="w-full h-full object-cover">
                 </div>
 
-                <!-- Texto con Negritas -->
-                <div class="text-xs leading-relaxed whitespace-pre-line text-emerald-50" id="preview-whatsapp-text">
-                  🏀 *CONVOCATORIA Y PRÓXIMO ENCUENTRO* 🏀
+                <!-- Texto con Negritas (Editable) -->
+                <div contenteditable="true" spellcheck="false" class="text-xs leading-relaxed whitespace-pre-line text-emerald-50 focus:outline-none p-1" id="preview-whatsapp-text">
+                  🏀 *CONVOCATORIA DE PARTIDO - CB CÁRTAMA* 🏀
 
-                  Hola a todos/as, os dejamos los detalles del partido de esta jornada:
+                  Hola a todos/as, os dejamos los detalles del encuentro de este fin de semana:
 
-                  📅 *Día:* Sábado 14 de Noviembre
-                  ⏱️ *Hora:* 18:30h (Convocatoria: 17:30h)
-                  📍 *Pabellón:* Municipal Esperanza
-                  🆚 *Rival:* CB Los Leones
+                  📅 *Día:* Sábado
+                  ⏱️ *Hora del partido:* 18:30h (Convocatoria: 17:30h)
+                  📍 *Pabellón:* Ciudad Deportiva de Cártama
+                  🆚 *Rival:* Por confirmar
 
-                  ¡Os esperamos a todas las familias animando desde la grada! 👏🏀
+                  ¡Os esperamos a todas las familias de verde y amarillo animando! 👏🏀
                 </div>
 
                 <div class="flex items-center justify-end space-x-1 mt-1 text-[10px] text-emerald-200">
@@ -481,9 +519,14 @@
             </div>
           </div>
 
-          <!-- BOTÓN DE PUBLICACIÓN EN WHATSAPP -->
-          <div class="mt-4 flex flex-col sm:flex-row gap-2 justify-center max-w-md mx-auto">
-            <button onclick="publicarEnWhatsApp()" class="w-full bg-emerald-600 hover:bg-emerald-700 text-white font-bold py-3 px-4 rounded-2xl shadow-xl flex items-center justify-center gap-2 text-xs transition transform active:scale-[0.98]">
+          <!-- PANEL DE SUPERVISIÓN Y PUBLICACIÓN SEGURA 1 A 1 EN WHATSAPP -->
+          <div class="mt-4 p-3.5 bg-[#05110a] border border-emerald-900/80 rounded-2xl space-y-2.5 max-w-md mx-auto">
+            <label class="flex items-start gap-2.5 text-xs text-emerald-200 cursor-pointer select-none">
+              <input type="checkbox" id="checkSeguridad_whatsapp" onchange="toggleBotonPublicar('whatsapp')" class="w-4 h-4 mt-0.5 rounded text-emerald-600 focus:ring-emerald-500 bg-slate-900 border-emerald-800">
+              <span class="font-medium">He revisado el texto y confirmo el envío a <strong>WhatsApp</strong></span>
+            </label>
+            <button id="btnPublicar_whatsapp" disabled onclick="publicarEnWhatsApp()" 
+              class="w-full py-3 px-4 rounded-xl font-bold flex items-center justify-center gap-2 text-xs transition bg-slate-800 text-slate-500 border border-slate-700/60 cursor-not-allowed">
               <i class="fab fa-whatsapp text-sm"></i>
               <span>💬 Enviar a Grupos de WhatsApp</span>
             </button>
@@ -491,89 +534,89 @@
         </div>
 
         <!-- ============================================================== -->
-        <!-- 5. MOCKUP DE TIKTOK / REELS (9:16) -->
+        <!-- 5. MOCKUP DE TIKTOK / REELS - CB CÁRTAMA -->
         <!-- ============================================================== -->
         <div id="view-tiktok" class="platform-view hidden">
           <div class="grid grid-cols-1 md:grid-cols-12 gap-4 items-start">
             
             <!-- Smartphone 9:16 -->
-            <div class="md:col-span-5 max-w-[260px] mx-auto w-full aspect-[9/16] bg-black rounded-[32px] border-4 border-slate-700 relative overflow-hidden shadow-2xl flex flex-col justify-between p-3.5 text-white">
+            <div class="md:col-span-5 max-w-[260px] mx-auto w-full aspect-[9/16] bg-black rounded-[32px] border-4 border-emerald-900 relative overflow-hidden shadow-2xl flex flex-col justify-between p-3.5 text-white">
               <img id="preview-tiktok-img" src="https://images.unsplash.com/photo-1546519638-68e109498ffc?w=800&auto=format&fit=crop" class="absolute inset-0 w-full h-full object-cover opacity-60">
               <div class="absolute inset-0 bg-gradient-to-b from-black/50 via-transparent to-black/90"></div>
 
               <div class="relative z-10 flex justify-between items-center text-xs font-bold pt-1">
                 <span>Siguiendo</span>
-                <span class="border-b-2 border-white pb-0.5">Para ti</span>
+                <span class="border-b-2 border-yellow-400 pb-0.5">Para ti</span>
                 <i class="fas fa-magnifying-glass text-xs"></i>
               </div>
 
-              <!-- Gancho 0-3s en pantalla -->
+              <!-- Gancho 0-3s -->
               <div class="relative z-10 text-center my-auto px-1">
-                <span id="preview-tiktok-hook" class="inline-block bg-amber-400 text-black font-black text-xs px-2.5 py-1.5 rounded-lg shadow-lg uppercase tracking-wide">
-                  ¡A 0.8s DEL FINAL PASÓ ESTO! 😱🏀
+                <span id="preview-tiktok-hook" class="inline-block bg-yellow-400 text-slate-950 font-black text-xs px-2.5 py-1.5 rounded-lg shadow-lg uppercase tracking-wide">
+                  ¡QUÉ FINAL EN CÁRTAMA! 😱🏀
                 </span>
               </div>
 
-              <!-- Información y controles laterales -->
+              <!-- Info inferior -->
               <div class="relative z-10 flex items-end justify-between">
                 <div class="space-y-1 max-w-[75%]">
-                  <p class="font-bold text-xs">@cbesperanza</p>
+                  <p class="font-bold text-xs text-yellow-400">@cbcartama</p>
                   <p class="text-[11px] text-slate-200 line-clamp-2" id="preview-tiktok-caption">
-                    ¿Tú habrías metido este tiro libre decisivo? 🔥🏀 #BasketTok #Cantera
+                    Final de infarto en la Ciudad Deportiva de Cártama 🔥💚💛 #CBCártama #BasketTok
                   </p>
                   <p class="text-[10px] text-slate-300 flex items-center gap-1.5 truncate">
-                    <i class="fas fa-music text-[9px]"></i>
-                    <span id="preview-tiktok-audio">Sonido original - Trap Deportivo</span>
+                    <i class="fas fa-music text-[9px] text-yellow-400"></i>
+                    <span id="preview-tiktok-audio">Sonido original - CB Cártama</span>
                   </p>
                 </div>
 
                 <div class="flex flex-col items-center space-y-3 text-slate-100 text-center text-xs">
-                  <div class="w-7 h-7 rounded-full bg-orange-600 flex items-center justify-center font-bold text-xs">🏀</div>
-                  <div><i class="fas fa-heart text-base text-red-500"></i><p class="text-[9px]">12.4k</p></div>
-                  <div><i class="fas fa-comment-dots text-base"></i><p class="text-[9px]">184</p></div>
-                  <div><i class="fas fa-bookmark text-base"></i><p class="text-[9px]">620</p></div>
+                  <div class="w-7 h-7 rounded-full bg-emerald-700 flex items-center justify-center font-bold text-xs text-yellow-300">CB</div>
+                  <div><i class="fas fa-heart text-base text-yellow-400"></i><p class="text-[9px]">14.8k</p></div>
+                  <div><i class="fas fa-comment-dots text-base"></i><p class="text-[9px]">210</p></div>
+                  <div><i class="fas fa-bookmark text-base"></i><p class="text-[9px]">740</p></div>
                 </div>
               </div>
             </div>
 
             <!-- Tabla Guion 30s -->
-            <div class="md:col-span-7 bg-slate-950 p-4 rounded-2xl border border-slate-800 space-y-2.5">
-              <div class="flex items-center justify-between border-b border-slate-800 pb-2">
-                <h4 class="text-xs font-bold uppercase tracking-wider text-orange-400 flex items-center gap-1.5">
+            <div class="md:col-span-7 bg-[#05110a] p-4 rounded-2xl border border-emerald-900/60 space-y-2.5">
+              <div class="flex items-center justify-between border-b border-emerald-900/60 pb-2">
+                <h4 class="text-xs font-bold uppercase tracking-wider text-yellow-400 flex items-center gap-1.5">
                   <i class="fas fa-clapperboard"></i> Guion Técnico de Retención (30s)
                 </h4>
-                <span class="text-[10px] bg-slate-800 text-slate-300 px-2 py-0.5 rounded">Formato 9:16</span>
+                <span class="text-[10px] bg-emerald-950 text-emerald-300 px-2 py-0.5 rounded border border-emerald-900">Formato 9:16</span>
               </div>
 
               <div class="overflow-x-auto">
                 <table class="w-full text-left text-xs border-collapse">
                   <thead>
-                    <tr class="text-slate-400 border-b border-slate-800">
+                    <tr class="text-emerald-400/80 border-b border-emerald-950">
                       <th class="py-2 px-1.5">Tiempo</th>
                       <th class="py-2 px-1.5">Visual</th>
                       <th class="py-2 px-1.5">Locución</th>
                     </tr>
                   </thead>
-                  <tbody id="tiktokGuionBody" class="divide-y divide-slate-900 text-slate-300">
+                  <tbody id="tiktokGuionBody" class="divide-y divide-emerald-950 text-slate-300">
                     <tr>
-                      <td class="py-2 px-1.5 font-bold text-amber-400 whitespace-nowrap">0-3s</td>
-                      <td class="py-2 px-1.5">Gancho visual con tiro libre de infarto</td>
-                      <td class="py-2 px-1.5 font-medium text-slate-100">"¿Tirarías tú este tiro libre?"</td>
+                      <td class="py-2 px-1.5 font-bold text-yellow-400 whitespace-nowrap">0-3s</td>
+                      <td class="py-2 px-1.5">Canasta decisiva en la Ciudad Deportiva</td>
+                      <td class="py-2 px-1.5 font-medium text-slate-100">"¿Meterías tú este tiro decisivo?"</td>
                     </tr>
                     <tr>
-                      <td class="py-2 px-1.5 font-bold text-amber-400 whitespace-nowrap">3-15s</td>
-                      <td class="py-2 px-1.5">Cortes rápidos de 1s con el partido</td>
-                      <td class="py-2 px-1.5 font-medium text-slate-100">"El duelo fue una batalla de poder a poder..."</td>
+                      <td class="py-2 px-1.5 font-bold text-yellow-400 whitespace-nowrap">3-15s</td>
+                      <td class="py-2 px-1.5">Cortes rápidos con la intensidad del partido</td>
+                      <td class="py-2 px-1.5 font-medium text-slate-100">"El duelo del CB Cártama fue una batalla de cantera..."</td>
                     </tr>
                     <tr>
-                      <td class="py-2 px-1.5 font-bold text-amber-400 whitespace-nowrap">15-25s</td>
-                      <td class="py-2 px-1.5">Cámara lenta del balón entrando</td>
-                      <td class="py-2 px-1.5 font-medium text-slate-100">"A falta de 0.8s, Hugo no perdonó."</td>
+                      <td class="py-2 px-1.5 font-bold text-yellow-400 whitespace-nowrap">15-25s</td>
+                      <td class="py-2 px-1.5">Banquillo celebrando la victoria</td>
+                      <td class="py-2 px-1.5 font-medium text-slate-100">"Con fe y garra, el triunfo se quedó en casa."</td>
                     </tr>
                     <tr>
-                      <td class="py-2 px-1.5 font-bold text-amber-400 whitespace-nowrap">25-30s</td>
-                      <td class="py-2 px-1.5">Logo del club y botón de seguir</td>
-                      <td class="py-2 px-1.5 font-medium text-slate-100">"Síguenos si amas el basket tanto como nosotros."</td>
+                      <td class="py-2 px-1.5 font-bold text-yellow-400 whitespace-nowrap">25-30s</td>
+                      <td class="py-2 px-1.5">Escudo del CB Cártama y botón de seguir</td>
+                      <td class="py-2 px-1.5 font-medium text-slate-100">"¡Síguenos y siente el orgullo verde y amarillo!"</td>
                     </tr>
                   </tbody>
                 </table>
@@ -582,68 +625,78 @@
 
           </div>
 
-          <!-- BOTÓN DE SUBIDA EN TIKTOK -->
-          <div class="mt-4 flex flex-col sm:flex-row gap-2 justify-center max-w-lg mx-auto">
-            <button onclick="publicarEnTikTok()" class="w-full bg-slate-950 hover:bg-slate-800 text-white font-bold py-3 px-4 rounded-2xl border border-slate-700 shadow-xl flex items-center justify-center gap-2 text-xs transition transform active:scale-[0.98]">
-              <i class="fab fa-tiktok text-sm"></i>
-              <span>🎵 Subir a TikTok Creator Center</span>
-            </button>
-            <button onclick="descargarFoto()" class="bg-slate-800 hover:bg-slate-700 text-slate-200 font-semibold py-3 px-3.5 rounded-2xl border border-slate-700 text-xs flex items-center justify-center gap-1.5 transition whitespace-nowrap" title="Descargar imagen para el vídeo">
-              <i class="fas fa-download"></i> Foto
-            </button>
+          <!-- PANEL DE SUPERVISIÓN Y PUBLICACIÓN SEGURA 1 A 1 EN TIKTOK -->
+          <div class="mt-4 p-3.5 bg-[#05110a] border border-emerald-900/80 rounded-2xl space-y-2.5 max-w-lg mx-auto">
+            <label class="flex items-start gap-2.5 text-xs text-emerald-200 cursor-pointer select-none">
+              <input type="checkbox" id="checkSeguridad_tiktok" onchange="toggleBotonPublicar('tiktok')" class="w-4 h-4 mt-0.5 rounded text-emerald-600 focus:ring-emerald-500 bg-slate-900 border-emerald-800">
+              <span class="font-medium">He revisado el guion y confirmo la subida a <strong>TikTok</strong></span>
+            </label>
+            <div class="flex gap-2">
+              <button id="btnPublicar_tiktok" disabled onclick="publicarEnTikTok()" 
+                class="flex-1 py-3 px-4 rounded-xl font-bold flex items-center justify-center gap-2 text-xs transition bg-slate-800 text-slate-500 border border-slate-700/60 cursor-not-allowed">
+                <i class="fab fa-tiktok text-sm"></i>
+                <span>🎵 Subir a TikTok Creator Center</span>
+              </button>
+              <button onclick="descargarFoto()" class="bg-emerald-950/80 hover:bg-emerald-900 text-emerald-300 font-semibold py-3 px-3 rounded-xl border border-emerald-800 text-xs flex items-center justify-center gap-1.5 transition whitespace-nowrap">
+                <i class="fas fa-download"></i> Foto
+              </button>
+            </div>
           </div>
         </div>
 
         <!-- ============================================================== -->
-        <!-- 6. MOCKUP DE LA PÁGINA WEB OFICIAL -->
+        <!-- 6. MOCKUP DE LA PÁGINA WEB OFICIAL (CBCARTAMA.COM / CBCARTAMA.ES) -->
         <!-- ============================================================== -->
         <div id="view-web" class="platform-view hidden">
-          <div class="max-w-xl mx-auto bg-slate-950 rounded-2xl border border-slate-800 overflow-hidden shadow-2xl">
-            <!-- Barra navegador simulada -->
-            <div class="bg-slate-900 px-3.5 py-2 border-b border-slate-800 flex items-center space-x-1.5 text-xs text-slate-400">
+          <div class="max-w-xl mx-auto bg-[#05110a] rounded-2xl border border-emerald-900/80 overflow-hidden shadow-2xl">
+            <!-- Barra navegador simulada con dominio real -->
+            <div class="bg-[#071910] px-3.5 py-2 border-b border-emerald-900/60 flex items-center space-x-1.5 text-xs text-emerald-400/80">
               <span class="w-2 h-2 rounded-full bg-red-500/80"></span>
-              <span class="w-2 h-2 rounded-full bg-amber-500/80"></span>
+              <span class="w-2 h-2 rounded-full bg-yellow-500/80"></span>
               <span class="w-2 h-2 rounded-full bg-emerald-500/80"></span>
-              <span class="ml-2 bg-slate-950 px-2.5 py-0.5 rounded text-[11px] text-slate-400 border border-slate-800 flex-1 truncate font-mono">
-                https://www.clubbaloncesto.com/noticias
+              <span class="ml-2 bg-[#05110a] px-2.5 py-0.5 rounded text-[11px] text-emerald-300 border border-emerald-900 flex-1 truncate font-mono">
+                https://www.cbcartama.com/noticias
               </span>
             </div>
 
             <!-- Cabecera Noticia -->
             <div class="relative h-48 sm:h-56 bg-slate-900 overflow-hidden">
               <img id="preview-web-img" src="https://images.unsplash.com/photo-1546519638-68e109498ffc?w=800&auto=format&fit=crop" class="w-full h-full object-cover">
-              <div class="absolute inset-0 bg-gradient-to-t from-slate-950 via-slate-950/40 to-transparent"></div>
+              <div class="absolute inset-0 bg-gradient-to-t from-[#05110a] via-[#05110a]/40 to-transparent"></div>
               <div class="absolute bottom-3 left-4 right-4">
-                <span class="bg-orange-500 text-white font-bold text-[9px] uppercase px-2 py-0.5 rounded shadow">Competición Oficial</span>
-                <h2 id="preview-web-title" class="text-base sm:text-xl font-black text-white mt-1 leading-tight">
-                  Previa de la Jornada: Nuestro Senior Masculino A recibe a CB Los Leones
+                <span class="bg-yellow-500 text-slate-950 font-black text-[9px] uppercase px-2 py-0.5 rounded shadow">CB CÁRTAMA OFICIAL</span>
+                <h2 contenteditable="true" spellcheck="false" id="preview-web-title" class="text-base sm:text-xl font-black text-white mt-1 leading-tight focus:outline-none">
+                  Previa de la Jornada: El CB Cártama defiende la Ciudad Deportiva
                 </h2>
               </div>
             </div>
 
-            <!-- Cuerpo Artículo -->
+            <!-- Cuerpo Artículo (Editable) -->
             <div class="p-4 sm:p-5 space-y-3">
-              <div class="flex items-center space-x-2 text-[11px] text-slate-400 border-b border-slate-900 pb-2">
-                <span><i class="far fa-user text-orange-400 mr-1"></i> Redacción CB</span>
+              <div class="flex items-center space-x-2 text-[11px] text-emerald-400/70 border-b border-emerald-950 pb-2">
+                <span><i class="far fa-user text-yellow-400 mr-1"></i> Comunicación CB Cártama</span>
                 <span>·</span>
-                <span><i class="far fa-calendar mr-1"></i> 8 de Noviembre</span>
+                <span><i class="far fa-calendar mr-1"></i> Cártama (Málaga)</span>
               </div>
 
-              <div id="preview-web-body" class="text-xs sm:text-sm leading-relaxed text-slate-300 space-y-2 whitespace-pre-line">
-                El Pabellón Municipal Esperanza se prepara para acoger este sábado un encuentro de máxima intensidad. Nuestro primer equipo masculino se enfrenta a CB Los Leones en una jornada clave.
+              <div contenteditable="true" spellcheck="false" id="preview-web-body" class="text-xs sm:text-sm leading-relaxed text-slate-200 space-y-2 whitespace-pre-line focus:outline-none p-1">
+                La Ciudad Deportiva de Cártama se prepara para vivir una vibrante jornada de baloncesto formativo y de competición. Nuestro equipo afronta el compromiso con la máxima ilusión tras una intensa semana de entrenamientos.
 
-                El cuerpo técnico ha destacado el excelente compromiso defensivo de toda la plantilla y la importancia de mantener la concentración desde el primer cuarto.
-
-                Hacemos un llamamiento a toda la afición y cantera para acudir al pabellón. ¡Vuestro aliento es decisivo!
+                Desde el cuerpo técnico se hace un llamamiento a todas las familias de Cártama para llenar las gradas con nuestros colores verde y amarillo. ¡Vuestro aliento es nuestro mayor motor!
               </div>
             </div>
           </div>
 
-          <!-- BOTÓN DE PUBLICACIÓN EN LA WEB DEL CLUB (SUPABASE) -->
-          <div class="mt-4 flex flex-col sm:flex-row gap-2 justify-center max-w-xl mx-auto">
-            <button id="btnPublicarWeb" onclick="publicarEnWebDirecto()" class="w-full bg-gradient-to-r from-cyan-600 to-blue-600 hover:from-cyan-500 hover:to-blue-500 text-white font-bold py-3.5 px-4 rounded-2xl shadow-xl flex items-center justify-center gap-2 text-xs sm:text-sm transition transform active:scale-[0.98]">
+          <!-- PANEL DE SUPERVISIÓN Y PUBLICACIÓN SEGURA EN LA WEB -->
+          <div class="mt-4 p-3.5 bg-[#05110a] border border-emerald-900/80 rounded-2xl space-y-2.5 max-w-xl mx-auto">
+            <label class="flex items-start gap-2.5 text-xs text-emerald-200 cursor-pointer select-none">
+              <input type="checkbox" id="checkSeguridad_web" onchange="toggleBotonPublicar('web')" class="w-4 h-4 mt-0.5 rounded text-emerald-600 focus:ring-emerald-500 bg-slate-900 border-emerald-800">
+              <span class="font-medium">He revisado el titular y la noticia y autorizo la publicación en la <strong>Web Oficial (cbcartama.com)</strong></span>
+            </label>
+            <button id="btnPublicar_web" disabled onclick="publicarEnWebDirecto()" 
+              class="w-full py-3.5 px-4 rounded-xl font-black flex items-center justify-center gap-2 text-xs sm:text-sm transition bg-slate-800 text-slate-500 border border-slate-700/60 cursor-not-allowed">
               <i class="fas fa-globe"></i>
-              <span id="btnPublicarWebText">🌐 Publicar Noticia en la Web del Club (Supabase)</span>
+              <span id="btnPublicarWebText">🌐 Publicar Noticia en la Web Oficial (Supabase)</span>
             </button>
           </div>
         </div>
@@ -660,7 +713,7 @@
     let datosGenerados = null;
     let urlImagenActual = 'https://images.unsplash.com/photo-1546519638-68e109498ffc?w=800&auto=format&fit=crop';
 
-    // Manejo de pestañas móviles (Editor vs Preview)
+    // Manejo de pestañas móviles
     function setMobileView(view) {
       const paneEditor = document.getElementById('pane-editor');
       const panePreview = document.getElementById('pane-preview');
@@ -670,37 +723,75 @@
       if (view === 'editor') {
         paneEditor.classList.remove('hidden');
         panePreview.classList.add('hidden');
-        tabEditor.className = 'py-2 text-xs font-bold rounded-lg bg-orange-500 text-white transition flex items-center justify-center gap-1.5';
-        tabPreview.className = 'py-2 text-xs font-bold rounded-lg text-slate-400 hover:text-white transition flex items-center justify-center gap-1.5';
+        tabEditor.className = 'py-2 text-xs font-bold rounded-lg bg-emerald-600 text-white transition flex items-center justify-center gap-1.5';
+        tabPreview.className = 'py-2 text-xs font-bold rounded-lg text-emerald-300/60 hover:text-white transition flex items-center justify-center gap-1.5';
       } else {
         paneEditor.classList.add('hidden');
         panePreview.classList.remove('hidden');
-        tabEditor.className = 'py-2 text-xs font-bold rounded-lg text-slate-400 hover:text-white transition flex items-center justify-center gap-1.5';
-        tabPreview.className = 'py-2 text-xs font-bold rounded-lg bg-orange-500 text-white transition flex items-center justify-center gap-1.5';
+        tabEditor.className = 'py-2 text-xs font-bold rounded-lg text-emerald-300/60 hover:text-white transition flex items-center justify-center gap-1.5';
+        tabPreview.className = 'py-2 text-xs font-bold rounded-lg bg-emerald-600 text-white transition flex items-center justify-center gap-1.5';
       }
     }
 
     function setModo(modo, btn) {
       modoActual = modo;
       document.querySelectorAll('.modo-btn').forEach(b => {
-        b.className = 'modo-btn text-xs font-medium py-2.5 px-2 rounded-xl border border-slate-800 bg-slate-800 text-slate-400 hover:text-white flex items-center justify-center gap-1.5 transition';
+        b.className = 'modo-btn text-xs font-medium py-2.5 px-2 rounded-xl border border-emerald-900 bg-emerald-950/80 text-emerald-300 hover:text-white flex items-center justify-center gap-1.5 transition';
       });
-      btn.className = 'modo-btn text-xs font-medium py-2.5 px-2 rounded-xl border border-orange-500/50 bg-orange-500/10 text-orange-400 flex items-center justify-center gap-1.5 transition';
+      btn.className = 'modo-btn text-xs font-medium py-2.5 px-2 rounded-xl border border-yellow-500/50 bg-yellow-500/10 text-yellow-400 flex items-center justify-center gap-1.5 transition';
     }
 
     function switchTab(plataforma) {
       plataformaActual = plataforma;
       document.querySelectorAll('.tab-btn').forEach(b => {
-        b.className = 'tab-btn px-2.5 sm:px-3 py-1.5 rounded-xl text-xs font-medium text-slate-400 hover:text-white transition flex items-center gap-1.5 whitespace-nowrap';
+        b.className = 'tab-btn px-2.5 sm:px-3 py-1.5 rounded-xl text-xs font-medium text-emerald-300/70 hover:text-white transition flex items-center gap-1.5 whitespace-nowrap';
       });
       const activeBtn = document.getElementById(`tab-${plataforma}`);
       if (activeBtn) {
-        activeBtn.className = 'tab-btn px-2.5 sm:px-3 py-1.5 rounded-xl text-xs font-bold transition flex items-center gap-1.5 bg-slate-800 text-white shadow whitespace-nowrap';
+        activeBtn.className = 'tab-btn px-2.5 sm:px-3 py-1.5 rounded-xl text-xs font-bold transition flex items-center gap-1.5 bg-emerald-800 text-white shadow whitespace-nowrap';
       }
 
       document.querySelectorAll('.platform-view').forEach(v => v.classList.add('hidden'));
       const activeView = document.getElementById(`view-${plataforma}`);
       if (activeView) activeView.classList.remove('hidden');
+    }
+
+    // CONTROL DE SEGURIDAD: CHECKBOX OBLIGATORIO PARA ACTIVAR CADA BOTÓN DE PUBLICAR
+    function toggleBotonPublicar(plat) {
+      const checkbox = document.getElementById(`checkSeguridad_${plat}`);
+      const boton = document.getElementById(`btnPublicar_${plat}`);
+      if (!checkbox || !boton) return;
+
+      if (checkbox.checked) {
+        boton.disabled = false;
+        boton.classList.remove('bg-slate-800', 'text-slate-500', 'border-slate-700/60', 'cursor-not-allowed');
+
+        // Estilos coloridos según red social
+        if (plat === 'x') {
+          boton.classList.add('bg-black', 'text-white', 'border-neutral-700', 'hover:bg-neutral-900', 'cursor-pointer', 'shadow-lg');
+        } else if (plat === 'instagram') {
+          boton.classList.add('bg-gradient-to-r', 'from-amber-500', 'via-pink-600', 'to-purple-600', 'text-white', 'hover:opacity-95', 'cursor-pointer', 'shadow-lg');
+        } else if (plat === 'facebook') {
+          boton.classList.add('bg-blue-600', 'text-white', 'hover:bg-blue-700', 'cursor-pointer', 'shadow-lg');
+        } else if (plat === 'whatsapp') {
+          boton.classList.add('bg-emerald-600', 'text-white', 'hover:bg-emerald-700', 'cursor-pointer', 'shadow-lg');
+        } else if (plat === 'tiktok') {
+          boton.classList.add('bg-black', 'text-white', 'border-neutral-700', 'hover:bg-neutral-900', 'cursor-pointer', 'shadow-lg');
+        } else if (plat === 'web') {
+          boton.classList.add('bg-gradient-to-r', 'from-emerald-600', 'to-yellow-500', 'text-slate-950', 'hover:opacity-95', 'cursor-pointer', 'shadow-lg');
+        }
+      } else {
+        boton.disabled = true;
+        boton.className = 'w-full py-3 px-4 rounded-xl font-bold flex items-center justify-center gap-2 text-xs transition bg-slate-800 text-slate-500 border border-slate-700/60 cursor-not-allowed';
+      }
+    }
+
+    function actualizarContadorX() {
+      const txt = document.getElementById('preview-x-text').innerText;
+      const len = txt.length;
+      const charElem = document.getElementById('charCountX');
+      charElem.textContent = `${len} / 280 caracteres`;
+      charElem.className = len <= 280 ? 'text-emerald-400 font-mono font-semibold' : 'text-red-400 font-mono font-bold';
     }
 
     function handleFileSelect(event) {
@@ -724,11 +815,10 @@
           document.getElementById('uploadPreviewImg').src = data.url;
           document.getElementById('uploadFilename').textContent = file.name;
         } else {
-          alert(data.error || 'Error al subir la imagen');
+          alert(data.error || 'Error al subir imagen');
         }
       })
-      .catch(err => {
-        console.error('Error al subir:', err);
+      .catch(() => {
         const reader = new FileReader();
         reader.onload = function(e) {
           urlImagenActual = e.target.result;
@@ -763,7 +853,7 @@
     function supervisarConGemini() {
       const texto = document.getElementById('textoBase').value.trim();
       if (!texto) {
-        alert('Por favor escribe algún texto, notas o datos de partido en el recuadro.');
+        alert('Por favor escribe algún texto o notas de partido en el recuadro.');
         return;
       }
 
@@ -781,7 +871,12 @@
           datosGenerados = res.data;
           volcarDatosEnPantalla(res.data);
           
-          // En móvil, cambiar automáticamente a la pestaña de previsualización
+          // Desmarcar todos los checks de seguridad para requerir nueva aprobación
+          ['x', 'instagram', 'facebook', 'whatsapp', 'tiktok', 'web'].forEach(p => {
+            const cb = document.getElementById(`checkSeguridad_${p}`);
+            if (cb) { cb.checked = false; toggleBotonPublicar(p); }
+          });
+
           if (window.innerWidth < 1024) {
             setMobileView('preview');
           }
@@ -796,42 +891,23 @@
     }
 
     function volcarDatosEnPantalla(d) {
-      // 1. X (Twitter)
       if (d.x) {
-        document.getElementById('preview-x-text').textContent = d.x;
-        const len = d.x.length;
-        const charElem = document.getElementById('charCountX');
-        charElem.textContent = `${len} / 280 caracteres`;
-        charElem.className = len <= 280 ? 'text-emerald-400 font-mono font-semibold' : 'text-red-400 font-mono font-bold';
-        
-        // Enlace directo para tuitear en móvil/web
-        const tweetUrl = `https://twitter.com/intent/tweet?text=${encodeURIComponent(d.x)}`;
-        document.getElementById('btnDirectX').href = tweetUrl;
+        document.getElementById('preview-x-text').innerText = d.x;
+        actualizarContadorX();
       }
-
-      // 2. Instagram
       if (d.instagram) {
-        document.getElementById('preview-instagram-text').textContent = d.instagram;
+        document.getElementById('preview-instagram-text').innerText = d.instagram;
       }
-
-      // 3. Facebook
       if (d.facebook) {
-        document.getElementById('preview-facebook-text').textContent = d.facebook;
+        document.getElementById('preview-facebook-text').innerText = d.facebook;
       }
-
-      // 4. WhatsApp
       if (d.whatsapp) {
-        document.getElementById('preview-whatsapp-text').textContent = d.whatsapp;
-        // Enlace directo para abrir en WhatsApp Web o App Móvil
-        const waUrl = `https://api.whatsapp.com/send?text=${encodeURIComponent(d.whatsapp)}`;
-        document.getElementById('btnDirectWhatsApp').href = waUrl;
+        document.getElementById('preview-whatsapp-text').innerText = d.whatsapp;
       }
-
-      // 5. TikTok
       if (d.tiktok) {
-        if (d.tiktok.hook) document.getElementById('preview-tiktok-hook').textContent = d.tiktok.hook;
-        if (d.tiktok.copy) document.getElementById('preview-tiktok-caption').textContent = d.tiktok.copy;
-        if (d.tiktok.audio) document.getElementById('preview-tiktok-audio').textContent = d.tiktok.audio;
+        if (d.tiktok.hook) document.getElementById('preview-tiktok-hook').innerText = d.tiktok.hook;
+        if (d.tiktok.copy) document.getElementById('preview-tiktok-caption').innerText = d.tiktok.copy;
+        if (d.tiktok.audio) document.getElementById('preview-tiktok-audio').innerText = d.tiktok.audio;
 
         if (d.tiktok.guion && Array.isArray(d.tiktok.guion)) {
           const tbody = document.getElementById('tiktokGuionBody');
@@ -839,7 +915,7 @@
           d.tiktok.guion.forEach(fila => {
             const tr = document.createElement('tr');
             tr.innerHTML = `
-              <td class="py-2 px-1.5 font-bold text-amber-400 whitespace-nowrap">${fila.tiempo || ''}</td>
+              <td class="py-2 px-1.5 font-bold text-yellow-400 whitespace-nowrap">${fila.tiempo || ''}</td>
               <td class="py-2 px-1.5">${fila.visual || ''}</td>
               <td class="py-2 px-1.5 font-medium text-slate-100">${fila.locucion || ''}</td>
             `;
@@ -847,71 +923,12 @@
           });
         }
       }
-
-      // 6. Web
       if (d.web) {
-        if (d.web.titulo) document.getElementById('preview-web-title').textContent = d.web.titulo;
-        if (d.web.cuerpo) document.getElementById('preview-web-body').textContent = d.web.cuerpo;
+        if (d.web.titulo) document.getElementById('preview-web-title').innerText = d.web.titulo;
+        if (d.web.cuerpo) document.getElementById('preview-web-body').innerText = d.web.cuerpo;
       }
     }
 
-    function obtenerTextoActual() {
-      if (!datosGenerados) {
-        if (plataformaActual === 'x') return document.getElementById('preview-x-text').innerText;
-        if (plataformaActual === 'instagram') return document.getElementById('preview-instagram-text').innerText;
-        if (plataformaActual === 'facebook') return document.getElementById('preview-facebook-text').innerText;
-        if (plataformaActual === 'whatsapp') return document.getElementById('preview-whatsapp-text').innerText;
-        if (plataformaActual === 'tiktok') return document.getElementById('preview-tiktok-caption').innerText;
-        if (plataformaActual === 'web') return document.getElementById('preview-web-title').innerText + '\n\n' + document.getElementById('preview-web-body').innerText;
-      } else {
-        if (plataformaActual === 'x') return datosGenerados.x || '';
-        if (plataformaActual === 'instagram') return datosGenerados.instagram || '';
-        if (plataformaActual === 'facebook') return datosGenerados.facebook || '';
-        if (plataformaActual === 'whatsapp') return datosGenerados.whatsapp || '';
-        if (plataformaActual === 'tiktok') return datosGenerados.tiktok?.copy || '';
-        if (plataformaActual === 'web') return `${datosGenerados.web?.titulo}\n\n${datosGenerados.web?.cuerpo}`;
-      }
-      return '';
-    }
-
-    function copiarContenidoActual() {
-      const texto = obtenerTextoActual();
-      navigator.clipboard.writeText(texto).then(() => {
-        const btnText = document.getElementById('copyBtnText');
-        const orig = btnText.textContent;
-        btnText.textContent = '¡Copiado! ✓';
-        setTimeout(() => { btnText.textContent = orig; }, 2000);
-      });
-    }
-
-    // Compartir nativo en móviles y tablets (Web Share API)
-    function compartirNativo() {
-      const texto = obtenerTextoActual();
-      if (navigator.share) {
-        navigator.share({
-          title: 'Publicación CB Baloncesto',
-          text: texto
-        }).catch(() => {});
-      } else {
-        copiarContenidoActual();
-      }
-    }
-
-    function cargarEjemplo() {
-      if (modoActual === 'prepartido') {
-        document.getElementById('textoBase').value = "Partido del Senior Masc A contra CB Las Rozas este sábado a las 19:00 en nuestro pabellón Esperanza. Necesitamos llenar la grada porque es el derbi de la comarca.";
-      } else if (modoActual === 'postpartido') {
-        document.getElementById('textoBase').value = "Ganamos 74 a 71 a Las Rozas en la prórroga. partidazo brutal remontamos 8 puntos al final pablo y sergio defendieron como animales y hugo metio el triple decisivo";
-      } else if (modoActual === 'mvp') {
-        document.getElementById('textoBase').value = "Queremos destacar a Laura Gómez del Cadete Femenino. Metió 18 puntos pero sobre todo se lesionó un tobillo hace 2 meses y volvió dejándose el alma y animando a todas.";
-      } else {
-        document.getElementById('textoBase').value = "Abrimos inscripciones para el Campus de Navidad de Baloncesto para chicos y chicas de 6 a 16 años del 26 al 30 de diciembre en el pabellón. Plazas limitadas.";
-      }
-    }
-
-    // ==============================================================
-    // FUNCIONES DE PUBLICACIÓN DIRECTA EN REDES SOCIALES
-    // ==============================================================
     function registrarAccionEnServidor(accion, detalles) {
       fetch('/api/registrar_accion', {
         method: 'POST',
@@ -920,7 +937,7 @@
       }).catch(() => {});
     }
 
-    function mostrarToast(mensaje, tipo = 'success') {
+    function mostrarToast(mensaje) {
       const toast = document.getElementById('toastNotificacion');
       const toastMsg = document.getElementById('toastMensaje');
       toastMsg.innerHTML = mensaje;
@@ -937,32 +954,31 @@
       if (!urlImagenActual) return;
       const a = document.createElement('a');
       a.href = urlImagenActual;
-      a.download = `baloncesto_post_${Date.now()}.jpg`;
+      a.download = `cb_cartama_${Date.now()}.jpg`;
       document.body.appendChild(a);
       a.click();
       document.body.removeChild(a);
-      mostrarToast('📥 Fotografía descargada lista para adjuntar.');
+      mostrarToast('📥 Fotografía descargada lista para adjuntar en redes.');
     }
 
-    // 1. Publicar en X (Twitter)
+    // 1. Publicar en X
     function publicarEnX() {
-      const texto = datosGenerados?.x || document.getElementById('preview-x-text').innerText;
+      const texto = document.getElementById('preview-x-text').innerText;
       navigator.clipboard.writeText(texto).then(() => {
-        registrarAccionEnServidor('PUBLICACION_X', `Publicación en X: '${texto.substring(0, 60)}...'`);
-        mostrarToast('🚀 ¡Texto copiado! Abriendo X con tu publicación lista...');
+        registrarAccionEnServidor('PUBLICACION_X', `X: '${texto.substring(0, 60)}...'`);
+        mostrarToast('🚀 ¡Texto de X copiado! Abriendo compositor...');
         const intentUrl = `https://twitter.com/intent/tweet?text=${encodeURIComponent(texto)}`;
         window.open(intentUrl, '_blank');
       });
     }
 
-    // 2. Publicar en Instagram (Meta Suite)
+    // 2. Publicar en Instagram
     function publicarEnInstagram() {
-      const texto = datosGenerados?.instagram || document.getElementById('preview-instagram-text').innerText;
+      const texto = document.getElementById('preview-instagram-text').innerText;
       navigator.clipboard.writeText(texto).then(() => {
-        registrarAccionEnServidor('PUBLICACION_INSTAGRAM', 'Apertura de Meta Suite / Instagram con caption copiado');
+        registrarAccionEnServidor('PUBLICACION_INSTAGRAM', 'Apertura de Meta Suite con caption copiado');
         descargarFoto();
-        mostrarToast('📸 Caption copiado e imagen descargada. ¡Pégalo en el compositor de Instagram!');
-        // Abre Meta Business Suite si está disponible, o Instagram Web
+        mostrarToast('📸 Caption copiado y foto descargada. ¡Pégalo en Instagram!');
         setTimeout(() => {
           window.open('https://business.facebook.com/latest/composer', '_blank');
         }, 600);
@@ -971,9 +987,9 @@
 
     // 3. Publicar en Facebook
     function publicarEnFacebook() {
-      const texto = datosGenerados?.facebook || document.getElementById('preview-facebook-text').innerText;
+      const texto = document.getElementById('preview-facebook-text').innerText;
       navigator.clipboard.writeText(texto).then(() => {
-        registrarAccionEnServidor('PUBLICACION_FACEBOOK', `Publicación en Facebook: '${texto.substring(0, 60)}...'`);
+        registrarAccionEnServidor('PUBLICACION_FACEBOOK', `Facebook: '${texto.substring(0, 60)}...'`);
         mostrarToast('📘 Texto copiado. Abriendo Facebook para publicar...');
         setTimeout(() => {
           window.open('https://www.facebook.com/', '_blank');
@@ -983,8 +999,8 @@
 
     // 4. Publicar en WhatsApp
     function publicarEnWhatsApp() {
-      const texto = datosGenerados?.whatsapp || document.getElementById('preview-whatsapp-text').innerText;
-      registrarAccionEnServidor('PUBLICACION_WHATSAPP', 'Envío a WhatsApp de convocatoria/crónica');
+      const texto = document.getElementById('preview-whatsapp-text').innerText;
+      registrarAccionEnServidor('PUBLICACION_WHATSAPP', 'Envío a WhatsApp CB Cártama');
       mostrarToast('💬 Abriendo WhatsApp con el mensaje preparado...');
       const waUrl = `https://api.whatsapp.com/send?text=${encodeURIComponent(texto)}`;
       window.open(waUrl, '_blank');
@@ -992,9 +1008,9 @@
 
     // 5. Publicar en TikTok
     function publicarEnTikTok() {
-      const copy = datosGenerados?.tiktok?.copy || document.getElementById('preview-tiktok-caption').innerText;
+      const copy = document.getElementById('preview-tiktok-caption').innerText;
       navigator.clipboard.writeText(copy).then(() => {
-        registrarAccionEnServidor('PUBLICACION_TIKTOK', 'Acceso a TikTok Creator Center con descripción copiada');
+        registrarAccionEnServidor('PUBLICACION_TIKTOK', 'Acceso a TikTok Creator Center');
         mostrarToast('🎵 Descripción copiada. Abriendo TikTok Creator Center...');
         setTimeout(() => {
           window.open('https://www.tiktok.com/creator-center/upload', '_blank');
@@ -1002,14 +1018,14 @@
       });
     }
 
-    // 6. Publicar en la Web Oficial (Supabase)
+    // 6. Publicar en Web Oficial (Supabase)
     function publicarEnWebDirecto() {
-      const titulo = datosGenerados?.web?.titulo || document.getElementById('preview-web-title').innerText;
-      const cuerpo = datosGenerados?.web?.cuerpo || document.getElementById('preview-web-body').innerText;
+      const titulo = document.getElementById('preview-web-title').innerText;
+      const cuerpo = document.getElementById('preview-web-body').innerText;
 
       const btn = document.getElementById('btnPublicarWebText');
       const origText = btn.textContent;
-      btn.innerHTML = '<i class="fas fa-spinner fa-spin mr-1"></i> Publicando en Supabase...';
+      btn.innerHTML = '<i class="fas fa-spinner fa-spin mr-1"></i> Publicando en cbcartama.com...';
 
       fetch('/api/publicar_web', {
         method: 'POST',
@@ -1020,7 +1036,7 @@
       .then(res => {
         btn.textContent = origText;
         if (res.success) {
-          mostrarToast('🎉 ¡Noticia publicada en la base de datos de la Web oficial!');
+          mostrarToast('🎉 ¡Noticia publicada con éxito en la Web Oficial de CB Cártama!');
         } else {
           alert('Error: ' + res.error);
         }
@@ -1029,6 +1045,50 @@
         btn.textContent = origText;
         alert('Error al conectar: ' + err);
       });
+    }
+
+    function obtenerTextoActual() {
+      if (plataformaActual === 'x') return document.getElementById('preview-x-text').innerText;
+      if (plataformaActual === 'instagram') return document.getElementById('preview-instagram-text').innerText;
+      if (plataformaActual === 'facebook') return document.getElementById('preview-facebook-text').innerText;
+      if (plataformaActual === 'whatsapp') return document.getElementById('preview-whatsapp-text').innerText;
+      if (plataformaActual === 'tiktok') return document.getElementById('preview-tiktok-caption').innerText;
+      if (plataformaActual === 'web') return document.getElementById('preview-web-title').innerText + '\n\n' + document.getElementById('preview-web-body').innerText;
+      return '';
+    }
+
+    function copiarContenidoActual() {
+      const texto = obtenerTextoActual();
+      navigator.clipboard.writeText(texto).then(() => {
+        const btnText = document.getElementById('copyBtnText');
+        const orig = btnText.textContent;
+        btnText.textContent = '¡Copiado! ✓';
+        setTimeout(() => { btnText.textContent = orig; }, 2000);
+      });
+    }
+
+    function compartirNativo() {
+      const texto = obtenerTextoActual();
+      if (navigator.share) {
+        navigator.share({
+          title: 'CB Cártama Baloncesto',
+          text: texto
+        }).catch(() => {});
+      } else {
+        copiarContenidoActual();
+      }
+    }
+
+    function cargarEjemplo() {
+      if (modoActual === 'prepartido') {
+        document.getElementById('textoBase').value = "Partido del Senior Masc contra CB Alhaurín el Grande este sábado a las 18:30 en la Ciudad Deportiva de Cártama. Entrada libre, que venga toda la afición de verde y amarillo.";
+      } else if (modoActual === 'postpartido') {
+        document.getElementById('textoBase').value = "Ganamos 68 a 64 a Alhaurín partidazo tremendo en la Ciudad Deportiva remontamos 6 puntos al final defensa asfixiante de todo el equipo y gran victoria para Cártama";
+      } else if (modoActual === 'mvp') {
+        document.getElementById('textoBase').value = "Queremos premiar a Marta del Cadete Femenino por su entrega incansable en defensa, animando a sus compañeras y salvando balones imposibles en el último cuarto.";
+      } else {
+        document.getElementById('textoBase').value = "Abiertas las inscripciones para la Escuela de Baloncesto y Babybasket del CB Cártama para la nueva temporada en la Ciudad Deportiva. Plazas limitadas. Más info en cbcartama.com.";
+      }
     }
 
     // Modal de Auditoría
@@ -1043,7 +1103,7 @@
 
     function cargarLogsAuditoria() {
       const tbody = document.getElementById('tbodyAuditoria');
-      tbody.innerHTML = '<tr><td colspan="5" class="py-6 text-center text-slate-400"><i class="fas fa-spinner fa-spin mr-2"></i> Cargando registro de auditoría...</td></tr>';
+      tbody.innerHTML = '<tr><td colspan="5" class="py-6 text-center text-emerald-400"><i class="fas fa-spinner fa-spin mr-2"></i> Cargando registro...</td></tr>';
 
       fetch('/api/auditoria')
         .then(r => r.json())
@@ -1054,15 +1114,15 @@
               let badgeColor = 'bg-slate-800 text-slate-300 border-slate-700';
               if (log.accion === 'LOGIN') badgeColor = 'bg-emerald-500/10 text-emerald-400 border-emerald-500/30';
               else if (log.accion === 'LOGIN_FALLIDO') badgeColor = 'bg-red-500/10 text-red-400 border-red-500/30';
-              else if (log.accion === 'SUPERVISION_IA') badgeColor = 'bg-orange-500/10 text-orange-400 border-orange-500/30';
+              else if (log.accion === 'SUPERVISION_IA') badgeColor = 'bg-yellow-500/10 text-yellow-400 border-yellow-500/30';
               else if (log.accion === 'SUBIDA_FOTO') badgeColor = 'bg-blue-500/10 text-blue-400 border-blue-500/30';
-              else if (log.accion === 'PUBLICACION') badgeColor = 'bg-purple-500/10 text-purple-400 border-purple-500/30';
+              else if (log.accion.startsWith('PUBLICACION')) badgeColor = 'bg-purple-500/10 text-purple-400 border-purple-500/30';
               else if (log.accion === 'LOGOUT') badgeColor = 'bg-slate-700/50 text-slate-400 border-slate-600';
 
               const tr = document.createElement('tr');
-              tr.className = 'border-b border-slate-800/80 hover:bg-slate-800/30 transition text-xs';
+              tr.className = 'border-b border-emerald-950/80 hover:bg-emerald-950/40 transition text-xs';
               tr.innerHTML = `
-                <td class="py-3 px-3 text-slate-400 whitespace-nowrap font-mono text-[11px]">${log.fecha || ''}</td>
+                <td class="py-3 px-3 text-emerald-400/80 whitespace-nowrap font-mono text-[11px]">${log.fecha || ''}</td>
                 <td class="py-3 px-3 font-semibold text-slate-200">${log.usuario || ''}</td>
                 <td class="py-3 px-3">
                   <span class="inline-block px-2 py-0.5 rounded-md border text-[10px] font-bold ${badgeColor}">
@@ -1072,7 +1132,7 @@
                 <td class="py-3 px-3 text-slate-300 max-w-xs sm:max-w-md truncate" title="${log.detalles || ''}">
                   ${log.detalles || ''}
                 </td>
-                <td class="py-3 px-3 text-slate-400 font-mono text-[11px] whitespace-nowrap">${log.ip || '-'}</td>
+                <td class="py-3 px-3 text-emerald-500/70 font-mono text-[11px] whitespace-nowrap">${log.ip || '-'}</td>
               `;
               tbody.appendChild(tr);
             });
@@ -1086,23 +1146,22 @@
     }
   </script>
 
-  <!-- MODAL DE AUDITORÍA Y CONTROL DE ACTIVIDAD -->
-  <div id="modalAuditoria" class="hidden fixed inset-0 z-50 flex items-center justify-center p-3 sm:p-6 bg-slate-950/80 backdrop-blur-sm">
-    <div class="bg-slate-900 border border-slate-800 rounded-3xl w-full max-w-4xl max-h-[85vh] flex flex-col shadow-2xl overflow-hidden">
+  <!-- MODAL DE AUDITORÍA CB CÁRTAMA -->
+  <div id="modalAuditoria" class="hidden fixed inset-0 z-50 flex items-center justify-center p-3 sm:p-6 bg-black/85 backdrop-blur-sm">
+    <div class="bg-[#092015] border border-emerald-900 rounded-3xl w-full max-w-4xl max-h-[85vh] flex flex-col shadow-2xl overflow-hidden">
       
-      <!-- Header Modal -->
-      <div class="p-4 sm:p-5 border-b border-slate-800 flex items-center justify-between">
+      <div class="p-4 sm:p-5 border-b border-emerald-950 flex items-center justify-between">
         <div class="flex items-center space-x-3">
-          <div class="w-9 h-9 rounded-xl bg-orange-500/10 border border-orange-500/30 text-orange-400 flex items-center justify-center">
+          <div class="w-9 h-9 rounded-xl bg-yellow-500/10 border border-yellow-500/30 text-yellow-400 flex items-center justify-center">
             <i class="fas fa-shield-halved"></i>
           </div>
           <div>
-            <h3 class="text-sm sm:text-base font-bold text-white">Registro de Auditoría y Control de Actividad</h3>
-            <p class="text-[11px] text-slate-400">Historial completo con usuario, fecha, operación realizada y dirección IP</p>
+            <h3 class="text-sm sm:text-base font-bold text-white">Auditoría y Control CB Cártama</h3>
+            <p class="text-[11px] text-emerald-400/80">Historial de accesos, supervisiones IA y publicaciones</p>
           </div>
         </div>
         <div class="flex items-center space-x-2">
-          <button onclick="cargarLogsAuditoria()" class="p-2 text-slate-400 hover:text-orange-400 text-sm transition" title="Actualizar">
+          <button onclick="cargarLogsAuditoria()" class="p-2 text-emerald-400 hover:text-yellow-400 text-sm transition" title="Actualizar">
             <i class="fas fa-rotate"></i>
           </button>
           <button onclick="cerrarModalAuditoria()" class="p-2 text-slate-400 hover:text-white text-base transition">
@@ -1111,30 +1170,27 @@
         </div>
       </div>
 
-      <!-- Tabla con Scroll -->
       <div class="p-4 overflow-y-auto flex-1">
-        <div class="overflow-x-auto rounded-xl border border-slate-800">
+        <div class="overflow-x-auto rounded-xl border border-emerald-950">
           <table class="w-full text-left text-xs">
-            <thead class="bg-slate-950 text-slate-400 uppercase text-[10px] font-bold tracking-wider border-b border-slate-800">
+            <thead class="bg-[#05110a] text-emerald-400/80 uppercase text-[10px] font-bold tracking-wider border-b border-emerald-950">
               <tr>
-                <th class="py-2.5 px-3">Fecha y Hora</th>
+                <th class="py-2.5 px-3">Fecha</th>
                 <th class="py-2.5 px-3">Usuario</th>
                 <th class="py-2.5 px-3">Operación</th>
                 <th class="py-2.5 px-3">Detalles</th>
                 <th class="py-2.5 px-3">IP</th>
               </tr>
             </thead>
-            <tbody id="tbodyAuditoria" class="divide-y divide-slate-800/50">
-              <!-- Se rellena vía JS -->
+            <tbody id="tbodyAuditoria" class="divide-y divide-emerald-950/60">
             </tbody>
           </table>
         </div>
       </div>
 
-      <!-- Footer Modal -->
-      <div class="p-3 bg-slate-950 border-t border-slate-800 flex justify-between items-center text-xs text-slate-500">
-        <span>Mostrando las últimas 50 operaciones</span>
-        <button onclick="cerrarModalAuditoria()" class="px-4 py-1.5 bg-slate-800 hover:bg-slate-700 text-slate-200 rounded-xl font-medium transition">
+      <div class="p-3 bg-[#05110a] border-t border-emerald-950 flex justify-between items-center text-xs text-emerald-500/80">
+        <span>Últimas 50 operaciones registradas</span>
+        <button onclick="cerrarModalAuditoria()" class="px-4 py-1.5 bg-emerald-900/60 hover:bg-emerald-800 text-emerald-200 rounded-xl font-medium transition">
           Cerrar
         </button>
       </div>
@@ -1142,12 +1198,12 @@
     </div>
   </div>
 
-  <!-- TOAST NOTIFICACIÓN FLOTANTE -->
-  <div id="toastNotificacion" class="hidden fixed bottom-5 right-5 z-50 transform translate-y-12 opacity-0 transition-all duration-300 max-w-sm bg-slate-900 border border-slate-700 text-white px-4 py-3 rounded-2xl shadow-2xl flex items-center space-x-3">
-    <div class="w-8 h-8 rounded-xl bg-orange-500/20 text-orange-400 flex items-center justify-center flex-shrink-0">
-      <i class="fas fa-paper-plane text-xs"></i>
+  <!-- TOAST NOTIFICACIÓN -->
+  <div id="toastNotificacion" class="hidden fixed bottom-5 right-5 z-50 transform translate-y-12 opacity-0 transition-all duration-300 max-w-sm bg-[#092015] border border-emerald-700 text-white px-4 py-3 rounded-2xl shadow-2xl flex items-center space-x-3">
+    <div class="w-8 h-8 rounded-xl bg-yellow-500/20 text-yellow-400 flex items-center justify-center flex-shrink-0">
+      <i class="fas fa-basketball text-xs"></i>
     </div>
-    <div class="text-xs text-slate-200" id="toastMensaje">Acción completada</div>
+    <div class="text-xs text-slate-100" id="toastMensaje">Acción completada</div>
   </div>
 
 </body>

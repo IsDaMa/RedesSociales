@@ -46,7 +46,8 @@ while ($intentos -lt 12) {
             $listo = $true
             break
         }
-    } catch {
+    }
+    catch {
         $intentos++
     }
 }
@@ -60,7 +61,8 @@ if ($listo) {
     Write-Host ""
     Write-Host "Abriendo en tu navegador..." -ForegroundColor Yellow
     Start-Process "http://localhost:5000"
-} else {
+}
+else {
     Write-Host "[AVISO] El servidor se esta iniciando. Abre: http://localhost:5000" -ForegroundColor Yellow
 }
 
