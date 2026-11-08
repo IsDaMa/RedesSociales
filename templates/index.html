@@ -2,9 +2,9 @@
 <html lang="es" class="dark">
 <head>
   <meta charset="UTF-8">
-  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no">
   <title>🏀 Centro de Mando y Previsualizador de Redes Sociales | Club Baloncesto</title>
-  <!-- Tailwind CSS -->
+  <!-- Tailwind CSS CDN -->
   <script src="https://cdn.tailwindcss.com"></script>
   <!-- FontAwesome Icons -->
   <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.5.1/css/all.min.css">
@@ -26,111 +26,143 @@
     }
   </script>
   <style>
-    /* Estilo para simular fondo de WhatsApp */
+    /* WhatsApp Background Pattern */
     .whatsapp-bg {
       background-color: #0b141a;
       background-image: radial-gradient(#1f2c34 1px, transparent 1px);
       background-size: 16px 16px;
     }
-    /* Scrollbar estilizada */
-    ::-webkit-scrollbar { width: 6px; height: 6px; }
+    /* Scrollbars elegantes */
+    ::-webkit-scrollbar { width: 5px; height: 5px; }
     ::-webkit-scrollbar-track { background: #0b0f19; }
     ::-webkit-scrollbar-thumb { background: #334155; border-radius: 4px; }
     ::-webkit-scrollbar-thumb:hover { background: #f97316; }
+    /* Evitar zoom molesto en inputs en Safari iOS */
+    input, textarea, select { font-size: 16px !important; }
+    @media (min-width: 640px) {
+      input, textarea, select { font-size: 14px !important; }
+    }
   </style>
 </head>
-<body class="bg-slate-950 text-slate-100 min-h-screen font-sans selection:bg-orange-500 selection:text-white">
+<body class="bg-slate-950 text-slate-100 min-h-screen font-sans selection:bg-orange-500 selection:text-white pb-16 lg:pb-6">
 
-  <!-- NAVBAR SUPERIOR -->
-  <header class="border-b border-slate-800 bg-slate-900/80 backdrop-blur sticky top-0 z-50">
-    <div class="max-w-7xl mx-auto px-4 h-16 flex items-center justify-between">
-      <div class="flex items-center space-x-3">
-        <div class="w-10 h-10 rounded-full bg-gradient-to-tr from-orange-600 to-amber-500 flex items-center justify-center shadow-lg shadow-orange-500/20 text-white font-black text-xl">
+  <!-- NAVBAR SUPERIOR RESPONSIVE -->
+  <header class="border-b border-slate-800 bg-slate-900/90 backdrop-blur sticky top-0 z-50">
+    <div class="max-w-7xl mx-auto px-3 sm:px-6 h-16 flex items-center justify-between">
+      
+      <!-- LOGO Y TÍTULO -->
+      <div class="flex items-center space-x-2.5">
+        <div class="w-9 h-9 sm:w-10 sm:h-10 rounded-xl bg-gradient-to-tr from-orange-600 to-amber-500 flex items-center justify-center shadow-lg shadow-orange-500/20 text-white font-black text-lg">
           🏀
         </div>
         <div>
-          <h1 class="font-extrabold text-lg text-white leading-tight flex items-center gap-2">
-            CB Social Hub
-            <span class="text-xs font-semibold px-2 py-0.5 rounded-full bg-emerald-500/10 text-emerald-400 border border-emerald-500/20 flex items-center gap-1">
-              <span class="w-1.5 h-1.5 rounded-full bg-emerald-400 animate-pulse"></span> Gemini 3.1 Flash-Lite
+          <div class="flex items-center gap-1.5">
+            <h1 class="font-extrabold text-sm sm:text-base text-white leading-tight">CB Social Hub</h1>
+            <span class="text-[10px] font-semibold px-1.5 py-0.5 rounded-full bg-emerald-500/10 text-emerald-400 border border-emerald-500/20 flex items-center gap-1">
+              <span class="w-1.5 h-1.5 rounded-full bg-emerald-400 animate-pulse"></span> Gemini 3.1
             </span>
-          </h1>
-          <p class="text-xs text-slate-400">Supervisión con IA y Previsualizador Multiplataforma</p>
+          </div>
+          <p class="text-[10px] sm:text-xs text-slate-400 truncate">Supervisión IA & Previsualizador 6 Canales</p>
         </div>
       </div>
-      <div class="flex items-center space-x-3">
-        <a href="https://github.com/IsDaMa/RedesSociales" target="_blank" class="text-xs px-3 py-1.5 rounded-lg border border-slate-700 bg-slate-800 hover:bg-slate-700 text-slate-300 transition flex items-center gap-1.5">
-          <i class="fab fa-github"></i> GitHub Repo
+
+      <!-- ZONA DE ACCESO CONTROLADO Y PERFIL -->
+      <div class="flex items-center space-x-2 sm:space-x-3">
+        <div class="hidden sm:flex items-center gap-2 px-3 py-1 bg-slate-800/80 rounded-xl border border-slate-700/60 text-xs">
+          <i class="fas fa-shield-halved text-emerald-400"></i>
+          <span class="text-slate-300 font-medium">{{ username }}</span>
+        </div>
+
+        <a href="/logout" title="Cerrar sesión" class="text-xs px-2.5 sm:px-3 py-1.5 rounded-xl border border-red-500/30 bg-red-500/10 hover:bg-red-500/20 text-red-400 transition flex items-center gap-1.5 font-medium">
+          <i class="fas fa-arrow-right-from-bracket"></i>
+          <span class="hidden sm:inline">Salir</span>
         </a>
       </div>
+
+    </div>
+
+    <!-- SELECTOR DE VISTA EN MÓVILES (REDACTAR VS PREVISUALIZAR) -->
+    <div class="grid grid-cols-2 p-1 bg-slate-950 border-t border-slate-800 lg:hidden">
+      <button type="button" onclick="setMobileView('editor')" id="mobileTabEditor" 
+        class="py-2 text-xs font-bold rounded-lg bg-orange-500 text-white transition flex items-center justify-center gap-1.5">
+        <i class="fas fa-pen-nib"></i> 1. Redactar & Foto
+      </button>
+      <button type="button" onclick="setMobileView('preview')" id="mobileTabPreview" 
+        class="py-2 text-xs font-bold rounded-lg text-slate-400 hover:text-white transition flex items-center justify-center gap-1.5">
+        <i class="fas fa-mobile-screen"></i> 2. Previsualizar (6)
+      </button>
     </div>
   </header>
 
-  <!-- CONTENIDO PRINCIPAL EN 2 COLUMNAS -->
-  <main class="max-w-7xl mx-auto px-4 py-6 grid grid-cols-1 lg:grid-cols-12 gap-6">
+  <!-- CONTENIDO PRINCIPAL ADAPTATIVO (MÓVIL, TABLET, ESCRITORIO) -->
+  <main class="max-w-7xl mx-auto px-3 sm:px-6 py-4 sm:py-6 grid grid-cols-1 lg:grid-cols-12 gap-5 sm:gap-6">
 
-    <!-- COLUMNA IZQUIERDA: ENTRADA DE DATOS Y SUPERVISIÓN -->
-    <section class="lg:col-span-5 space-y-5">
+    <!-- ============================================================== -->
+    <!-- COLUMNA 1: ENTRADA DE DATOS, FOTO Y SUPERVISIÓN (EDITOR) -->
+    <!-- ============================================================== -->
+    <section id="pane-editor" class="lg:col-span-5 space-y-4">
       
-      <!-- TARJETA: REDACCIÓN Y SELECCIÓN DE MODO -->
-      <div class="bg-slate-900 border border-slate-800 rounded-2xl p-5 shadow-xl">
+      <div class="bg-slate-900 border border-slate-800 rounded-3xl p-4 sm:p-5 shadow-xl">
         <div class="flex items-center justify-between mb-3">
-          <h2 class="text-sm font-bold uppercase tracking-wider text-slate-300 flex items-center gap-2">
-            <i class="fas fa-pen-nib text-orange-500"></i> 1. Tu Texto o Borrador
+          <h2 class="text-xs sm:text-sm font-bold uppercase tracking-wider text-slate-200 flex items-center gap-2">
+            <i class="fas fa-pen-nib text-orange-500"></i> Tu Texto o Borrador
           </h2>
-          <span class="text-xs text-slate-400">Selecciona el tipo de evento:</span>
+          <span class="text-[11px] text-slate-400">Paso 1 de 2</span>
         </div>
 
-        <!-- SELECTOR DE MODOS -->
+        <!-- SELECTOR DE MODOS CON SCROLL SUAVE EN MÓVIL -->
         <div class="grid grid-cols-2 sm:grid-cols-4 gap-1.5 mb-3">
-          <button type="button" onclick="setModo('prepartido', this)" class="modo-btn text-xs font-medium py-2 px-2.5 rounded-xl border border-orange-500/50 bg-orange-500/10 text-orange-400 flex items-center justify-center gap-1.5 transition">
+          <button type="button" onclick="setModo('prepartido', this)" class="modo-btn text-xs font-medium py-2.5 px-2 rounded-xl border border-orange-500/50 bg-orange-500/10 text-orange-400 flex items-center justify-center gap-1.5 transition">
             <i class="fas fa-calendar-day"></i> Pre-Partido
           </button>
-          <button type="button" onclick="setModo('postpartido', this)" class="modo-btn text-xs font-medium py-2 px-2.5 rounded-xl border border-slate-800 bg-slate-800 text-slate-400 hover:text-white flex items-center justify-center gap-1.5 transition">
+          <button type="button" onclick="setModo('postpartido', this)" class="modo-btn text-xs font-medium py-2.5 px-2 rounded-xl border border-slate-800 bg-slate-800 text-slate-400 hover:text-white flex items-center justify-center gap-1.5 transition">
             <i class="fas fa-trophy"></i> Resultado
           </button>
-          <button type="button" onclick="setModo('mvp', this)" class="modo-btn text-xs font-medium py-2 px-2.5 rounded-xl border border-slate-800 bg-slate-800 text-slate-400 hover:text-white flex items-center justify-center gap-1.5 transition">
+          <button type="button" onclick="setModo('mvp', this)" class="modo-btn text-xs font-medium py-2.5 px-2 rounded-xl border border-slate-800 bg-slate-800 text-slate-400 hover:text-white flex items-center justify-center gap-1.5 transition">
             <i class="fas fa-star"></i> MVP Cantera
           </button>
-          <button type="button" onclick="setModo('noticia', this)" class="modo-btn text-xs font-medium py-2 px-2.5 rounded-xl border border-slate-800 bg-slate-800 text-slate-400 hover:text-white flex items-center justify-center gap-1.5 transition">
+          <button type="button" onclick="setModo('noticia', this)" class="modo-btn text-xs font-medium py-2.5 px-2 rounded-xl border border-slate-800 bg-slate-800 text-slate-400 hover:text-white flex items-center justify-center gap-1.5 transition">
             <i class="fas fa-bullhorn"></i> Noticia
           </button>
         </div>
 
-        <!-- TEXTAREA DE ENTRADA -->
+        <!-- CAJA DE TEXTO PRINCIPAL -->
         <div class="relative">
           <textarea id="textoBase" rows="6" 
-            placeholder="Escribe aquí los datos del partido, las notas del entrenador o el anuncio del club...&#10;&#10;Ejemplo: 'Jugamos el sábado a las 18:30 contra Baloncesto Alcalá en nuestro pabellón. Entrada gratis. Que venga toda la afición.'" 
-            class="w-full bg-slate-950 border border-slate-800 rounded-xl p-3.5 text-sm text-slate-200 placeholder-slate-500 focus:outline-none focus:ring-2 focus:ring-orange-500 focus:border-transparent transition resize-none"></textarea>
+            placeholder="Introduce las notas del partido, audio transcrito del entrenador o comunicado del club...&#10;&#10;Ejemplo: 'Jugamos el sábado a las 18:30h contra Baloncesto Alcalá en nuestro pabellón. Entrada gratuita.'" 
+            class="w-full bg-slate-950 border border-slate-800 rounded-2xl p-3.5 text-sm text-slate-100 placeholder-slate-500 focus:outline-none focus:ring-2 focus:ring-orange-500 focus:border-transparent transition resize-none"></textarea>
           
-          <button type="button" onclick="cargarEjemplo()" class="absolute bottom-3 right-3 text-xs text-orange-400/80 hover:text-orange-300 bg-slate-900/80 border border-slate-700 px-2 py-1 rounded-md transition flex items-center gap-1">
+          <button type="button" onclick="cargarEjemplo()" class="absolute bottom-3 right-3 text-xs text-orange-400/90 hover:text-orange-300 bg-slate-900/90 border border-slate-700 px-2.5 py-1 rounded-lg transition flex items-center gap-1 shadow">
             <i class="fas fa-magic"></i> Cargar Ejemplo
           </button>
         </div>
 
-        <!-- SUBIDA DE FOTOGRAFÍAS -->
+        <!-- SUBIDA DE FOTOGRAFÍAS CON SOPORTE DE CÁMARA MÓVIL -->
         <div class="mt-4">
-          <label class="block text-xs font-semibold text-slate-400 mb-2 flex items-center justify-between">
-            <span><i class="fas fa-camera text-blue-400 mr-1.5"></i> 2. Fotografía del Partido / Evento</span>
-            <span class="text-[11px] text-slate-500">JPG, PNG o WEBP</span>
+          <label class="block text-xs font-semibold text-slate-300 mb-2 flex items-center justify-between">
+            <span><i class="fas fa-camera text-blue-400 mr-1.5"></i> Fotografía para publicar</span>
+            <span class="text-[10px] text-slate-500">Cámara o Galería</span>
           </label>
 
           <div id="dropzone" onclick="document.getElementById('fileInput').click()" 
-            class="border-2 border-dashed border-slate-800 hover:border-orange-500/50 bg-slate-950/50 hover:bg-slate-950 rounded-xl p-4 text-center cursor-pointer transition group">
+            class="border-2 border-dashed border-slate-800 hover:border-orange-500/50 bg-slate-950/50 hover:bg-slate-950 rounded-2xl p-4 text-center cursor-pointer transition group">
+            
+            <!-- Input que permite galería Y cámara directa en smartphones -->
             <input type="file" id="fileInput" accept="image/*" class="hidden" onchange="handleFileSelect(event)">
             
             <div id="uploadPlaceholder">
               <i class="fas fa-cloud-arrow-up text-2xl text-slate-500 group-hover:text-orange-400 transition mb-1"></i>
-              <p class="text-xs text-slate-400">Arrastra una imagen aquí o <span class="text-orange-400 font-semibold underline">haz clic para examinar</span></p>
+              <p class="text-xs text-slate-300 font-medium">Toca para abrir <span class="text-orange-400 underline">Cámara o Galería</span></p>
+              <p class="text-[10px] text-slate-500 mt-0.5">JPG, PNG o WEBP (Máx. 16 MB)</p>
             </div>
 
             <!-- PREVIEW DE IMAGEN CARGADA -->
-            <div id="uploadPreviewContainer" class="hidden flex items-center justify-between bg-slate-900 p-2 rounded-lg border border-slate-800">
+            <div id="uploadPreviewContainer" class="hidden flex items-center justify-between bg-slate-900 p-2.5 rounded-xl border border-slate-800">
               <div class="flex items-center space-x-3 overflow-hidden">
-                <img id="uploadPreviewImg" src="" alt="Foto" class="w-12 h-12 object-cover rounded-md border border-slate-700">
+                <img id="uploadPreviewImg" src="" alt="Foto" class="w-12 h-12 object-cover rounded-lg border border-slate-700">
                 <div class="text-left truncate">
-                  <p id="uploadFilename" class="text-xs font-medium text-slate-200 truncate">foto.jpg</p>
-                  <p class="text-[10px] text-emerald-400 flex items-center gap-1"><i class="fas fa-check-circle"></i> Imagen lista para previsualizar</p>
+                  <p id="uploadFilename" class="text-xs font-semibold text-slate-200 truncate">foto.jpg</p>
+                  <p class="text-[10px] text-emerald-400 flex items-center gap-1"><i class="fas fa-circle-check"></i> Imagen cargada con éxito</p>
                 </div>
               </div>
               <button type="button" onclick="removeImage(event)" class="text-slate-400 hover:text-red-400 p-2 text-sm transition">
@@ -140,84 +172,98 @@
           </div>
         </div>
 
-        <!-- BOTÓN PRINCIPAL: SUPERVISAR CON GEMINI -->
+        <!-- BOTÓN PRINCIPAL DE SUPERVISIÓN IA -->
         <button id="btnSupervisar" onclick="supervisarConGemini()" 
-          class="mt-5 w-full bg-gradient-to-r from-orange-500 via-amber-500 to-orange-600 hover:from-orange-600 hover:to-orange-700 text-white font-bold py-3.5 px-4 rounded-xl shadow-lg shadow-orange-500/25 transition transform active:scale-[0.99] flex items-center justify-center gap-2">
-          <i class="fas fa-wand-magic-sparkles"></i>
+          class="mt-5 w-full bg-gradient-to-r from-orange-500 via-amber-500 to-orange-600 hover:from-orange-600 hover:to-orange-700 text-white font-extrabold py-3.5 px-4 rounded-2xl shadow-xl shadow-orange-500/20 transition transform active:scale-[0.98] flex items-center justify-center gap-2 text-sm sm:text-base">
+          <i class="fas fa-wand-magic-sparkles text-amber-200"></i>
           <span>✨ Supervisar y Adaptar con Gemini</span>
         </button>
 
       </div>
 
-      <!-- CONSEJO RÁPIDO -->
-      <div class="bg-blue-950/20 border border-blue-800/30 rounded-xl p-3.5 text-xs text-blue-300 flex items-start gap-2.5">
-        <i class="fas fa-circle-info text-blue-400 mt-0.5"></i>
-        <p>Gemini revisará el tono, eliminará faltas ortográficas, adaptará la longitud a cada red social e insertará los hashtags y llamadas a la acción correspondientes.</p>
+      <!-- TARJETA DE SEGURIDAD Y CONSEJOS -->
+      <div class="bg-slate-900/60 border border-slate-800/80 rounded-2xl p-3.5 text-xs text-slate-400 flex items-start gap-2.5">
+        <i class="fas fa-shield-check text-emerald-400 mt-0.5 text-sm"></i>
+        <div>
+          <p class="font-semibold text-slate-300">Seguridad & Multiplataforma</p>
+          <p class="text-[11px] text-slate-400 mt-0.5">Tus contenidos se procesan de forma privada mediante la API oficial de Google Gemini y quedan listos para compartir directamente en tus apps.</p>
+        </div>
       </div>
 
     </section>
 
-    <!-- COLUMNA DERECHA: PREVISUALIZADOR MULTIPLATAFORMA -->
-    <section class="lg:col-span-7 space-y-4">
+    <!-- ============================================================== -->
+    <!-- COLUMNA 2: PREVISUALIZADOR MULTIPLATAFORMA (6 CANALES) -->
+    <!-- ============================================================== -->
+    <section id="pane-preview" class="lg:col-span-7 space-y-4 hidden lg:block">
       
-      <!-- BARRA DE PESTAÑAS DE PLATAFORMAS -->
+      <!-- BARRA DE PESTAÑAS RESPONSIVE -->
       <div class="flex items-center justify-between flex-wrap gap-2">
-        <div class="flex items-center space-x-1 bg-slate-900 p-1.5 rounded-2xl border border-slate-800 overflow-x-auto max-w-full">
-          <button onclick="switchTab('x')" id="tab-x" class="tab-btn px-3 py-1.5 rounded-xl text-xs font-bold transition flex items-center gap-1.5 bg-slate-800 text-white shadow">
-            <i class="fab fa-x-twitter"></i> X (Twitter)
+        <div class="flex items-center space-x-1 bg-slate-900 p-1.5 rounded-2xl border border-slate-800 overflow-x-auto max-w-full no-scrollbar">
+          <button onclick="switchTab('x')" id="tab-x" class="tab-btn px-2.5 sm:px-3 py-1.5 rounded-xl text-xs font-bold transition flex items-center gap-1.5 bg-slate-800 text-white shadow whitespace-nowrap">
+            <i class="fab fa-x-twitter"></i> X
           </button>
-          <button onclick="switchTab('instagram')" id="tab-instagram" class="tab-btn px-3 py-1.5 rounded-xl text-xs font-medium text-slate-400 hover:text-white transition flex items-center gap-1.5">
+          <button onclick="switchTab('instagram')" id="tab-instagram" class="tab-btn px-2.5 sm:px-3 py-1.5 rounded-xl text-xs font-medium text-slate-400 hover:text-white transition flex items-center gap-1.5 whitespace-nowrap">
             <i class="fab fa-instagram text-pink-500"></i> Instagram
           </button>
-          <button onclick="switchTab('facebook')" id="tab-facebook" class="tab-btn px-3 py-1.5 rounded-xl text-xs font-medium text-slate-400 hover:text-white transition flex items-center gap-1.5">
+          <button onclick="switchTab('facebook')" id="tab-facebook" class="tab-btn px-2.5 sm:px-3 py-1.5 rounded-xl text-xs font-medium text-slate-400 hover:text-white transition flex items-center gap-1.5 whitespace-nowrap">
             <i class="fab fa-facebook text-blue-500"></i> Facebook
           </button>
-          <button onclick="switchTab('whatsapp')" id="tab-whatsapp" class="tab-btn px-3 py-1.5 rounded-xl text-xs font-medium text-slate-400 hover:text-white transition flex items-center gap-1.5">
+          <button onclick="switchTab('whatsapp')" id="tab-whatsapp" class="tab-btn px-2.5 sm:px-3 py-1.5 rounded-xl text-xs font-medium text-slate-400 hover:text-white transition flex items-center gap-1.5 whitespace-nowrap">
             <i class="fab fa-whatsapp text-emerald-400"></i> WhatsApp
           </button>
-          <button onclick="switchTab('tiktok')" id="tab-tiktok" class="tab-btn px-3 py-1.5 rounded-xl text-xs font-medium text-slate-400 hover:text-white transition flex items-center gap-1.5">
+          <button onclick="switchTab('tiktok')" id="tab-tiktok" class="tab-btn px-2.5 sm:px-3 py-1.5 rounded-xl text-xs font-medium text-slate-400 hover:text-white transition flex items-center gap-1.5 whitespace-nowrap">
             <i class="fab fa-tiktok"></i> TikTok
           </button>
-          <button onclick="switchTab('web')" id="tab-web" class="tab-btn px-3 py-1.5 rounded-xl text-xs font-medium text-slate-400 hover:text-white transition flex items-center gap-1.5">
-            <i class="fas fa-globe text-cyan-400"></i> Web Club
+          <button onclick="switchTab('web')" id="tab-web" class="tab-btn px-2.5 sm:px-3 py-1.5 rounded-xl text-xs font-medium text-slate-400 hover:text-white transition flex items-center gap-1.5 whitespace-nowrap">
+            <i class="fas fa-globe text-cyan-400"></i> Web
           </button>
         </div>
 
-        <button onclick="copiarContenidoActual()" class="text-xs font-semibold px-3 py-2 rounded-xl bg-orange-500/10 hover:bg-orange-500/20 border border-orange-500/30 text-orange-400 transition flex items-center gap-1.5">
-          <i class="fas fa-copy"></i> <span id="copyBtnText">Copiar Texto</span>
-        </button>
+        <!-- ACCIONES RÁPIDAS: COPIAR Y COMPARTIR NATIVO -->
+        <div class="flex items-center space-x-1.5">
+          <button onclick="compartirNativo()" title="Compartir directamente desde móvil o tablet" 
+            class="text-xs font-semibold px-3 py-2 rounded-xl bg-blue-500/10 hover:bg-blue-500/20 border border-blue-500/30 text-blue-400 transition flex items-center gap-1.5">
+            <i class="fas fa-share-nodes"></i> <span class="hidden sm:inline">Compartir</span>
+          </button>
+          <button onclick="copiarContenidoActual()" 
+            class="text-xs font-semibold px-3 py-2 rounded-xl bg-orange-500/10 hover:bg-orange-500/20 border border-orange-500/30 text-orange-400 transition flex items-center gap-1.5">
+            <i class="fas fa-copy"></i> <span id="copyBtnText">Copiar</span>
+          </button>
+        </div>
       </div>
 
       <!-- CONTENEDOR DE LAS 6 VISTAS MOCKUP -->
-      <div class="bg-slate-900 border border-slate-800 rounded-2xl p-5 shadow-2xl min-h-[550px] relative">
+      <div class="bg-slate-900 border border-slate-800 rounded-3xl p-3 sm:p-5 shadow-2xl min-h-[500px] relative">
 
         <!-- OVERLAY DE CARGA -->
-        <div id="loadingOverlay" class="hidden absolute inset-0 bg-slate-950/80 backdrop-blur-sm rounded-2xl z-30 flex flex-col items-center justify-center space-y-3">
+        <div id="loadingOverlay" class="hidden absolute inset-0 bg-slate-950/85 backdrop-blur-sm rounded-3xl z-30 flex flex-col items-center justify-center p-4 text-center space-y-3">
           <div class="w-12 h-12 border-4 border-orange-500 border-t-transparent rounded-full animate-spin"></div>
-          <p class="text-sm font-semibold text-slate-200 animate-pulse">Gemini está supervisando y redactando los contenidos...</p>
+          <p class="text-sm font-bold text-slate-100 animate-pulse">Gemini está supervisando el contenido y adaptando los 6 canales...</p>
+          <p class="text-xs text-slate-400">Verificando tono de club, ortografía y hashtags oficiales</p>
         </div>
 
         <!-- ============================================================== -->
         <!-- 1. MOCKUP DE X (TWITTER) -->
         <!-- ============================================================== -->
         <div id="view-x" class="platform-view">
-          <div class="max-w-lg mx-auto bg-black text-white rounded-2xl border border-neutral-800 p-4 shadow-xl font-sans">
-            <!-- Header del Tweet -->
+          <div class="max-w-md mx-auto bg-black text-white rounded-2xl border border-neutral-800 p-4 shadow-xl font-sans">
+            <!-- Header Tweet -->
             <div class="flex items-start justify-between">
               <div class="flex items-center space-x-3">
                 <div class="w-10 h-10 rounded-full bg-gradient-to-tr from-orange-600 to-amber-500 flex items-center justify-center font-bold text-lg">🏀</div>
                 <div>
                   <div class="flex items-center gap-1">
-                    <span class="font-bold text-sm text-white hover:underline cursor-pointer">Club Baloncesto</span>
+                    <span class="font-bold text-sm text-white">Club Baloncesto</span>
                     <i class="fas fa-certificate text-sky-400 text-xs"></i>
                   </div>
                   <span class="text-xs text-neutral-500">@ClubBasket · Ahora</span>
                 </div>
               </div>
-              <i class="fas fa-ellipsis text-neutral-500 hover:text-sky-400 cursor-pointer"></i>
+              <i class="fas fa-ellipsis text-neutral-500"></i>
             </div>
 
-            <!-- Cuerpo del Tweet -->
+            <!-- Cuerpo Tweet -->
             <div class="mt-3 text-sm text-neutral-100 whitespace-pre-line leading-relaxed" id="preview-x-text">
               ¡Día de partido en casa! 🏀 Este fin de semana nuestro Senior Masculino A recibe a CB Los Leones en un choque crucial. ¡Llenemos el Esperanza y empujemos al equipo! 💪🔥
 
@@ -227,24 +273,26 @@
               ¡No faltes! #VamosBasket #OrgulloDeClub
             </div>
 
-            <!-- Imagen del Tweet -->
-            <div id="preview-x-img-wrapper" class="mt-3 rounded-2xl overflow-hidden border border-neutral-800 bg-neutral-900 max-h-72 flex items-center justify-center">
+            <!-- Imagen Tweet -->
+            <div class="mt-3 rounded-2xl overflow-hidden border border-neutral-800 bg-neutral-900 max-h-72 flex items-center justify-center">
               <img id="preview-x-img" src="https://images.unsplash.com/photo-1546519638-68e109498ffc?w=800&auto=format&fit=crop" alt="Basket" class="w-full h-full object-cover">
             </div>
 
-            <!-- Contador de caracteres -->
-            <div class="mt-2.5 flex items-center justify-between text-xs text-neutral-500 border-b border-neutral-800 pb-2.5">
-              <span id="charCountX" class="text-emerald-400 font-mono">198 / 280 caracteres</span>
-              <span class="text-[11px]"><i class="fas fa-check text-emerald-400 mr-1"></i> Formato óptimo para X</span>
+            <!-- Contador de caracteres y Botón directo a X -->
+            <div class="mt-3 flex items-center justify-between text-xs text-neutral-500 border-b border-neutral-800 pb-2.5">
+              <span id="charCountX" class="text-emerald-400 font-mono font-semibold">198 / 280 caracteres</span>
+              <a id="btnDirectX" href="#" target="_blank" class="text-sky-400 hover:underline flex items-center gap-1 text-[11px]">
+                <i class="fab fa-x-twitter"></i> Abrir en X
+              </a>
             </div>
 
-            <!-- Barra de Interacciones de X -->
-            <div class="flex justify-between items-center text-neutral-500 text-xs pt-2.5 px-2">
-              <span class="hover:text-sky-400 cursor-pointer flex items-center gap-1.5"><i class="far fa-comment"></i> 14</span>
-              <span class="hover:text-emerald-400 cursor-pointer flex items-center gap-1.5"><i class="fas fa-retweet"></i> 28</span>
-              <span class="hover:text-pink-500 cursor-pointer flex items-center gap-1.5"><i class="far fa-heart"></i> 142</span>
-              <span class="hover:text-sky-400 cursor-pointer flex items-center gap-1.5"><i class="far fa-bookmark"></i> 9</span>
-              <span class="hover:text-sky-400 cursor-pointer"><i class="fas fa-arrow-up-from-bracket"></i></span>
+            <!-- Barra Interacciones X -->
+            <div class="flex justify-between items-center text-neutral-500 text-xs pt-2 px-1">
+              <span class="flex items-center gap-1.5"><i class="far fa-comment"></i> 14</span>
+              <span class="flex items-center gap-1.5"><i class="fas fa-retweet"></i> 28</span>
+              <span class="flex items-center gap-1.5"><i class="far fa-heart"></i> 142</span>
+              <span class="flex items-center gap-1.5"><i class="far fa-bookmark"></i> 9</span>
+              <span><i class="fas fa-arrow-up-from-bracket"></i></span>
             </div>
           </div>
         </div>
@@ -271,14 +319,14 @@
             </div>
 
             <!-- IG Icons Bar -->
-            <div class="p-3 pb-1">
+            <div class="p-3 pb-2">
               <div class="flex justify-between items-center text-lg mb-2">
                 <div class="flex space-x-4">
-                  <i class="far fa-heart hover:text-red-500 cursor-pointer"></i>
-                  <i class="far fa-comment hover:text-neutral-400 cursor-pointer"></i>
-                  <i class="far fa-paper-plane hover:text-neutral-400 cursor-pointer"></i>
+                  <i class="far fa-heart"></i>
+                  <i class="far fa-comment"></i>
+                  <i class="far fa-paper-plane"></i>
                 </div>
-                <i class="far fa-bookmark hover:text-neutral-400 cursor-pointer"></i>
+                <i class="far fa-bookmark"></i>
               </div>
               <p class="text-xs font-bold mb-1">328 Me gusta</p>
               
@@ -295,8 +343,6 @@
 
                 #Baloncesto #Cantera #OrgulloBasket #FamiliaDeportiva #JornadaDeLiga
               </div>
-              <p class="text-[11px] text-neutral-500 mt-2">Ver los 24 comentarios</p>
-              <p class="text-[10px] text-neutral-600 uppercase mt-1">Hace 2 horas</p>
             </div>
           </div>
         </div>
@@ -305,7 +351,7 @@
         <!-- 3. MOCKUP DE FACEBOOK -->
         <!-- ============================================================== -->
         <div id="view-facebook" class="platform-view hidden">
-          <div class="max-w-lg mx-auto bg-slate-900 rounded-xl border border-slate-800 p-4 shadow-xl">
+          <div class="max-w-md mx-auto bg-slate-900 rounded-2xl border border-slate-800 p-4 shadow-xl">
             <!-- Header Facebook -->
             <div class="flex items-center space-x-3 mb-3">
               <div class="w-10 h-10 rounded-full bg-blue-600 flex items-center justify-center font-bold text-lg text-white">🏀</div>
@@ -324,25 +370,25 @@
             <div class="text-sm text-slate-200 leading-relaxed whitespace-pre-line mb-3" id="preview-facebook-text">
               ¡La emoción de la competición vuelve a nuestro pabellón!
 
-              Invitamos a todas las familias, socios y aficionados al baloncesto a acompañar a nuestro equipo en una nueva e intensa jornada de liga. Será un encuentro muy disputado donde la energía de la grada marcará la diferencia.
+              Invitamos a todas las familias, socios y aficionados al baloncesto a acompañar a nuestro equipo en una nueva e intensa jornada de liga.
 
               ¡No te quedes en casa y ven a animar al club de nuestro barrio!
             </div>
 
             <!-- Imagen Facebook -->
-            <div class="rounded-lg overflow-hidden border border-slate-800 mb-3 bg-slate-950 max-h-72 flex items-center justify-center">
+            <div class="rounded-xl overflow-hidden border border-slate-800 mb-3 bg-slate-950 max-h-72 flex items-center justify-center">
               <img id="preview-facebook-img" src="https://images.unsplash.com/photo-1546519638-68e109498ffc?w=800&auto=format&fit=crop" alt="Facebook Post" class="w-full h-full object-cover">
             </div>
 
-            <!-- Barra de Likes y Compartidos -->
-            <div class="flex items-center justify-between text-xs text-slate-400 border-t border-b border-slate-800/80 py-2 my-2">
+            <!-- Barra Likes y Compartir -->
+            <div class="flex items-center justify-between text-xs text-slate-400 border-t border-b border-slate-800 py-2 my-2">
               <span class="flex items-center gap-1"><i class="fas fa-thumbs-up text-blue-500"></i> 64 personas</span>
               <span>12 comentarios · 7 veces compartido</span>
             </div>
             <div class="grid grid-cols-3 text-center text-xs text-slate-400 pt-1 font-semibold">
-              <button class="hover:text-blue-400 py-1 flex items-center justify-center gap-1.5"><i class="far fa-thumbs-up"></i> Me gusta</button>
-              <button class="hover:text-blue-400 py-1 flex items-center justify-center gap-1.5"><i class="far fa-comment"></i> Comentar</button>
-              <button class="hover:text-blue-400 py-1 flex items-center justify-center gap-1.5"><i class="fas fa-share"></i> Compartir</button>
+              <span class="py-1 flex items-center justify-center gap-1.5"><i class="far fa-thumbs-up"></i> Me gusta</span>
+              <span class="py-1 flex items-center justify-center gap-1.5"><i class="far fa-comment"></i> Comentar</span>
+              <span class="py-1 flex items-center justify-center gap-1.5"><i class="fas fa-share"></i> Compartir</span>
             </div>
           </div>
         </div>
@@ -351,39 +397,40 @@
         <!-- 4. MOCKUP DE WHATSAPP -->
         <!-- ============================================================== -->
         <div id="view-whatsapp" class="platform-view hidden">
-          <div class="max-w-md mx-auto rounded-2xl overflow-hidden border border-slate-800 shadow-2xl">
+          <div class="max-w-md mx-auto rounded-3xl overflow-hidden border border-slate-800 shadow-2xl">
             <!-- Header WhatsApp -->
-            <div class="bg-[#1f2c34] text-white p-3 flex items-center space-x-3">
-              <div class="w-9 h-9 rounded-full bg-emerald-600 flex items-center justify-center font-bold text-sm">🏀</div>
-              <div class="flex-1 truncate">
-                <p class="text-sm font-bold truncate">Familias & Jugadores - Cantera</p>
-                <p class="text-[11px] text-slate-400 truncate">tú, Entrenador, Directiva...</p>
+            <div class="bg-[#1f2c34] text-white p-3 flex items-center justify-between">
+              <div class="flex items-center space-x-3 truncate">
+                <div class="w-9 h-9 rounded-full bg-emerald-600 flex items-center justify-center font-bold text-sm">🏀</div>
+                <div class="truncate">
+                  <p class="text-xs sm:text-sm font-bold truncate">Familias & Cantera CB</p>
+                  <p class="text-[10px] text-slate-400">tú, Entrenador, Directiva...</p>
+                </div>
               </div>
-              <div class="flex space-x-4 text-slate-400 text-sm">
-                <i class="fas fa-video"></i>
-                <i class="fas fa-phone"></i>
-                <i class="fas fa-ellipsis-vertical"></i>
-              </div>
+              <a id="btnDirectWhatsApp" href="#" target="_blank" 
+                class="text-xs bg-emerald-500/20 hover:bg-emerald-500/30 text-emerald-400 border border-emerald-500/30 px-2.5 py-1 rounded-lg font-medium flex items-center gap-1">
+                <i class="fab fa-whatsapp"></i> <span class="hidden sm:inline">Enviar</span>
+              </a>
             </div>
 
-            <!-- Pantalla del Chat -->
-            <div class="whatsapp-bg p-4 min-h-[380px] flex flex-col justify-end">
-              <!-- Burbuja de mensaje recibida -->
-              <div class="bg-[#005c4b] text-white p-3.5 rounded-2xl rounded-tr-none max-w-[90%] self-end shadow-md">
+            <!-- Pantalla Chat -->
+            <div class="whatsapp-bg p-3.5 min-h-[350px] flex flex-col justify-end">
+              <!-- Burbuja Verde -->
+              <div class="bg-[#005c4b] text-white p-3.5 rounded-2xl rounded-tr-none max-w-[92%] self-end shadow-md">
                 
-                <!-- Imagen en WhatsApp si existe -->
-                <div id="preview-whatsapp-img-wrapper" class="mb-2 rounded-xl overflow-hidden border border-emerald-800/50 max-h-48">
+                <!-- Imagen si existe -->
+                <div class="mb-2 rounded-xl overflow-hidden border border-emerald-800/50 max-h-48">
                   <img id="preview-whatsapp-img" src="https://images.unsplash.com/photo-1546519638-68e109498ffc?w=800&auto=format&fit=crop" class="w-full h-full object-cover">
                 </div>
 
-                <!-- Texto WhatsApp -->
+                <!-- Texto con Negritas -->
                 <div class="text-xs leading-relaxed whitespace-pre-line text-emerald-50" id="preview-whatsapp-text">
                   🏀 *CONVOCATORIA Y PRÓXIMO ENCUENTRO* 🏀
 
                   Hola a todos/as, os dejamos los detalles del partido de esta jornada:
 
                   📅 *Día:* Sábado 14 de Noviembre
-                  ⏱️ *Hora del partido:* 18:30h (Convocatoria: 17:30h)
+                  ⏱️ *Hora:* 18:30h (Convocatoria: 17:30h)
                   📍 *Pabellón:* Municipal Esperanza
                   🆚 *Rival:* CB Los Leones
 
@@ -403,92 +450,86 @@
         <!-- 5. MOCKUP DE TIKTOK / REELS (9:16) -->
         <!-- ============================================================== -->
         <div id="view-tiktok" class="platform-view hidden">
-          <div class="grid grid-cols-1 md:grid-cols-12 gap-5 items-start">
+          <div class="grid grid-cols-1 md:grid-cols-12 gap-4 items-start">
             
-            <!-- Smartphone 9:16 Mockup -->
-            <div class="md:col-span-5 max-w-[280px] mx-auto w-full aspect-[9/16] bg-black rounded-[36px] border-4 border-slate-700 relative overflow-hidden shadow-2xl flex flex-col justify-between p-3.5 text-white">
-              <!-- Fondo (Imagen subida) -->
-              <img id="preview-tiktok-img" src="https://images.unsplash.com/photo-1546519638-68e109498ffc?w=800&auto=format&fit=crop" class="absolute inset-0 w-full h-full object-cover opacity-65">
-              <div class="absolute inset-0 bg-gradient-to-b from-black/40 via-transparent to-black/90"></div>
+            <!-- Smartphone 9:16 -->
+            <div class="md:col-span-5 max-w-[260px] mx-auto w-full aspect-[9/16] bg-black rounded-[32px] border-4 border-slate-700 relative overflow-hidden shadow-2xl flex flex-col justify-between p-3.5 text-white">
+              <img id="preview-tiktok-img" src="https://images.unsplash.com/photo-1546519638-68e109498ffc?w=800&auto=format&fit=crop" class="absolute inset-0 w-full h-full object-cover opacity-60">
+              <div class="absolute inset-0 bg-gradient-to-b from-black/50 via-transparent to-black/90"></div>
 
-              <!-- Top Bar -->
               <div class="relative z-10 flex justify-between items-center text-xs font-bold pt-1">
                 <span>Siguiendo</span>
                 <span class="border-b-2 border-white pb-0.5">Para ti</span>
-                <i class="fas fa-magnifying-glass text-sm"></i>
+                <i class="fas fa-magnifying-glass text-xs"></i>
               </div>
 
-              <!-- Gancho en Pantalla (0-3s) -->
-              <div class="relative z-10 text-center my-auto px-2">
-                <span id="preview-tiktok-hook" class="inline-block bg-amber-400 text-black font-black text-xs px-3 py-1.5 rounded-lg shadow-lg uppercase tracking-wide transform -rotate-1">
-                  ¡A 0.8 SEGUNDOS DEL FINAL! 😱🏀
+              <!-- Gancho 0-3s en pantalla -->
+              <div class="relative z-10 text-center my-auto px-1">
+                <span id="preview-tiktok-hook" class="inline-block bg-amber-400 text-black font-black text-xs px-2.5 py-1.5 rounded-lg shadow-lg uppercase tracking-wide">
+                  ¡A 0.8s DEL FINAL PASÓ ESTO! 😱🏀
                 </span>
               </div>
 
-              <!-- Controles Laterales y Descripción -->
+              <!-- Información y controles laterales -->
               <div class="relative z-10 flex items-end justify-between">
-                <!-- Información inferior -->
-                <div class="space-y-1.5 max-w-[75%]">
+                <div class="space-y-1 max-w-[75%]">
                   <p class="font-bold text-xs">@cbesperanza</p>
                   <p class="text-[11px] text-slate-200 line-clamp-2" id="preview-tiktok-caption">
                     ¿Tú habrías metido este tiro libre decisivo? 🔥🏀 #BasketTok #Cantera
                   </p>
                   <p class="text-[10px] text-slate-300 flex items-center gap-1.5 truncate">
-                    <i class="fas fa-music text-[9px] animate-spin"></i>
-                    <span id="preview-tiktok-audio">Sonido original - Trap Deportivo (130 BPM)</span>
+                    <i class="fas fa-music text-[9px]"></i>
+                    <span id="preview-tiktok-audio">Sonido original - Trap Deportivo</span>
                   </p>
                 </div>
 
-                <!-- Iconos laterales -->
-                <div class="flex flex-col items-center space-y-3.5 text-slate-100 text-center">
-                  <div class="w-8 h-8 rounded-full border border-white flex items-center justify-center bg-orange-600 text-xs font-bold mb-1">🏀</div>
-                  <div><i class="fas fa-heart text-xl hover:text-red-500"></i><p class="text-[10px]">12.4k</p></div>
-                  <div><i class="fas fa-comment-dots text-xl"></i><p class="text-[10px]">184</p></div>
-                  <div><i class="fas fa-bookmark text-xl"></i><p class="text-[10px]">620</p></div>
-                  <div><i class="fas fa-share text-xl"></i><p class="text-[10px]">Compartir</p></div>
-                  <div class="w-7 h-7 rounded-full bg-slate-800 border-2 border-slate-600 flex items-center justify-center animate-spin"><i class="fas fa-record-vinyl text-xs"></i></div>
+                <div class="flex flex-col items-center space-y-3 text-slate-100 text-center text-xs">
+                  <div class="w-7 h-7 rounded-full bg-orange-600 flex items-center justify-center font-bold text-xs">🏀</div>
+                  <div><i class="fas fa-heart text-base text-red-500"></i><p class="text-[9px]">12.4k</p></div>
+                  <div><i class="fas fa-comment-dots text-base"></i><p class="text-[9px]">184</p></div>
+                  <div><i class="fas fa-bookmark text-base"></i><p class="text-[9px]">620</p></div>
                 </div>
               </div>
             </div>
 
-            <!-- Tabla del Guion Técnico de 30s -->
-            <div class="md:col-span-7 bg-slate-950 p-4 rounded-xl border border-slate-800 space-y-3">
+            <!-- Tabla Guion 30s -->
+            <div class="md:col-span-7 bg-slate-950 p-4 rounded-2xl border border-slate-800 space-y-2.5">
               <div class="flex items-center justify-between border-b border-slate-800 pb-2">
                 <h4 class="text-xs font-bold uppercase tracking-wider text-orange-400 flex items-center gap-1.5">
-                  <i class="fas fa-clapperboard"></i> Guion Técnico de Retención (30 Segundos)
+                  <i class="fas fa-clapperboard"></i> Guion Técnico de Retención (30s)
                 </h4>
-                <span class="text-[11px] bg-slate-800 text-slate-300 px-2 py-0.5 rounded">Formato 9:16</span>
+                <span class="text-[10px] bg-slate-800 text-slate-300 px-2 py-0.5 rounded">Formato 9:16</span>
               </div>
 
               <div class="overflow-x-auto">
                 <table class="w-full text-left text-xs border-collapse">
                   <thead>
                     <tr class="text-slate-400 border-b border-slate-800">
-                      <th class="py-2 px-2">Tiempo</th>
-                      <th class="py-2 px-2">Visual</th>
-                      <th class="py-2 px-2">Locución / Audio</th>
+                      <th class="py-2 px-1.5">Tiempo</th>
+                      <th class="py-2 px-1.5">Visual</th>
+                      <th class="py-2 px-1.5">Locución</th>
                     </tr>
                   </thead>
                   <tbody id="tiktokGuionBody" class="divide-y divide-slate-900 text-slate-300">
                     <tr>
-                      <td class="py-2.5 px-2 font-bold text-amber-400 whitespace-nowrap">0-3s</td>
-                      <td class="py-2.5 px-2">Gancho visual con tiro libre de infarto</td>
-                      <td class="py-2.5 px-2 font-medium text-slate-100">"¿Tirarías tú este tiro con todo el pabellón gritándote?"</td>
+                      <td class="py-2 px-1.5 font-bold text-amber-400 whitespace-nowrap">0-3s</td>
+                      <td class="py-2 px-1.5">Gancho visual con tiro libre de infarto</td>
+                      <td class="py-2 px-1.5 font-medium text-slate-100">"¿Tirarías tú este tiro libre?"</td>
                     </tr>
                     <tr>
-                      <td class="py-2.5 px-2 font-bold text-amber-400 whitespace-nowrap">3-15s</td>
-                      <td class="py-2.5 px-2">Cortes rápidos de 1s con la emoción del partido</td>
-                      <td class="py-2.5 px-2 font-medium text-slate-100">"El duelo frente a Alcorcón fue una batalla de poder a poder..."</td>
+                      <td class="py-2 px-1.5 font-bold text-amber-400 whitespace-nowrap">3-15s</td>
+                      <td class="py-2 px-1.5">Cortes rápidos de 1s con el partido</td>
+                      <td class="py-2 px-1.5 font-medium text-slate-100">"El duelo fue una batalla de poder a poder..."</td>
                     </tr>
                     <tr>
-                      <td class="py-2.5 px-2 font-bold text-amber-400 whitespace-nowrap">15-25s</td>
-                      <td class="py-2.5 px-2">Cámara lenta del balón entrando y piña del equipo</td>
-                      <td class="py-2.5 px-2 font-medium text-slate-100">"A falta de 0.8s, Hugo no perdonó. Victoria de infarto."</td>
+                      <td class="py-2 px-1.5 font-bold text-amber-400 whitespace-nowrap">15-25s</td>
+                      <td class="py-2 px-1.5">Cámara lenta del balón entrando</td>
+                      <td class="py-2 px-1.5 font-medium text-slate-100">"A falta de 0.8s, Hugo no perdonó."</td>
                     </tr>
                     <tr>
-                      <td class="py-2.5 px-2 font-bold text-amber-400 whitespace-nowrap">25-30s</td>
-                      <td class="py-2.5 px-2">Logo animado del club y botón de seguir</td>
-                      <td class="py-2.5 px-2 font-medium text-slate-100">"Síguenos si amas el basket de cantera tanto como nosotros."</td>
+                      <td class="py-2 px-1.5 font-bold text-amber-400 whitespace-nowrap">25-30s</td>
+                      <td class="py-2 px-1.5">Logo del club y botón de seguir</td>
+                      <td class="py-2 px-1.5 font-medium text-slate-100">"Síguenos si amas el basket tanto como nosotros."</td>
                     </tr>
                   </tbody>
                 </table>
@@ -502,50 +543,43 @@
         <!-- 6. MOCKUP DE LA PÁGINA WEB OFICIAL -->
         <!-- ============================================================== -->
         <div id="view-web" class="platform-view hidden">
-          <div class="max-w-2xl mx-auto bg-slate-950 rounded-2xl border border-slate-800 overflow-hidden shadow-2xl">
-            <!-- Barra del navegador web simulada -->
-            <div class="bg-slate-900 px-4 py-2 border-b border-slate-800 flex items-center space-x-2 text-xs text-slate-400">
-              <span class="w-2.5 h-2.5 rounded-full bg-red-500/80"></span>
-              <span class="w-2.5 h-2.5 rounded-full bg-amber-500/80"></span>
-              <span class="w-2.5 h-2.5 rounded-full bg-emerald-500/80"></span>
-              <span class="ml-2 bg-slate-950 px-3 py-1 rounded-md text-[11px] text-slate-400 border border-slate-800 flex-1 truncate font-mono">
-                https://www.clubbaloncesto.com/noticias/cronica-jornada
+          <div class="max-w-xl mx-auto bg-slate-950 rounded-2xl border border-slate-800 overflow-hidden shadow-2xl">
+            <!-- Barra navegador simulada -->
+            <div class="bg-slate-900 px-3.5 py-2 border-b border-slate-800 flex items-center space-x-1.5 text-xs text-slate-400">
+              <span class="w-2 h-2 rounded-full bg-red-500/80"></span>
+              <span class="w-2 h-2 rounded-full bg-amber-500/80"></span>
+              <span class="w-2 h-2 rounded-full bg-emerald-500/80"></span>
+              <span class="ml-2 bg-slate-950 px-2.5 py-0.5 rounded text-[11px] text-slate-400 border border-slate-800 flex-1 truncate font-mono">
+                https://www.clubbaloncesto.com/noticias
               </span>
             </div>
 
-            <!-- Cabecera de Noticia -->
-            <div class="relative h-60 bg-slate-900 overflow-hidden">
+            <!-- Cabecera Noticia -->
+            <div class="relative h-48 sm:h-56 bg-slate-900 overflow-hidden">
               <img id="preview-web-img" src="https://images.unsplash.com/photo-1546519638-68e109498ffc?w=800&auto=format&fit=crop" class="w-full h-full object-cover">
               <div class="absolute inset-0 bg-gradient-to-t from-slate-950 via-slate-950/40 to-transparent"></div>
-              <div class="absolute bottom-4 left-6 right-6">
-                <span class="bg-orange-500 text-white font-bold text-[10px] uppercase px-2.5 py-1 rounded-md shadow">Primera Nacional</span>
-                <h2 id="preview-web-title" class="text-xl md:text-2xl font-black text-white mt-2 leading-tight">
+              <div class="absolute bottom-3 left-4 right-4">
+                <span class="bg-orange-500 text-white font-bold text-[9px] uppercase px-2 py-0.5 rounded shadow">Competición Oficial</span>
+                <h2 id="preview-web-title" class="text-base sm:text-xl font-black text-white mt-1 leading-tight">
                   Previa de la Jornada: Nuestro Senior Masculino A recibe a CB Los Leones
                 </h2>
               </div>
             </div>
 
-            <!-- Cuerpo del Artículo -->
-            <div class="p-6 space-y-4">
-              <div class="flex items-center space-x-3 text-xs text-slate-400 border-b border-slate-900 pb-3">
-                <span class="flex items-center gap-1.5"><i class="far fa-user text-orange-400"></i> Redacción CB</span>
+            <!-- Cuerpo Artículo -->
+            <div class="p-4 sm:p-5 space-y-3">
+              <div class="flex items-center space-x-2 text-[11px] text-slate-400 border-b border-slate-900 pb-2">
+                <span><i class="far fa-user text-orange-400 mr-1"></i> Redacción CB</span>
                 <span>·</span>
-                <span class="flex items-center gap-1.5"><i class="far fa-calendar"></i> 8 de Noviembre</span>
-                <span>·</span>
-                <span class="flex items-center gap-1.5"><i class="far fa-clock"></i> 2 min de lectura</span>
+                <span><i class="far fa-calendar mr-1"></i> 8 de Noviembre</span>
               </div>
 
-              <div id="preview-web-body" class="text-sm leading-relaxed text-slate-300 space-y-3 whitespace-pre-line">
-                El Pabellón Municipal Esperanza se prepara para acoger este sábado un encuentro de máxima intensidad. Nuestro primer equipo masculino se enfrenta a CB Los Leones en una jornada marcada en rojo en el calendario.
+              <div id="preview-web-body" class="text-xs sm:text-sm leading-relaxed text-slate-300 space-y-2 whitespace-pre-line">
+                El Pabellón Municipal Esperanza se prepara para acoger este sábado un encuentro de máxima intensidad. Nuestro primer equipo masculino se enfrenta a CB Los Leones en una jornada clave.
 
-                El cuerpo técnico ha destacado durante la semana el excelente compromiso defensivo de toda la plantilla y la importancia de mantener la concentración desde el salto inicial.
+                El cuerpo técnico ha destacado el excelente compromiso defensivo de toda la plantilla y la importancia de mantener la concentración desde el primer cuarto.
 
-                Hacemos un llamamiento a toda la familia del club, cantera y simpatizantes para acudir a la pista y llenar la grada. ¡Vuestro aliento siempre marca la diferencia!
-              </div>
-
-              <div class="pt-4 border-t border-slate-900 flex justify-between items-center text-xs text-slate-500">
-                <span>Categoría: Crónicas y Previas</span>
-                <span class="text-orange-400 font-semibold cursor-pointer hover:underline">Compartir esta noticia →</span>
+                Hacemos un llamamiento a toda la afición y cantera para acudir al pabellón. ¡Vuestro aliento es decisivo!
               </div>
             </div>
           </div>
@@ -556,29 +590,49 @@
 
   </main>
 
-  <!-- JAVASCRIPT REACTIVO -->
+  <!-- JAVASCRIPT RESPONSIVE & MULTIPLATAFORMA -->
   <script>
     let modoActual = 'prepartido';
     let plataformaActual = 'x';
     let datosGenerados = null;
     let urlImagenActual = 'https://images.unsplash.com/photo-1546519638-68e109498ffc?w=800&auto=format&fit=crop';
 
+    // Manejo de pestañas móviles (Editor vs Preview)
+    function setMobileView(view) {
+      const paneEditor = document.getElementById('pane-editor');
+      const panePreview = document.getElementById('pane-preview');
+      const tabEditor = document.getElementById('mobileTabEditor');
+      const tabPreview = document.getElementById('mobileTabPreview');
+
+      if (view === 'editor') {
+        paneEditor.classList.remove('hidden');
+        panePreview.classList.add('hidden');
+        tabEditor.className = 'py-2 text-xs font-bold rounded-lg bg-orange-500 text-white transition flex items-center justify-center gap-1.5';
+        tabPreview.className = 'py-2 text-xs font-bold rounded-lg text-slate-400 hover:text-white transition flex items-center justify-center gap-1.5';
+      } else {
+        paneEditor.classList.add('hidden');
+        panePreview.classList.remove('hidden');
+        tabEditor.className = 'py-2 text-xs font-bold rounded-lg text-slate-400 hover:text-white transition flex items-center justify-center gap-1.5';
+        tabPreview.className = 'py-2 text-xs font-bold rounded-lg bg-orange-500 text-white transition flex items-center justify-center gap-1.5';
+      }
+    }
+
     function setModo(modo, btn) {
       modoActual = modo;
       document.querySelectorAll('.modo-btn').forEach(b => {
-        b.className = 'modo-btn text-xs font-medium py-2 px-2.5 rounded-xl border border-slate-800 bg-slate-800 text-slate-400 hover:text-white flex items-center justify-center gap-1.5 transition';
+        b.className = 'modo-btn text-xs font-medium py-2.5 px-2 rounded-xl border border-slate-800 bg-slate-800 text-slate-400 hover:text-white flex items-center justify-center gap-1.5 transition';
       });
-      btn.className = 'modo-btn text-xs font-medium py-2 px-2.5 rounded-xl border border-orange-500/50 bg-orange-500/10 text-orange-400 flex items-center justify-center gap-1.5 transition';
+      btn.className = 'modo-btn text-xs font-medium py-2.5 px-2 rounded-xl border border-orange-500/50 bg-orange-500/10 text-orange-400 flex items-center justify-center gap-1.5 transition';
     }
 
     function switchTab(plataforma) {
       plataformaActual = plataforma;
       document.querySelectorAll('.tab-btn').forEach(b => {
-        b.className = 'tab-btn px-3 py-1.5 rounded-xl text-xs font-medium text-slate-400 hover:text-white transition flex items-center gap-1.5';
+        b.className = 'tab-btn px-2.5 sm:px-3 py-1.5 rounded-xl text-xs font-medium text-slate-400 hover:text-white transition flex items-center gap-1.5 whitespace-nowrap';
       });
       const activeBtn = document.getElementById(`tab-${plataforma}`);
       if (activeBtn) {
-        activeBtn.className = 'tab-btn px-3 py-1.5 rounded-xl text-xs font-bold transition flex items-center gap-1.5 bg-slate-800 text-white shadow';
+        activeBtn.className = 'tab-btn px-2.5 sm:px-3 py-1.5 rounded-xl text-xs font-bold transition flex items-center gap-1.5 bg-slate-800 text-white shadow whitespace-nowrap';
       }
 
       document.querySelectorAll('.platform-view').forEach(v => v.classList.add('hidden'));
@@ -606,11 +660,12 @@
           document.getElementById('uploadPreviewContainer').classList.remove('hidden');
           document.getElementById('uploadPreviewImg').src = data.url;
           document.getElementById('uploadFilename').textContent = file.name;
+        } else {
+          alert(data.error || 'Error al subir la imagen');
         }
       })
       .catch(err => {
         console.error('Error al subir:', err);
-        // Fallback local con FileReader
         const reader = new FileReader();
         reader.onload = function(e) {
           urlImagenActual = e.target.result;
@@ -662,6 +717,11 @@
         if (res.data) {
           datosGenerados = res.data;
           volcarDatosEnPantalla(res.data);
+          
+          // En móvil, cambiar automáticamente a la pestaña de previsualización
+          if (window.innerWidth < 1024) {
+            setMobileView('preview');
+          }
         } else {
           alert('Error al generar: ' + (res.error || 'Respuesta inválida'));
         }
@@ -679,7 +739,11 @@
         const len = d.x.length;
         const charElem = document.getElementById('charCountX');
         charElem.textContent = `${len} / 280 caracteres`;
-        charElem.className = len <= 280 ? 'text-emerald-400 font-mono' : 'text-red-400 font-mono font-bold';
+        charElem.className = len <= 280 ? 'text-emerald-400 font-mono font-semibold' : 'text-red-400 font-mono font-bold';
+        
+        // Enlace directo para tuitear en móvil/web
+        const tweetUrl = `https://twitter.com/intent/tweet?text=${encodeURIComponent(d.x)}`;
+        document.getElementById('btnDirectX').href = tweetUrl;
       }
 
       // 2. Instagram
@@ -695,6 +759,9 @@
       // 4. WhatsApp
       if (d.whatsapp) {
         document.getElementById('preview-whatsapp-text').textContent = d.whatsapp;
+        // Enlace directo para abrir en WhatsApp Web o App Móvil
+        const waUrl = `https://api.whatsapp.com/send?text=${encodeURIComponent(d.whatsapp)}`;
+        document.getElementById('btnDirectWhatsApp').href = waUrl;
       }
 
       // 5. TikTok
@@ -709,9 +776,9 @@
           d.tiktok.guion.forEach(fila => {
             const tr = document.createElement('tr');
             tr.innerHTML = `
-              <td class="py-2.5 px-2 font-bold text-amber-400 whitespace-nowrap">${fila.tiempo || ''}</td>
-              <td class="py-2.5 px-2">${fila.visual || ''}</td>
-              <td class="py-2.5 px-2 font-medium text-slate-100">${fila.locucion || ''}</td>
+              <td class="py-2 px-1.5 font-bold text-amber-400 whitespace-nowrap">${fila.tiempo || ''}</td>
+              <td class="py-2 px-1.5">${fila.visual || ''}</td>
+              <td class="py-2 px-1.5 font-medium text-slate-100">${fila.locucion || ''}</td>
             `;
             tbody.appendChild(tr);
           });
@@ -725,31 +792,46 @@
       }
     }
 
-    function copiarContenidoActual() {
-      let textoACopiar = '';
+    function obtenerTextoActual() {
       if (!datosGenerados) {
-        // Copiar lo que haya en el mockup visible
-        if (plataformaActual === 'x') textoACopiar = document.getElementById('preview-x-text').innerText;
-        else if (plataformaActual === 'instagram') textoACopiar = document.getElementById('preview-instagram-text').innerText;
-        else if (plataformaActual === 'facebook') textoACopiar = document.getElementById('preview-facebook-text').innerText;
-        else if (plataformaActual === 'whatsapp') textoACopiar = document.getElementById('preview-whatsapp-text').innerText;
-        else if (plataformaActual === 'tiktok') textoACopiar = document.getElementById('preview-tiktok-caption').innerText;
-        else if (plataformaActual === 'web') textoACopiar = document.getElementById('preview-web-title').innerText + '\n\n' + document.getElementById('preview-web-body').innerText;
+        if (plataformaActual === 'x') return document.getElementById('preview-x-text').innerText;
+        if (plataformaActual === 'instagram') return document.getElementById('preview-instagram-text').innerText;
+        if (plataformaActual === 'facebook') return document.getElementById('preview-facebook-text').innerText;
+        if (plataformaActual === 'whatsapp') return document.getElementById('preview-whatsapp-text').innerText;
+        if (plataformaActual === 'tiktok') return document.getElementById('preview-tiktok-caption').innerText;
+        if (plataformaActual === 'web') return document.getElementById('preview-web-title').innerText + '\n\n' + document.getElementById('preview-web-body').innerText;
       } else {
-        if (plataformaActual === 'x') textoACopiar = datosGenerados.x || '';
-        else if (plataformaActual === 'instagram') textoACopiar = datosGenerados.instagram || '';
-        else if (plataformaActual === 'facebook') textoACopiar = datosGenerados.facebook || '';
-        else if (plataformaActual === 'whatsapp') textoACopiar = datosGenerados.whatsapp || '';
-        else if (plataformaActual === 'tiktok') textoACopiar = datosGenerados.tiktok?.copy || '';
-        else if (plataformaActual === 'web') textoACopiar = `${datosGenerados.web?.titulo}\n\n${datosGenerados.web?.cuerpo}`;
+        if (plataformaActual === 'x') return datosGenerados.x || '';
+        if (plataformaActual === 'instagram') return datosGenerados.instagram || '';
+        if (plataformaActual === 'facebook') return datosGenerados.facebook || '';
+        if (plataformaActual === 'whatsapp') return datosGenerados.whatsapp || '';
+        if (plataformaActual === 'tiktok') return datosGenerados.tiktok?.copy || '';
+        if (plataformaActual === 'web') return `${datosGenerados.web?.titulo}\n\n${datosGenerados.web?.cuerpo}`;
       }
+      return '';
+    }
 
-      navigator.clipboard.writeText(textoACopiar).then(() => {
+    function copiarContenidoActual() {
+      const texto = obtenerTextoActual();
+      navigator.clipboard.writeText(texto).then(() => {
         const btnText = document.getElementById('copyBtnText');
         const orig = btnText.textContent;
         btnText.textContent = '¡Copiado! ✓';
         setTimeout(() => { btnText.textContent = orig; }, 2000);
       });
+    }
+
+    // Compartir nativo en móviles y tablets (Web Share API)
+    function compartirNativo() {
+      const texto = obtenerTextoActual();
+      if (navigator.share) {
+        navigator.share({
+          title: 'Publicación CB Baloncesto',
+          text: texto
+        }).catch(() => {});
+      } else {
+        copiarContenidoActual();
+      }
     }
 
     function cargarEjemplo() {
