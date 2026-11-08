@@ -2,6 +2,8 @@ import os
 import json
 import uuid
 import hmac
+import sqlite3
+from datetime import datetime, timezone
 from functools import wraps
 from flask import Flask, render_template, request, jsonify, redirect, url_for, session, send_from_directory
 from werkzeug.utils import secure_filename
@@ -16,14 +18,27 @@ app = Flask(__name__)
 # Configuración de Seguridad y Sesión
 app.config['SECRET_KEY'] = os.environ.get("SECRET_KEY", "cbe-super-secret-key-2026-basket-club")
 app.config['UPLOAD_FOLDER'] = os.path.join(os.path.dirname(__file__), 'static', 'uploads')
+app.config['DB_PATH'] = os.path.join(os.path.dirname(__file__), 'database', 'auditoria_local.db')
 app.config['MAX_CONTENT_LENGTH'] = 16 * 1024 * 1024  # Máximo 16 MB por subida
 ALLOWED_EXTENSIONS = {'png', 'jpg', 'jpeg', 'webp', 'gif'}
 
-# Credenciales de Acceso Administrador (configurables en .env)
+# Credenciales de Administrador
 ADMIN_USERNAME = os.environ.get("ADMIN_USERNAME", "admin")
 ADMIN_PASSWORD = os.environ.get("ADMIN_PASSWORD", "basketclub2026")
 
 os.makedirs(app.config['UPLOAD_FOLDER'], exist_ok=True)
+os.makedirs(os.path.dirname(app.config['DB_PATH']), exist_ok=True)
+
+# Inicializar Supabase si está disponible
+SUPABASE_URL = os.environ.get("SUPABASE_URL", "").replace("/rest/v1/", "").replace("/rest/v1", "").rstrip("/")
+SUPABASE_KEY = os.environ.get("SUPABASE_KEY", "")
+client_supabase = None
+if SUPABASE_URL and SUPABASE_KEY:
+    try:
+        from supabase import create_client
+        client_supabase = create_client(SUPABASE_URL, SUPABASE_KEY)
+    except Exception as e:
+        print(f"Aviso: Supabase no disponible en inicio ({e})")
 
 # Inicializar Google Gemini
 GEMINI_API_KEY = os.environ.get("GEMINI_API_KEY", "")
@@ -31,7 +46,61 @@ client_gemini = genai.Client(api_key=GEMINI_API_KEY) if GEMINI_API_KEY else None
 MODEL_NAME = "gemini-3.1-flash-lite"
 
 # ==============================================================================
-# MIDDLEWARE Y SEGURIDAD
+# BASE DE DATOS LOCAL DE AUDITORÍA (Garantiza registro inmediato 100% fiable)
+# ==============================================================================
+def init_local_audit_db():
+    conn = sqlite3.connect(app.config['DB_PATH'])
+    cursor = conn.cursor()
+    cursor.execute('''
+        CREATE TABLE IF NOT EXISTS auditoria (
+            id INTEGER PRIMARY KEY AUTOINCREMENT,
+            usuario TEXT NOT NULL,
+            accion TEXT NOT NULL,
+            detalles TEXT,
+            ip TEXT,
+            fecha TIMESTAMP DEFAULT CURRENT_TIMESTAMP
+        )
+    ''')
+    conn.commit()
+    conn.close()
+
+init_local_audit_db()
+
+def registrar_auditoria(usuario: str, accion: str, detalles: str, ip: str = None):
+    """Registra cualquier acción en la base de datos local y en Supabase (si existe la tabla)."""
+    if not ip:
+        ip = request.headers.get('X-Forwarded-For', request.remote_addr or '127.0.0.1').split(',')[0].strip()
+    
+    fecha_iso = datetime.now(timezone.utc).strftime("%Y-%m-%d %H:%M:%S UTC")
+
+    # 1. Registro Local (SQLite - siempre disponible sin fallos de red)
+    try:
+        conn = sqlite3.connect(app.config['DB_PATH'])
+        cursor = conn.cursor()
+        cursor.execute(
+            "INSERT INTO auditoria (usuario, accion, detalles, ip, fecha) VALUES (?, ?, ?, ?, ?)",
+            (usuario, accion, detalles, ip, fecha_iso)
+        )
+        conn.commit()
+        conn.close()
+    except Exception as e:
+        print(f"Error al registrar auditoría local: {e}")
+
+    # 2. Registro Remoto en Supabase (si está configurada la tabla)
+    if client_supabase:
+        try:
+            client_supabase.table("auditoria").insert({
+                "usuario": usuario,
+                "accion": accion,
+                "detalles": detalles,
+                "ip": ip
+            }).execute()
+        except Exception:
+            # Si la tabla auditoria no ha sido creada aún en Supabase, no interrumpe el flujo
+            pass
+
+# ==============================================================================
+# SEGURIDAD Y MIDDLEWARE
 # ==============================================================================
 @app.after_request
 def aplicar_cabeceras_seguridad(response):
@@ -54,7 +123,7 @@ def allowed_file(filename):
     return '.' in filename and filename.rsplit('.', 1)[1].lower() in ALLOWED_EXTENSIONS
 
 # ==============================================================================
-# PROMPT DEL SUPERVISOR INTELIGENTE
+# PROMPT DEL SUPERVISOR IA
 # ==============================================================================
 PROMPT_SUPERVISOR_GENERAL = """Eres el Director de Comunicación y Contenidos de élite para un Club de Baloncesto.
 Tu función es recibir un borrador, notas de entrenador, datos de partido o un anuncio en bruto del club, supervisarlo, optimizarlo y devolver el contenido adaptado a 6 plataformas específicas:
@@ -65,7 +134,7 @@ Tu función es recibir un borrador, notas de entrenador, datos de partido o un a
 5. Página Web: Titular de prensa y artículo periodístico de 2-3 párrafos.
 6. TikTok: Texto gancho para pantalla (0-3s), copy corto, audio sugerido y guion técnico en 4 tramos (0-3s, 3-15s, 15-25s, 25-30s).
 
-DEBES RESPONDER EXCLUSIVAMENTE CON UN OBJETO JSON VÁLIDO (sin bloques de código markdown ni texto adicional fuera del JSON), con esta estructura exacta:
+DEBES RESPONDER EXCLUSIVAMENTE CON UN OBJETO JSON VÁLIDO (sin bloques de código markdown ni texto fuera del JSON):
 {
   "x": "Texto adaptado a X...",
   "instagram": "Texto para Instagram...",
@@ -90,7 +159,7 @@ DEBES RESPONDER EXCLUSIVAMENTE CON UN OBJETO JSON VÁLIDO (sin bloques de códig
 """
 
 # ==============================================================================
-# RUTAS DE AUTENTICACIÓN Y NAVEGACIÓN
+# RUTAS DE AUTENTICACIÓN
 # ==============================================================================
 @app.route('/login', methods=['GET', 'POST'])
 def login():
@@ -102,21 +171,24 @@ def login():
         user = request.form.get('username', '').strip()
         pwd = request.form.get('password', '').strip()
 
-        # Comparación segura para evitar ataques de temporización (timing attacks)
         val_user = hmac.compare_digest(user.encode('utf-8'), ADMIN_USERNAME.encode('utf-8'))
         val_pwd = hmac.compare_digest(pwd.encode('utf-8'), ADMIN_PASSWORD.encode('utf-8'))
 
         if val_user and val_pwd:
             session['logged_in'] = True
             session['user'] = user
+            registrar_auditoria(user, "LOGIN", "Inicio de sesión exitoso en el panel web")
             return redirect(url_for('index'))
         else:
+            registrar_auditoria(user or "Desconocido", "LOGIN_FALLIDO", f"Intento de acceso fallido con usuario: {user}")
             error = "Usuario o contraseña incorrectos."
 
     return render_template('login.html', error=error)
 
 @app.route('/logout')
 def logout():
+    user = session.get('user', 'Usuario')
+    registrar_auditoria(user, "LOGOUT", "Cierre de sesión voluntario")
     session.clear()
     return redirect(url_for('login'))
 
@@ -131,11 +203,12 @@ def uploaded_file(filename):
     return send_from_directory(app.config['UPLOAD_FOLDER'], secure_filename(filename))
 
 # ==============================================================================
-# RUTAS API (PROTEGIDAS)
+# RUTAS API PROTEGIDAS Y AUDITADAS
 # ==============================================================================
 @app.route('/api/upload', methods=['POST'])
 @login_required
 def upload_file():
+    user = session.get('user', 'Admin')
     if 'foto' not in request.files:
         return jsonify({'error': 'No se envió ninguna imagen'}), 400
     file = request.files['foto']
@@ -146,12 +219,19 @@ def upload_file():
         unique_name = f"{uuid.uuid4().hex[:12]}.{ext}"
         filepath = os.path.join(app.config['UPLOAD_FOLDER'], unique_name)
         file.save(filepath)
+        
+        registrar_auditoria(
+            user, 
+            "SUBIDA_FOTO", 
+            f"Subida de imagen: {file.filename} -> Guardada como {unique_name}"
+        )
         return jsonify({'url': f"/uploads/{unique_name}", 'filename': unique_name})
     return jsonify({'error': 'Formato de imagen no permitido (Usa JPG, PNG o WEBP)'}), 400
 
 @app.route('/api/supervisar', methods=['POST'])
 @login_required
 def supervisar():
+    user = session.get('user', 'Admin')
     data = request.json or {}
     texto_usuario = data.get('texto', '').strip()
     modo = data.get('modo', 'general')
@@ -183,13 +263,50 @@ def supervisar():
             )
         )
         resultado_json = json.loads(response.text)
+        
+        # Registrar en auditoría
+        resumen_texto = texto_usuario[:80] + "..." if len(texto_usuario) > 80 else texto_usuario
+        registrar_auditoria(
+            user, 
+            "SUPERVISION_IA", 
+            f"Modo: {modo.upper()} | Texto base: '{resumen_texto}' | Generados 6 canales con Gemini"
+        )
+
         return jsonify({'success': True, 'data': resultado_json})
     except Exception as e:
-        print(f"Error con Gemini: {e}")
+        registrar_auditoria(user, "ERROR_IA", f"Fallo en generación: {str(e)}")
         return jsonify({'error': f"Error al generar con Gemini: {str(e)}"}), 500
 
+@app.route('/api/auditoria', methods=['GET'])
+@login_required
+def obtener_auditoria():
+    """Devuelve las últimas 50 operaciones registradas para el panel de control."""
+    try:
+        conn = sqlite3.connect(app.config['DB_PATH'])
+        conn.row_factory = sqlite3.Row
+        cursor = conn.cursor()
+        cursor.execute("SELECT id, usuario, accion, detalles, ip, fecha FROM auditoria ORDER BY id DESC LIMIT 50")
+        filas = cursor.fetchall()
+        logs = [dict(fila) for fila in filas]
+        conn.close()
+        return jsonify({'success': True, 'logs': logs})
+    except Exception as e:
+        return jsonify({'error': str(e)}), 500
+
+@app.route('/api/registrar_accion', methods=['POST'])
+@login_required
+def registrar_accion_manual():
+    """Permite registrar acciones como 'PUBLICACION', 'MODIFICACION' o 'BORRADO' desde la web."""
+    user = session.get('user', 'Admin')
+    data = request.json or {}
+    accion = data.get('accion', 'OPERACION').upper()
+    detalles = data.get('detalles', 'Acción realizada desde la interfaz web')
+    
+    registrar_auditoria(user, accion, detalles)
+    return jsonify({'success': True})
+
 if __name__ == '__main__':
-    print("🏀 SERVIDOR SEGURO Y CONTROLADO ACTIVO 🏀")
+    print("🏀 SERVIDOR SEGURO Y CONTROLADO ACTIVO (START.PY) 🏀")
     print("👉 Abre tu navegador en: http://localhost:5000")
-    print(f"🔑 Credenciales por defecto -> Usuario: {ADMIN_USERNAME} | Contraseña: {ADMIN_PASSWORD}")
-    app.run(host='0.0.0.0', port=5000, debug=True)
+    print(f"🔑 Credenciales -> Usuario: {ADMIN_USERNAME} | Contraseña: {ADMIN_PASSWORD}")
+    app.run(host='0.0.0.0', port=5000, debug=False)

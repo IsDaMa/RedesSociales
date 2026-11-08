@@ -47,6 +47,16 @@ CREATE TABLE IF NOT EXISTS noticias (
     publicado_noticia BOOLEAN DEFAULT FALSE
 );
 
+-- 5. Tabla de Auditoría y Registro de Actividad (Control de Accesos y Operaciones)
+CREATE TABLE IF NOT EXISTS auditoria (
+    id SERIAL PRIMARY KEY,
+    usuario VARCHAR(100) NOT NULL,
+    accion VARCHAR(50) NOT NULL, -- LOGIN, LOGOUT, SUPERVISION_IA, SUBIDA_FOTO, PUBLICACION, MODIFICACION, BORRADO
+    detalles TEXT,
+    ip VARCHAR(50),
+    fecha TIMESTAMP WITH TIME ZONE DEFAULT CURRENT_TIMESTAMP
+);
+
 -- ================================================================
 -- PERMISOS Y ACCESO (RLS) PARA SCRIPTS Y GITHUB ACTIONS
 -- Permite que los scripts de automatización puedan leer y escribir
@@ -55,5 +65,6 @@ ALTER TABLE IF EXISTS equipos DISABLE ROW LEVEL SECURITY;
 ALTER TABLE IF EXISTS partidos DISABLE ROW LEVEL SECURITY;
 ALTER TABLE IF EXISTS resultados DISABLE ROW LEVEL SECURITY;
 ALTER TABLE IF EXISTS noticias DISABLE ROW LEVEL SECURITY;
+ALTER TABLE IF EXISTS auditoria DISABLE ROW LEVEL SECURITY;
 
 

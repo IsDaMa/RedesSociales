@@ -68,6 +68,12 @@
 
       <!-- ZONA DE ACCESO CONTROLADO Y PERFIL -->
       <div class="flex items-center space-x-2 sm:space-x-3">
+        <button type="button" onclick="abrirModalAuditoria()" title="Ver registro de actividad y accesos" 
+          class="text-xs px-2.5 sm:px-3 py-1.5 rounded-xl border border-slate-700 bg-slate-800 hover:bg-slate-700 text-slate-200 transition flex items-center gap-1.5 font-medium shadow-sm">
+          <i class="fas fa-list-check text-orange-400"></i>
+          <span class="hidden sm:inline">Auditoría</span>
+        </button>
+
         <div class="hidden sm:flex items-center gap-2 px-3 py-1 bg-slate-800/80 rounded-xl border border-slate-700/60 text-xs">
           <i class="fas fa-shield-halved text-emerald-400"></i>
           <span class="text-slate-300 font-medium">{{ username }}</span>
@@ -845,6 +851,117 @@
         document.getElementById('textoBase').value = "Abrimos inscripciones para el Campus de Navidad de Baloncesto para chicos y chicas de 6 a 16 años del 26 al 30 de diciembre en el pabellón. Plazas limitadas.";
       }
     }
+
+    // Modal de Auditoría
+    function abrirModalAuditoria() {
+      document.getElementById('modalAuditoria').classList.remove('hidden');
+      cargarLogsAuditoria();
+    }
+
+    function cerrarModalAuditoria() {
+      document.getElementById('modalAuditoria').classList.add('hidden');
+    }
+
+    function cargarLogsAuditoria() {
+      const tbody = document.getElementById('tbodyAuditoria');
+      tbody.innerHTML = '<tr><td colspan="5" class="py-6 text-center text-slate-400"><i class="fas fa-spinner fa-spin mr-2"></i> Cargando registro de auditoría...</td></tr>';
+
+      fetch('/api/auditoria')
+        .then(r => r.json())
+        .then(res => {
+          if (res.logs && res.logs.length > 0) {
+            tbody.innerHTML = '';
+            res.logs.forEach(log => {
+              let badgeColor = 'bg-slate-800 text-slate-300 border-slate-700';
+              if (log.accion === 'LOGIN') badgeColor = 'bg-emerald-500/10 text-emerald-400 border-emerald-500/30';
+              else if (log.accion === 'LOGIN_FALLIDO') badgeColor = 'bg-red-500/10 text-red-400 border-red-500/30';
+              else if (log.accion === 'SUPERVISION_IA') badgeColor = 'bg-orange-500/10 text-orange-400 border-orange-500/30';
+              else if (log.accion === 'SUBIDA_FOTO') badgeColor = 'bg-blue-500/10 text-blue-400 border-blue-500/30';
+              else if (log.accion === 'PUBLICACION') badgeColor = 'bg-purple-500/10 text-purple-400 border-purple-500/30';
+              else if (log.accion === 'LOGOUT') badgeColor = 'bg-slate-700/50 text-slate-400 border-slate-600';
+
+              const tr = document.createElement('tr');
+              tr.className = 'border-b border-slate-800/80 hover:bg-slate-800/30 transition text-xs';
+              tr.innerHTML = `
+                <td class="py-3 px-3 text-slate-400 whitespace-nowrap font-mono text-[11px]">${log.fecha || ''}</td>
+                <td class="py-3 px-3 font-semibold text-slate-200">${log.usuario || ''}</td>
+                <td class="py-3 px-3">
+                  <span class="inline-block px-2 py-0.5 rounded-md border text-[10px] font-bold ${badgeColor}">
+                    ${log.accion || ''}
+                  </span>
+                </td>
+                <td class="py-3 px-3 text-slate-300 max-w-xs sm:max-w-md truncate" title="${log.detalles || ''}">
+                  ${log.detalles || ''}
+                </td>
+                <td class="py-3 px-3 text-slate-400 font-mono text-[11px] whitespace-nowrap">${log.ip || '-'}</td>
+              `;
+              tbody.appendChild(tr);
+            });
+          } else {
+            tbody.innerHTML = '<tr><td colspan="5" class="py-6 text-center text-slate-400">No hay registros de actividad todavía.</td></tr>';
+          }
+        })
+        .catch(err => {
+          tbody.innerHTML = `<tr><td colspan="5" class="py-6 text-center text-red-400">Error al cargar registros: ${err}</td></tr>`;
+        });
+    }
   </script>
+
+  <!-- MODAL DE AUDITORÍA Y CONTROL DE ACTIVIDAD -->
+  <div id="modalAuditoria" class="hidden fixed inset-0 z-50 flex items-center justify-center p-3 sm:p-6 bg-slate-950/80 backdrop-blur-sm">
+    <div class="bg-slate-900 border border-slate-800 rounded-3xl w-full max-w-4xl max-h-[85vh] flex flex-col shadow-2xl overflow-hidden">
+      
+      <!-- Header Modal -->
+      <div class="p-4 sm:p-5 border-b border-slate-800 flex items-center justify-between">
+        <div class="flex items-center space-x-3">
+          <div class="w-9 h-9 rounded-xl bg-orange-500/10 border border-orange-500/30 text-orange-400 flex items-center justify-center">
+            <i class="fas fa-shield-halved"></i>
+          </div>
+          <div>
+            <h3 class="text-sm sm:text-base font-bold text-white">Registro de Auditoría y Control de Actividad</h3>
+            <p class="text-[11px] text-slate-400">Historial completo con usuario, fecha, operación realizada y dirección IP</p>
+          </div>
+        </div>
+        <div class="flex items-center space-x-2">
+          <button onclick="cargarLogsAuditoria()" class="p-2 text-slate-400 hover:text-orange-400 text-sm transition" title="Actualizar">
+            <i class="fas fa-rotate"></i>
+          </button>
+          <button onclick="cerrarModalAuditoria()" class="p-2 text-slate-400 hover:text-white text-base transition">
+            <i class="fas fa-xmark"></i>
+          </button>
+        </div>
+      </div>
+
+      <!-- Tabla con Scroll -->
+      <div class="p-4 overflow-y-auto flex-1">
+        <div class="overflow-x-auto rounded-xl border border-slate-800">
+          <table class="w-full text-left text-xs">
+            <thead class="bg-slate-950 text-slate-400 uppercase text-[10px] font-bold tracking-wider border-b border-slate-800">
+              <tr>
+                <th class="py-2.5 px-3">Fecha y Hora</th>
+                <th class="py-2.5 px-3">Usuario</th>
+                <th class="py-2.5 px-3">Operación</th>
+                <th class="py-2.5 px-3">Detalles</th>
+                <th class="py-2.5 px-3">IP</th>
+              </tr>
+            </thead>
+            <tbody id="tbodyAuditoria" class="divide-y divide-slate-800/50">
+              <!-- Se rellena vía JS -->
+            </tbody>
+          </table>
+        </div>
+      </div>
+
+      <!-- Footer Modal -->
+      <div class="p-3 bg-slate-950 border-t border-slate-800 flex justify-between items-center text-xs text-slate-500">
+        <span>Mostrando las últimas 50 operaciones</span>
+        <button onclick="cerrarModalAuditoria()" class="px-4 py-1.5 bg-slate-800 hover:bg-slate-700 text-slate-200 rounded-xl font-medium transition">
+          Cerrar
+        </button>
+      </div>
+
+    </div>
+  </div>
+
 </body>
 </html>
