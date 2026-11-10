@@ -1253,6 +1253,7 @@
     // GENERADOR DE CARTELES Y MARCADORES EN VIVO (CANVAS HD 1080x1080)
     // ==============================================================
     let tipoCartelActual = 'marcador';
+    let formatoCartelActual = 'cuadrado';
     const logoOficialCartel = new Image();
     logoOficialCartel.crossOrigin = 'anonymous';
     logoOficialCartel.src = 'https://www.cbcartama.com/img/logo.webp';
@@ -1287,6 +1288,40 @@
     function cerrarModalCartel() {
       const modal = document.getElementById('modalCartel');
       if (modal) modal.classList.add('hidden');
+    }
+
+    function setFormatoCartel(formato) {
+      formatoCartelActual = formato;
+      const btnC = document.getElementById('btnFormatoCuadrado');
+      const btnH = document.getElementById('btnFormatoHistoria');
+      const wrapper = document.getElementById('cartelCanvasWrapper');
+      const badge = document.getElementById('cartelBadgeRes');
+      const textoRes = document.getElementById('cartelResolucionTexto');
+
+      const clsActiva = 'py-2 px-2 text-xs font-bold rounded-xl bg-yellow-500 text-slate-950 transition flex items-center justify-center gap-1.5 shadow';
+      const clsInactiva = 'py-2 px-2 text-xs font-medium rounded-xl text-emerald-300 hover:text-white transition flex items-center justify-center gap-1.5';
+
+      if (btnC) btnC.className = formato === 'cuadrado' ? clsActiva : clsInactiva;
+      if (btnH) btnH.className = formato === 'historia' ? clsActiva : clsInactiva;
+
+      if (wrapper) {
+        if (formato === 'historia') {
+          wrapper.className = 'relative w-full max-w-[270px] max-h-[500px] aspect-[9/16] rounded-2xl overflow-hidden shadow-2xl border border-emerald-800/60 bg-black';
+        } else {
+          wrapper.className = 'relative w-full max-w-[400px] aspect-square rounded-2xl overflow-hidden shadow-2xl border border-emerald-800/60 bg-black';
+        }
+      }
+
+      if (badge) {
+        badge.textContent = formato === 'historia' ? '1080x1920 (9:16 Story)' : '1080x1080 (1:1 Feed)';
+      }
+      if (textoRes) {
+        textoRes.innerHTML = formato === 'historia' 
+          ? '<i class="fas fa-mobile-screen text-yellow-400 mr-1"></i> Formato vertical HD para Instagram Stories, Reels, TikTok y Estados (1080 × 1920 px).'
+          : '<i class="fas fa-sparkles text-yellow-400 mr-1"></i> Resolución optimizada para Feed de Instagram, Facebook, WhatsApp y X (1080 × 1080 px).';
+      }
+
+      renderizarCartelCanvas();
     }
 
     function setTipoCartel(tipo) {
@@ -1333,11 +1368,15 @@
       if (!canvas) return;
       const ctx = canvas.getContext('2d');
 
+      const isStory = formatoCartelActual === 'historia';
       const W = 1080;
-      const H = 1080;
+      const H = isStory ? 1920 : 1080;
+
+      canvas.width = W;
+      canvas.height = H;
 
       // 1. Fondo Degradado CB Cártama
-      const gradFondo = ctx.createRadialGradient(W / 2, H / 2, 80, W / 2, H / 2, 750);
+      const gradFondo = ctx.createRadialGradient(W / 2, H / 2, 80, W / 2, H / 2, isStory ? 1100 : 750);
       gradFondo.addColorStop(0, '#0a301a');
       gradFondo.addColorStop(0.6, '#06170d');
       gradFondo.addColorStop(1, '#020704');
@@ -1349,11 +1388,11 @@
       ctx.strokeStyle = 'rgba(234, 179, 8, 0.12)';
       ctx.lineWidth = 8;
       ctx.beginPath();
-      ctx.arc(W / 2, H / 2, 340, 0, Math.PI * 2);
+      ctx.arc(W / 2, H / 2, isStory ? 400 : 340, 0, Math.PI * 2);
       ctx.stroke();
 
       ctx.beginPath();
-      ctx.arc(W / 2, H / 2, 100, 0, Math.PI * 2);
+      ctx.arc(W / 2, H / 2, 110, 0, Math.PI * 2);
       ctx.stroke();
 
       ctx.beginPath();
@@ -1365,25 +1404,25 @@
       ctx.fillStyle = 'rgba(234, 179, 8, 0.15)';
       ctx.beginPath();
       ctx.moveTo(W, 0);
-      ctx.lineTo(W - 240, 0);
-      ctx.lineTo(W, 240);
+      ctx.lineTo(W - (isStory ? 300 : 240), 0);
+      ctx.lineTo(W, (isStory ? 300 : 240));
       ctx.closePath();
       ctx.fill();
 
       ctx.fillStyle = 'rgba(21, 128, 61, 0.25)';
       ctx.beginPath();
       ctx.moveTo(0, H);
-      ctx.lineTo(260, H);
-      ctx.lineTo(0, H - 260);
+      ctx.lineTo(isStory ? 320 : 260, H);
+      ctx.lineTo(0, H - (isStory ? 320 : 260));
       ctx.closePath();
       ctx.fill();
       ctx.restore();
 
-      // 3. Cabecera Oficial
-      const logoW = 120;
-      const logoH = 120;
+      // 3. Cabecera Oficial (con márgenes de seguridad para Story)
+      const logoW = isStory ? 140 : 120;
+      const logoH = isStory ? 140 : 120;
       const logoX = W / 2 - logoW / 2;
-      const logoY = 55;
+      const logoY = isStory ? 180 : 55;
 
       if (logoOficialCartel.complete && logoOficialCartel.naturalWidth > 0) {
         try { ctx.drawImage(logoOficialCartel, logoX, logoY, logoW, logoH); } catch(e){}
@@ -1396,37 +1435,39 @@
 
       ctx.textAlign = 'center';
       ctx.fillStyle = '#eab308';
-      ctx.font = '900 42px Montserrat, Arial Black, sans-serif';
+      ctx.font = isStory ? '900 46px Montserrat, Arial Black, sans-serif' : '900 42px Montserrat, Arial Black, sans-serif';
       ctx.shadowColor = 'rgba(0,0,0,0.8)';
       ctx.shadowBlur = 10;
-      ctx.fillText('CLUB BALONCESTO CÁRTAMA', W / 2, 220);
+      ctx.fillText('CLUB BALONCESTO CÁRTAMA', W / 2, isStory ? 365 : 220);
 
       ctx.fillStyle = '#94a3b8';
       ctx.font = '700 20px Montserrat, sans-serif';
       ctx.shadowBlur = 0;
-      ctx.fillText('CIUDAD DEPORTIVA DE CÁRTAMA · MÁLAGA', W / 2, 255);
+      ctx.fillText('CIUDAD DEPORTIVA DE CÁRTAMA · MÁLAGA', W / 2, isStory ? 405 : 255);
 
       // 4. Categoría
       const catElem = document.getElementById('cartelCategoria');
       const categoria = (catElem ? catElem.value : 'SENIOR MASCULINO').toUpperCase();
+      const catY = isStory ? 450 : 280;
       ctx.fillStyle = '#15803d';
-      roundRect(ctx, W / 2 - 250, 280, 500, 48, 24, true, false);
+      roundRect(ctx, W / 2 - 250, catY, 500, 48, 24, true, false);
       ctx.strokeStyle = '#eab308';
       ctx.lineWidth = 2;
-      roundRect(ctx, W / 2 - 250, 280, 500, 48, 24, false, true);
+      roundRect(ctx, W / 2 - 250, catY, 500, 48, 24, false, true);
 
       ctx.fillStyle = '#ffffff';
       ctx.font = '900 22px Montserrat, sans-serif';
-      ctx.fillText(categoria, W / 2, 312);
+      ctx.fillText(categoria, W / 2, catY + 32);
 
       // 5. Lema
       const titElem = document.getElementById('cartelTitular');
       const titular = (titElem ? titElem.value : '¡PARTIDAZO!').toUpperCase();
+      const titY = isStory ? 555 : 385;
       ctx.fillStyle = '#fde047';
       ctx.font = '900 36px Montserrat, Arial Black, sans-serif';
       ctx.shadowColor = 'rgba(0,0,0,0.9)';
       ctx.shadowBlur = 8;
-      ctx.fillText(titular, W / 2, 385);
+      ctx.fillText(titular, W / 2, titY);
       ctx.shadowBlur = 0;
 
       // 6. Contenido específico
@@ -1438,50 +1479,66 @@
         const pRivElem = document.getElementById('cartelPuntosRival');
         const pRival = pRivElem ? pRivElem.value : '0';
 
+        const boxY = isStory ? 680 : 430;
+        const boxH = isStory ? 440 : 320;
+        const scoreY = isStory ? 970 : 675;
+        const teamNameY = isStory ? 765 : 505;
+
+        // Tarjeta Local
         ctx.fillStyle = 'rgba(7, 25, 16, 0.85)';
-        roundRect(ctx, 110, 430, 390, 320, 28, true, false);
+        roundRect(ctx, isStory ? 100 : 110, boxY, isStory ? 410 : 390, boxH, 28, true, false);
         ctx.strokeStyle = '#eab308';
         ctx.lineWidth = 4;
-        roundRect(ctx, 110, 430, 390, 320, 28, false, true);
+        roundRect(ctx, isStory ? 100 : 110, boxY, isStory ? 410 : 390, boxH, 28, false, true);
 
         ctx.fillStyle = '#eab308';
         ctx.font = '900 36px Montserrat, sans-serif';
-        ctx.fillText('CB CÁRTAMA', 305, 505);
+        ctx.fillText('CB CÁRTAMA', isStory ? 305 : 305, teamNameY);
 
         ctx.fillStyle = '#ffffff';
-        ctx.font = '900 135px Montserrat, Arial Black, sans-serif';
+        ctx.font = isStory ? '900 145px Montserrat, Arial Black, sans-serif' : '900 135px Montserrat, Arial Black, sans-serif';
         ctx.shadowColor = 'rgba(234, 179, 8, 0.4)';
         ctx.shadowBlur = 20;
-        ctx.fillText(pLocal, 305, 675);
+        ctx.fillText(pLocal, isStory ? 305 : 305, scoreY);
         ctx.shadowBlur = 0;
 
+        // VS
         ctx.fillStyle = '#eab308';
         ctx.font = '900 48px Montserrat, sans-serif';
-        ctx.fillText('VS', W / 2, 595);
+        ctx.fillText('VS', W / 2, isStory ? 885 : 595);
 
+        // Tarjeta Rival
         ctx.fillStyle = 'rgba(7, 25, 16, 0.85)';
-        roundRect(ctx, 580, 430, 390, 320, 28, true, false);
+        roundRect(ctx, isStory ? 570 : 580, boxY, isStory ? 410 : 390, boxH, 28, true, false);
         ctx.strokeStyle = '#334155';
         ctx.lineWidth = 4;
-        roundRect(ctx, 580, 430, 390, 320, 28, false, true);
+        roundRect(ctx, isStory ? 570 : 580, boxY, isStory ? 410 : 390, boxH, 28, false, true);
 
         ctx.fillStyle = '#cbd5e1';
         ctx.font = '900 32px Montserrat, sans-serif';
         const rivalCorto = rival.length > 18 ? rival.substring(0, 16) + '...' : rival;
-        ctx.fillText(rivalCorto, 775, 505);
+        ctx.fillText(rivalCorto, isStory ? 775 : 775, teamNameY);
 
         ctx.fillStyle = '#f8fafc';
-        ctx.font = '900 135px Montserrat, Arial Black, sans-serif';
-        ctx.fillText(pRival, 775, 675);
+        ctx.font = isStory ? '900 145px Montserrat, Arial Black, sans-serif' : '900 135px Montserrat, Arial Black, sans-serif';
+        ctx.fillText(pRival, isStory ? 775 : 775, scoreY);
 
+        // Badge Marcador Final
+        const badgeY = isStory ? 1200 : 785;
         ctx.fillStyle = '#166534';
-        roundRect(ctx, W / 2 - 160, 785, 320, 52, 26, true, false);
+        roundRect(ctx, W / 2 - 170, badgeY, 340, 54, 27, true, false);
         ctx.strokeStyle = '#22c55e';
         ctx.lineWidth = 2;
-        roundRect(ctx, W / 2 - 160, 785, 320, 52, 26, false, true);
+        roundRect(ctx, W / 2 - 170, badgeY, 340, 54, 27, false, true);
         ctx.fillStyle = '#ffffff';
         ctx.font = '900 24px Montserrat, sans-serif';
-        ctx.fillText('MARCADOR FINAL', W / 2, 820);
+        ctx.fillText('MARCADOR FINAL', W / 2, badgeY + 36);
+
+        if (isStory) {
+          ctx.fillStyle = '#eab308';
+          ctx.font = '700 26px Montserrat, sans-serif';
+          ctx.fillText('🏀 ADN CÁRTAMA · ORGULLO Y CANTERA', W / 2, 1340);
+        }
 
       } else if (tipoCartelActual === 'prepartido') {
         const rivElem = document.getElementById('cartelRival');
@@ -1491,31 +1548,69 @@
         const lugElem = document.getElementById('cartelLugar');
         const lugar = (lugElem ? lugElem.value : 'CIUDAD DEPORTIVA DE CÁRTAMA').toUpperCase();
 
-        ctx.fillStyle = '#ffffff';
-        ctx.font = '900 48px Montserrat, Arial Black, sans-serif';
-        ctx.fillText('CB CÁRTAMA', W / 2, 480);
+        if (isStory) {
+          ctx.fillStyle = '#ffffff';
+          ctx.font = '900 52px Montserrat, Arial Black, sans-serif';
+          ctx.fillText('CB CÁRTAMA', W / 2, 730);
 
-        ctx.fillStyle = '#eab308';
-        ctx.font = '900 36px Montserrat, sans-serif';
-        ctx.fillText('VS', W / 2, 545);
+          ctx.fillStyle = '#eab308';
+          ctx.font = '900 40px Montserrat, sans-serif';
+          ctx.fillText('VS', W / 2, 810);
 
-        ctx.fillStyle = '#cbd5e1';
-        ctx.font = '900 44px Montserrat, Arial Black, sans-serif';
-        ctx.fillText(rival, W / 2, 615);
+          ctx.fillStyle = '#cbd5e1';
+          ctx.font = '900 48px Montserrat, Arial Black, sans-serif';
+          ctx.fillText(rival, W / 2, 895);
 
-        ctx.fillStyle = 'rgba(7, 25, 16, 0.9)';
-        roundRect(ctx, 140, 680, 800, 160, 24, true, false);
-        ctx.strokeStyle = '#eab308';
-        ctx.lineWidth = 3;
-        roundRect(ctx, 140, 680, 800, 160, 24, false, true);
+          ctx.fillStyle = 'rgba(7, 25, 16, 0.9)';
+          roundRect(ctx, 120, 980, 840, 260, 28, true, false);
+          ctx.strokeStyle = '#eab308';
+          ctx.lineWidth = 3;
+          roundRect(ctx, 120, 980, 840, 260, 28, false, true);
 
-        ctx.fillStyle = '#fde047';
-        ctx.font = '900 38px Montserrat, sans-serif';
-        ctx.fillText('📅 ' + fechaHora, W / 2, 745);
+          ctx.fillStyle = '#fde047';
+          ctx.font = '900 42px Montserrat, sans-serif';
+          ctx.fillText('📅 ' + fechaHora, W / 2, 1070);
 
-        ctx.fillStyle = '#ffffff';
-        ctx.font = '700 24px Montserrat, sans-serif';
-        ctx.fillText('📍 ' + lugar + ' · ENTRADA LIBRE', W / 2, 800);
+          ctx.fillStyle = '#ffffff';
+          ctx.font = '700 26px Montserrat, sans-serif';
+          ctx.fillText('📍 ' + lugar, W / 2, 1145);
+
+          ctx.fillStyle = '#166534';
+          roundRect(ctx, W / 2 - 240, 1310, 480, 56, 28, true, false);
+          ctx.strokeStyle = '#22c55e';
+          ctx.lineWidth = 2;
+          roundRect(ctx, W / 2 - 240, 1310, 480, 56, 28, false, true);
+          ctx.fillStyle = '#ffffff';
+          ctx.font = '900 24px Montserrat, sans-serif';
+          ctx.fillText('🎟️ ENTRADA LIBRE · ¡TE ESPERAMOS!', W / 2, 1346);
+
+        } else {
+          ctx.fillStyle = '#ffffff';
+          ctx.font = '900 48px Montserrat, Arial Black, sans-serif';
+          ctx.fillText('CB CÁRTAMA', W / 2, 480);
+
+          ctx.fillStyle = '#eab308';
+          ctx.font = '900 36px Montserrat, sans-serif';
+          ctx.fillText('VS', W / 2, 545);
+
+          ctx.fillStyle = '#cbd5e1';
+          ctx.font = '900 44px Montserrat, Arial Black, sans-serif';
+          ctx.fillText(rival, W / 2, 615);
+
+          ctx.fillStyle = 'rgba(7, 25, 16, 0.9)';
+          roundRect(ctx, 140, 680, 800, 160, 24, true, false);
+          ctx.strokeStyle = '#eab308';
+          ctx.lineWidth = 3;
+          roundRect(ctx, 140, 680, 800, 160, 24, false, true);
+
+          ctx.fillStyle = '#fde047';
+          ctx.font = '900 38px Montserrat, sans-serif';
+          ctx.fillText('📅 ' + fechaHora, W / 2, 745);
+
+          ctx.fillStyle = '#ffffff';
+          ctx.font = '700 24px Montserrat, sans-serif';
+          ctx.fillText('📍 ' + lugar + ' · ENTRADA LIBRE', W / 2, 800);
+        }
 
       } else if (tipoCartelActual === 'mvp') {
         const nomElem = document.getElementById('cartelMvpNombre');
@@ -1523,45 +1618,78 @@
         const merElem = document.getElementById('cartelMvpMerito');
         const merito = merElem ? merElem.value : 'Valores de esfuerzo y compañerismo';
 
-        ctx.fillStyle = '#eab308';
-        ctx.font = '900 38px Montserrat, sans-serif';
-        ctx.fillText('⭐ JUGADOR/A DE LA JORNADA ⭐', W / 2, 460);
+        if (isStory) {
+          ctx.fillStyle = '#eab308';
+          ctx.font = '900 42px Montserrat, sans-serif';
+          ctx.fillText('⭐ JUGADOR/A DE LA JORNADA ⭐', W / 2, 720);
 
-        ctx.fillStyle = '#ffffff';
-        ctx.font = '900 64px Montserrat, Arial Black, sans-serif';
-        ctx.shadowColor = 'rgba(234, 179, 8, 0.5)';
-        ctx.shadowBlur = 15;
-        ctx.fillText(nombre, W / 2, 570);
-        ctx.shadowBlur = 0;
+          ctx.fillStyle = '#ffffff';
+          ctx.font = '900 68px Montserrat, Arial Black, sans-serif';
+          ctx.shadowColor = 'rgba(234, 179, 8, 0.5)';
+          ctx.shadowBlur = 18;
+          ctx.fillText(nombre, W / 2, 850);
+          ctx.shadowBlur = 0;
 
-        ctx.fillStyle = 'rgba(7, 25, 16, 0.9)';
-        roundRect(ctx, 140, 650, 800, 160, 24, true, false);
-        ctx.strokeStyle = '#22c55e';
-        ctx.lineWidth = 3;
-        roundRect(ctx, 140, 650, 800, 160, 24, false, true);
+          ctx.fillStyle = 'rgba(7, 25, 16, 0.9)';
+          roundRect(ctx, 120, 950, 840, 280, 28, true, false);
+          ctx.strokeStyle = '#22c55e';
+          ctx.lineWidth = 3;
+          roundRect(ctx, 120, 950, 840, 280, 28, false, true);
 
-        ctx.fillStyle = '#fde047';
-        ctx.font = '900 24px Montserrat, sans-serif';
-        ctx.fillText('ADN VERDE Y AMARILLO', W / 2, 705);
+          ctx.fillStyle = '#fde047';
+          ctx.font = '900 26px Montserrat, sans-serif';
+          ctx.fillText('ADN VERDE Y AMARILLO', W / 2, 1015);
 
-        ctx.fillStyle = '#ffffff';
-        ctx.font = '500 24px Montserrat, sans-serif';
-        wrapCanvasText(ctx, '"' + merito + '"', W / 2, 760, 740, 30);
+          ctx.fillStyle = '#ffffff';
+          ctx.font = '500 26px Montserrat, sans-serif';
+          wrapCanvasText(ctx, '"' + merito + '"', W / 2, 1080, 780, 34);
+
+          ctx.fillStyle = '#eab308';
+          ctx.font = '700 24px Montserrat, sans-serif';
+          ctx.fillText('VALORES · COMPAÑERISMO · ESFUERZO', W / 2, 1340);
+
+        } else {
+          ctx.fillStyle = '#eab308';
+          ctx.font = '900 38px Montserrat, sans-serif';
+          ctx.fillText('⭐ JUGADOR/A DE LA JORNADA ⭐', W / 2, 460);
+
+          ctx.fillStyle = '#ffffff';
+          ctx.font = '900 64px Montserrat, Arial Black, sans-serif';
+          ctx.shadowColor = 'rgba(234, 179, 8, 0.5)';
+          ctx.shadowBlur = 15;
+          ctx.fillText(nombre, W / 2, 570);
+          ctx.shadowBlur = 0;
+
+          ctx.fillStyle = 'rgba(7, 25, 16, 0.9)';
+          roundRect(ctx, 140, 650, 800, 160, 24, true, false);
+          ctx.strokeStyle = '#22c55e';
+          ctx.lineWidth = 3;
+          roundRect(ctx, 140, 650, 800, 160, 24, false, true);
+
+          ctx.fillStyle = '#fde047';
+          ctx.font = '900 24px Montserrat, sans-serif';
+          ctx.fillText('ADN VERDE Y AMARILLO', W / 2, 705);
+
+          ctx.fillStyle = '#ffffff';
+          ctx.font = '500 24px Montserrat, sans-serif';
+          wrapCanvasText(ctx, '"' + merito + '"', W / 2, 760, 740, 30);
+        }
       }
 
       // 7. Pie
+      const footH = isStory ? 160 : 95;
       ctx.fillStyle = '#05110a';
-      ctx.fillRect(0, H - 95, W, 95);
+      ctx.fillRect(0, H - footH, W, footH);
       ctx.strokeStyle = '#eab308';
       ctx.lineWidth = 3;
       ctx.beginPath();
-      ctx.moveTo(0, H - 95);
-      ctx.lineTo(W, H - 95);
+      ctx.moveTo(0, H - footH);
+      ctx.lineTo(W, H - footH);
       ctx.stroke();
 
       ctx.fillStyle = '#94a3b8';
       ctx.font = '700 20px Montserrat, sans-serif';
-      ctx.fillText('cbcartama.com  ·  #CBCártama  ·  Pasión por el Baloncesto', W / 2, H - 40);
+      ctx.fillText('cbcartama.com  ·  #CBCártama  ·  Pasión por el Baloncesto', W / 2, isStory ? H - 85 : H - 40);
     }
 
     function roundRect(ctx, x, y, width, height, radius, fill, stroke) {
@@ -1601,12 +1729,12 @@
       const canvas = document.getElementById('cartelCanvas');
       if (!canvas) return;
       const a = document.createElement('a');
-      a.download = `cartel-cb-cartama-${tipoCartelActual}.png`;
+      a.download = `cartel-cb-cartama-${formatoCartelActual}-${tipoCartelActual}.png`;
       a.href = canvas.toDataURL('image/png');
       document.body.appendChild(a);
       a.click();
       document.body.removeChild(a);
-      mostrarToast('📥 Cartel oficial descargado en alta resolución (1080x1080).');
+      mostrarToast(`📥 Cartel oficial descargado (${formatoCartelActual === 'historia' ? '1080x1920 Historia' : '1080x1080 Cuadrado'}).`);
     }
 
     function usarCartelComoFoto() {
@@ -1624,7 +1752,7 @@
       const prevI = document.getElementById('uploadPreviewImg');
       if (prevI) prevI.src = dataUrl;
       const fn = document.getElementById('uploadFilename');
-      if (fn) fn.textContent = `cartel-${tipoCartelActual}.jpg`;
+      if (fn) fn.textContent = `cartel-${formatoCartelActual}-${tipoCartelActual}.jpg`;
 
       cerrarModalCartel();
       mostrarToast('🎨 ¡Cartel aplicado a todas las publicaciones!');
@@ -1646,7 +1774,7 @@
           <div>
             <h3 class="text-sm sm:text-base font-black text-white flex items-center gap-2">
               <span>Estudio de Carteles y Marcadores HD</span>
-              <span class="text-[10px] font-bold px-2 py-0.5 rounded-full bg-yellow-500/10 text-yellow-400 border border-yellow-500/30">1080x1080 PNG</span>
+              <span id="cartelBadgeRes" class="text-[10px] font-bold px-2 py-0.5 rounded-full bg-yellow-500/10 text-yellow-400 border border-yellow-500/30">1080x1080 (1:1 Feed)</span>
             </h3>
             <p class="text-[11px] text-emerald-400/80">Diseño oficial con escudo y colores verde y amarillo del CB Cártama</p>
           </div>
@@ -1659,6 +1787,20 @@
       <div class="p-4 sm:p-6 overflow-y-auto flex-1 grid grid-cols-1 lg:grid-cols-12 gap-6 items-start">
         
         <div class="lg:col-span-5 space-y-4">
+
+          <div>
+            <label class="block text-xs font-bold text-emerald-200 mb-2">Formato del Cartel</label>
+            <div class="grid grid-cols-2 gap-2 bg-[#05110a] p-1.5 rounded-2xl border border-emerald-950">
+              <button type="button" onclick="setFormatoCartel('cuadrado')" id="btnFormatoCuadrado" 
+                class="py-2 px-2 text-xs font-bold rounded-xl bg-yellow-500 text-slate-950 transition flex items-center justify-center gap-1.5 shadow">
+                <i class="fas fa-square"></i> Cuadrado (1:1 Post)
+              </button>
+              <button type="button" onclick="setFormatoCartel('historia')" id="btnFormatoHistoria" 
+                class="py-2 px-2 text-xs font-medium rounded-xl text-emerald-300 hover:text-white transition flex items-center justify-center gap-1.5">
+                <i class="fas fa-mobile-screen"></i> Historia (9:16 Story)
+              </button>
+            </div>
+          </div>
           
           <div>
             <label class="block text-xs font-bold text-emerald-200 mb-2">Tipo de Cartel</label>
@@ -1751,10 +1893,10 @@
         </div>
 
         <div class="lg:col-span-7 flex flex-col items-center justify-center bg-[#040d07] p-4 rounded-3xl border border-emerald-950/80">
-          <div class="relative w-full max-w-[400px] aspect-square rounded-2xl overflow-hidden shadow-2xl border border-emerald-800/60 bg-black">
+          <div id="cartelCanvasWrapper" class="relative w-full max-w-[400px] aspect-square rounded-2xl overflow-hidden shadow-2xl border border-emerald-800/60 bg-black">
             <canvas id="cartelCanvas" width="1080" height="1080" class="w-full h-full object-contain block"></canvas>
           </div>
-          <p class="text-[11px] text-emerald-400/70 mt-3 text-center">
+          <p id="cartelResolucionTexto" class="text-[11px] text-emerald-400/70 mt-3 text-center">
             <i class="fas fa-sparkles text-yellow-400 mr-1"></i> Resolución optimizada para Instagram, Facebook, WhatsApp y X (1080 × 1080 px).
           </p>
         </div>
