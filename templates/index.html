@@ -1114,13 +1114,18 @@
 
     function compartirNativo() {
       const texto = obtenerTextoActual();
-      if (navigator.share) {
+      const esMovil = /Android|iPhone|iPad|iPod/i.test(navigator.userAgent);
+
+      // En móviles y tablets abre el menú de compartir con WhatsApp/Instagram
+      if (esMovil && navigator.share) {
         navigator.share({
           title: 'CB Cártama Baloncesto',
           text: texto
         }).catch(() => {});
       } else {
+        // En ordenadores copia directamente al portapapeles para evitar la ventana de contactos de Windows
         copiarContenidoActual();
+        mostrarToast('📋 ¡Texto copiado al portapapeles listo para pegar!');
       }
     }
 
