@@ -206,12 +206,20 @@
           </div>
         </div>
 
-        <!-- BOTÓN PRINCIPAL: SUPERVISAR CON GEMINI -->
-        <button id="btnSupervisar" onclick="supervisarConGemini()" 
-          class="mt-5 w-full bg-gradient-to-r from-emerald-600 via-green-600 to-yellow-500 hover:from-emerald-500 hover:to-yellow-400 text-slate-950 font-black py-3.5 px-4 rounded-2xl shadow-xl shadow-emerald-950/40 transition transform active:scale-[0.98] flex items-center justify-center gap-2 text-sm sm:text-base">
-          <i class="fas fa-wand-magic-sparkles text-yellow-950"></i>
-          <span>✨ Supervisar y Adaptar con Gemini</span>
-        </button>
+        <!-- BOTONES DE ACCIÓN: CON IA VS DIRECTO ORIGINAL -->
+        <div class="mt-5 grid grid-cols-1 sm:grid-cols-2 gap-2.5">
+          <button id="btnSupervisar" onclick="supervisarConGemini()" 
+            class="w-full bg-gradient-to-r from-emerald-600 via-green-600 to-yellow-500 hover:opacity-95 text-slate-950 font-black py-3 px-3 rounded-2xl shadow-xl shadow-emerald-950/40 transition transform active:scale-[0.98] flex items-center justify-center gap-2 text-xs sm:text-sm">
+            <i class="fas fa-wand-magic-sparkles text-yellow-950"></i>
+            <span>✨ Adaptar con IA</span>
+          </button>
+
+          <button id="btnTextoDirecto" onclick="usarTextoOriginalDirecto()" 
+            class="w-full bg-[#05110a] hover:bg-emerald-950/80 text-yellow-400 border border-yellow-500/40 hover:border-yellow-400 font-black py-3 px-3 rounded-2xl shadow-lg transition transform active:scale-[0.98] flex items-center justify-center gap-2 text-xs sm:text-sm">
+            <i class="fas fa-paper-plane text-yellow-400"></i>
+            <span>📝 Publicar Original (Sin IA)</span>
+          </button>
+        </div>
 
       </div>
 
@@ -893,6 +901,52 @@
         document.getElementById('loadingOverlay').classList.add('hidden');
         alert('Error de conexión con el servidor: ' + err);
       });
+    }
+
+    function usarTextoOriginalDirecto() {
+      const texto = document.getElementById('textoBase').value.trim();
+      if (!texto) {
+        alert('Por favor escribe algún texto o notas del entrenador en el recuadro.');
+        return;
+      }
+
+      // Volcar exactamente el texto original del entrenador sin modificar nada
+      datosGenerados = {
+        x: texto.length > 280 ? texto.substring(0, 277) + '...' : texto,
+        instagram: texto,
+        facebook: texto,
+        whatsapp: texto,
+        tiktok: {
+          copy: texto,
+          audio: "Sonido oficial",
+          hook: texto.substring(0, 60),
+          guion: [
+            { tiempo: "0-3s", visual: "Vídeo o foto del encuentro", locucion: texto.substring(0, 50) },
+            { tiempo: "3-15s", visual: "Jugadas destacadas", locucion: texto.substring(50, 150) || texto },
+            { tiempo: "15-25s", visual: "Celebración y banquillo", locucion: texto.substring(150, 250) || texto },
+            { tiempo: "25-30s", visual: "Escudo CB Cártama", locucion: "¡Vamos Cártama!" }
+          ]
+        },
+        web: {
+          titulo: texto.substring(0, 80),
+          cuerpo: texto
+        }
+      };
+
+      volcarDatosEnPantalla(datosGenerados);
+
+      // Desmarcar todos los checks de seguridad para requerir aprobación previa
+      ['x', 'instagram', 'facebook', 'whatsapp', 'tiktok', 'web'].forEach(p => {
+        const cb = document.getElementById(`checkSeguridad_${p}`);
+        if (cb) { cb.checked = false; toggleBotonPublicar(p); }
+      });
+
+      registrarAccionEnServidor('TEXTO_ORIGINAL', `Cargado texto original del entrenador sin IA (${texto.substring(0, 60)}...)`);
+      mostrarToast('📝 ¡Texto original del entrenador preparado para publicar!');
+
+      if (window.innerWidth < 1024) {
+        setMobileView('preview');
+      }
     }
 
     function volcarDatosEnPantalla(d) {
