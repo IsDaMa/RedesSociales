@@ -202,8 +202,8 @@ def index():
     return render_template('index.html', username=session.get('user', 'Admin'))
 
 @app.route('/uploads/<filename>')
-@login_required
 def uploaded_file(filename):
+    """Acceso público a las fotos subidas para que Facebook, Instagram y Make puedan descargarlas."""
     return send_from_directory(app.config['UPLOAD_FOLDER'], secure_filename(filename))
 
 # ==============================================================================
@@ -228,6 +228,8 @@ def upload_file():
         base_url = request.host_url.rstrip('/')
         if request.headers.get('X-Forwarded-Proto') == 'https':
             base_url = base_url.replace('http://', 'https://')
+        if 'localhost' in base_url or '127.0.0.1' in base_url or '192.168.' in base_url:
+            base_url = "https://redes.cbcartama.com"
         full_url = f"{base_url}/uploads/{unique_name}"
 
         registrar_auditoria(
@@ -345,6 +347,8 @@ def publicar_red():
     base_url = request.host_url.rstrip('/')
     if request.headers.get('X-Forwarded-Proto') == 'https':
         base_url = base_url.replace('http://', 'https://')
+    if 'localhost' in base_url or '127.0.0.1' in base_url or '192.168.' in base_url:
+        base_url = "https://redes.cbcartama.com"
 
     if url_imagen.startswith('data:image'):
         # Es un cartel generado en vivo en el Canvas (Base64) -> Guardarlo como archivo físico público
