@@ -224,12 +224,18 @@ def upload_file():
         filepath = os.path.join(app.config['UPLOAD_FOLDER'], unique_name)
         file.save(filepath)
         
+        # Construir URL pública absoluta válida para que Facebook / Instagram puedan descargarla
+        base_url = request.host_url.rstrip('/')
+        if request.headers.get('X-Forwarded-Proto') == 'https':
+            base_url = base_url.replace('http://', 'https://')
+        full_url = f"{base_url}/uploads/{unique_name}"
+
         registrar_auditoria(
             user, 
             "SUBIDA_FOTO", 
             f"Subida de imagen: {file.filename} -> Guardada como {unique_name}"
         )
-        return jsonify({'url': f"/uploads/{unique_name}", 'filename': unique_name})
+        return jsonify({'url': full_url, 'filename': unique_name})
     return jsonify({'error': 'Formato de imagen no permitido (Usa JPG, PNG o WEBP)'}), 400
 
 @app.route('/api/supervisar', methods=['POST'])
@@ -333,7 +339,31 @@ def publicar_red():
     data = request.json or {}
     red = data.get('red', '').lower()
     texto = data.get('texto', '').strip()
-    url_imagen = data.get('url_imagen', '')
+    url_imagen = data.get('url_imagen', '').strip()
+
+    # Garantizar que la imagen sea una URL pública absoluta (Facebook/Instagram exigen https://)
+    base_url = request.host_url.rstrip('/')
+    if request.headers.get('X-Forwarded-Proto') == 'https':
+        base_url = base_url.replace('http://', 'https://')
+
+    if url_imagen.startswith('data:image'):
+        # Es un cartel generado en vivo en el Canvas (Base64) -> Guardarlo como archivo físico público
+        try:
+            import base64
+            header, encoded = url_imagen.split(',', 1)
+            ext = 'jpg' if 'jpeg' in header.lower() else 'png'
+            unique_name = f"cartel_{uuid.uuid4().hex[:10]}.{ext}"
+            filepath = os.path.join(app.config['UPLOAD_FOLDER'], unique_name)
+            with open(filepath, 'wb') as f:
+                f.write(base64.b64decode(encoded))
+            url_imagen = f"{base_url}/uploads/{unique_name}"
+        except Exception as e:
+            print(f"Aviso: error guardando canvas base64: {e}")
+            url_imagen = "https://www.cbcartama.com/img/hero_bg.webp"
+    elif url_imagen.startswith('/'):
+        url_imagen = f"{base_url}{url_imagen}"
+    elif not url_imagen or not url_imagen.startswith('http'):
+        url_imagen = "https://www.cbcartama.com/img/hero_bg.webp"
 
     webhook_url = os.environ.get('WEBHOOK_PUBLICACION', '').strip()
     
