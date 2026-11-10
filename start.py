@@ -26,6 +26,23 @@ ALLOWED_EXTENSIONS = {'png', 'jpg', 'jpeg', 'webp', 'gif'}
 ADMIN_USERNAME = os.environ.get("ADMIN_USERNAME", "admin").strip()
 ADMIN_PASSWORD = os.environ.get("ADMIN_PASSWORD", "basketclub2026").strip()
 
+def obtener_usuarios_autorizados():
+    """Devuelve el diccionario de usuarios autorizados del CB Cártama (administración, categorías y prensa)."""
+    usuarios = {
+        ADMIN_USERNAME.lower(): ADMIN_PASSWORD,
+        "senior": os.environ.get("PASSWORD_SENIOR", "cartama2026").strip(),
+        "cantera": os.environ.get("PASSWORD_CANTERA", "cartama2026").strip(),
+        "prensa": os.environ.get("PASSWORD_PRENSA", "cartama2026").strip()
+    }
+    # Permitir añadir más usuarios desde variable de entorno USUARIOS_CLUB (ej: 'entrenador1:pass1,entrenador2:pass2')
+    extra_users = os.environ.get("USUARIOS_CLUB", "").strip()
+    if extra_users:
+        for par in extra_users.split(','):
+            if ':' in par:
+                u, p = par.split(':', 1)
+                usuarios[u.strip().lower()] = p.strip()
+    return usuarios
+
 os.makedirs(app.config['UPLOAD_FOLDER'], exist_ok=True)
 os.makedirs(os.path.dirname(app.config['DB_PATH']), exist_ok=True)
 
@@ -174,14 +191,18 @@ def login():
         user = request.form.get('username', '').strip()
         pwd = request.form.get('password', '').strip()
 
-        # Tolerante a mayúsculas/minúsculas en el usuario (los teclados de móvil suelen poner la primera letra en mayúscula)
-        val_user = hmac.compare_digest(user.lower().encode('utf-8'), ADMIN_USERNAME.lower().encode('utf-8'))
-        val_pwd = hmac.compare_digest(pwd.encode('utf-8'), ADMIN_PASSWORD.encode('utf-8'))
+        usuarios_validos = obtener_usuarios_autorizados()
+        user_norm = user.lower()
 
-        if val_user and val_pwd:
+        val_login = False
+        if user_norm in usuarios_validos:
+            pwd_esperada = usuarios_validos[user_norm]
+            val_login = hmac.compare_digest(pwd.encode('utf-8'), pwd_esperada.encode('utf-8'))
+
+        if val_login:
             session['logged_in'] = True
-            session['user'] = user.lower()
-            registrar_auditoria(user, "LOGIN", "Inicio de sesión exitoso en el panel web")
+            session['user'] = user_norm.capitalize()
+            registrar_auditoria(user_norm.capitalize(), "LOGIN", f"Inicio de sesión exitoso ({user_norm})")
             return redirect(url_for('index'))
         else:
             registrar_auditoria(user or "Desconocido", "LOGIN_FALLIDO", f"Intento de acceso fallido con usuario: {user}")
