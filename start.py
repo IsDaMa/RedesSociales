@@ -341,6 +341,7 @@ def publicar_web():
     id_noticia = None
     if client_supabase:
         try:
+            # 1. Intentar con esquema de tabla noticias con 'publicado_noticia'
             res = client_supabase.table("noticias").insert({
                 "titulo": titulo,
                 "contenido": contenido,
@@ -349,7 +350,19 @@ def publicar_web():
             if res.data:
                 id_noticia = res.data[0].get('id')
         except Exception as e:
-            print(f"Error al publicar en Supabase: {e}")
+            print(f"Error al publicar en Supabase con publicado_noticia, reintentando con 'publicada': {e}")
+            try:
+                # 2. Fallback por si la tabla usa la columna 'publicada' y 'autor'
+                res = client_supabase.table("noticias").insert({
+                    "titulo": titulo,
+                    "contenido": contenido,
+                    "publicada": True,
+                    "autor": f"Redes Sociales ({user})"
+                }).execute()
+                if res.data:
+                    id_noticia = res.data[0].get('id')
+            except Exception as e2:
+                print(f"Error en segundo intento de publicación en Supabase: {e2}")
 
     registrar_auditoria(user, "PUBLICACION_WEB", f"Noticia publicada en web: '{titulo}'")
     return jsonify({'success': True, 'id': id_noticia, 'message': 'Noticia publicada con éxito en la web del club.'})
