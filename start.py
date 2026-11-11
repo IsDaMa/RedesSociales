@@ -404,6 +404,8 @@ def publicar_red():
         url_imagen = "https://www.cbcartama.com/img/hero_bg.webp"
 
     webhook_url = os.environ.get('WEBHOOK_PUBLICACION', '').strip()
+    if not webhook_url or "5ej8g5r4wo6tc3lza1ruis3qfggzwcsg" in webhook_url:
+        webhook_url = "https://hook.eu1.make.com/ydnmvr0xr8snfeeal1ok43z3c0iqvjkj"
     
     if not webhook_url:
         return jsonify({'has_webhook': False, 'message': 'No hay webhook configurado, usando método directo.'})
