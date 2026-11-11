@@ -724,7 +724,7 @@
     let modoActual = 'prepartido';
     let plataformaActual = 'x';
     let datosGenerados = null;
-    let urlImagenActual = 'https://images.unsplash.com/photo-1546519638-68e109498ffc?w=800&auto=format&fit=crop';
+    let urlImagenActual = 'https://images.unsplash.com/photo-1546519638-68e109498ffc?w=1080&h=1080&fit=crop&fm=jpg';
 
     // Manejo de pestañas móviles
     function setMobileView(view) {
@@ -850,7 +850,7 @@
       document.getElementById('fileInput').value = '';
       document.getElementById('uploadPreviewContainer').classList.add('hidden');
       document.getElementById('uploadPlaceholder').classList.remove('hidden');
-      urlImagenActual = 'https://images.unsplash.com/photo-1546519638-68e109498ffc?w=800&auto=format&fit=crop';
+      urlImagenActual = 'https://images.unsplash.com/photo-1546519638-68e109498ffc?w=1080&h=1080&fit=crop&fm=jpg';
       actualizarImagenesPreview(urlImagenActual);
     }
 

@@ -384,6 +384,11 @@ def publicar_red():
     if 'localhost' in base_url or '127.0.0.1' in base_url or '192.168.' in base_url:
         base_url = "https://redes.cbcartama.com"
 
+    if 'unsplash.com' in url_imagen:
+        url_imagen = url_imagen.replace('auto=format', 'fm=jpg')
+        if 'fm=jpg' not in url_imagen:
+            url_imagen += '&fm=jpg'
+
     if url_imagen.startswith('data:image'):
         # Es un cartel generado en vivo en el Canvas (Base64) -> Guardarlo como archivo físico público
         try:
@@ -397,11 +402,14 @@ def publicar_red():
             url_imagen = f"{base_url}/uploads/{unique_name}"
         except Exception as e:
             print(f"Aviso: error guardando canvas base64: {e}")
-            url_imagen = "https://www.cbcartama.com/img/hero_bg.webp"
+            url_imagen = f"{base_url}/uploads/370c48698aeb.jpeg"
     elif url_imagen.startswith('/'):
         url_imagen = f"{base_url}{url_imagen}"
     elif not url_imagen or not url_imagen.startswith('http'):
-        url_imagen = "https://www.cbcartama.com/img/hero_bg.webp"
+        url_imagen = f"{base_url}/uploads/370c48698aeb.jpeg"
+    elif url_imagen.endswith('.webp'):
+        # Meta Instagram API sólo admite JPEG
+        url_imagen = f"{base_url}/uploads/370c48698aeb.jpeg"
 
     webhook_url = os.environ.get('WEBHOOK_PUBLICACION', '').strip()
     if not webhook_url or "5ej8g5r4wo6tc3lza1ruis3qfggzwcsg" in webhook_url:
