@@ -1020,14 +1020,36 @@
       mostrarToast('📥 Fotografía descargada lista para adjuntar en redes.');
     }
 
-    // 1. Publicar en X
+    // 1. Publicar en X (Twitter)
     function publicarEnX() {
       const texto = document.getElementById('preview-x-text').innerText;
-      navigator.clipboard.writeText(texto).then(() => {
-        registrarAccionEnServidor('PUBLICACION_X', `X: '${texto.substring(0, 60)}...'`);
-        mostrarToast('🚀 ¡Texto de X copiado! Abriendo compositor...');
-        const intentUrl = `https://twitter.com/intent/tweet?text=${encodeURIComponent(texto)}`;
-        window.open(intentUrl, '_blank');
+      
+      // Intentar publicación automática si hay webhook configurado en Make
+      fetch('/api/publicar_red', {
+        method: 'POST',
+        headers: { 'Content-Type': 'application/json' },
+        body: JSON.stringify({ red: 'x', texto: texto, url_imagen: urlImagenActual })
+      })
+      .then(r => r.json())
+      .then(res => {
+        if (res.has_webhook && res.success) {
+          mostrarToast('🚀 ¡Publicado automáticamente en X (Twitter) vía Make.com!');
+        } else {
+          navigator.clipboard.writeText(texto).then(() => {
+            registrarAccionEnServidor('PUBLICACION_X', `X: '${texto.substring(0, 60)}...'`);
+            mostrarToast('🚀 ¡Texto de X copiado! Abriendo compositor...');
+            const intentUrl = `https://twitter.com/intent/tweet?text=${encodeURIComponent(texto)}`;
+            window.open(intentUrl, '_blank');
+          });
+        }
+      })
+      .catch(() => {
+        navigator.clipboard.writeText(texto).then(() => {
+          registrarAccionEnServidor('PUBLICACION_X', `X: '${texto.substring(0, 60)}...'`);
+          mostrarToast('🚀 ¡Texto de X copiado! Abriendo compositor...');
+          const intentUrl = `https://twitter.com/intent/tweet?text=${encodeURIComponent(texto)}`;
+          window.open(intentUrl, '_blank');
+        });
       });
     }
 
