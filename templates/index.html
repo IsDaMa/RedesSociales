@@ -1235,13 +1235,28 @@
 
       recorder.start();
 
-      const totalFrames = 150;
+      const totalFrames = 150; // 5 segundos a 30 FPS
       let frame = 0;
 
-      const tit = (document.getElementById('cartelTitular') ? document.getElementById('cartelTitular').value : 'CB CÁRTAMA').toUpperCase();
-      const pLoc = document.getElementById('cartelPuntosLocal') ? document.getElementById('cartelPuntosLocal').value : '78';
-      const pRiv = document.getElementById('cartelPuntosRival') ? document.getElementById('cartelPuntosRival').value : '65';
-      const riv = (document.getElementById('cartelRival') ? document.getElementById('cartelRival').value : 'RIVAL').toUpperCase();
+      // Obtener textos: cabecera, categoría, titular y copy completo (se muestran de una vez)
+      const catElem = document.getElementById('cartelCategoria');
+      const categoria = (catElem ? catElem.value : 'CB CÁRTAMA').toUpperCase();
+      const titElem = document.getElementById('cartelTitular');
+      const titular = (titElem ? titElem.value : '¡ORGULLO CÁRTAMA!').toUpperCase();
+      const captionElem = document.getElementById('preview-tiktok-caption');
+      const copyTexto = (captionElem ? captionElem.innerText : '').trim() || 'Club Baloncesto Cártama · Baloncesto y valores en la Ciudad Deportiva';
+
+      // Fotos a animar
+      let fotosParaAnimar = (typeof fotosSubidasImgObjects !== 'undefined' && fotosSubidasImgObjects.length > 0)
+        ? fotosSubidasImgObjects.filter(im => im.complete && im.naturalWidth > 0)
+        : [];
+
+      if (!fotosParaAnimar.length) {
+        const fbImg = new Image();
+        fbImg.crossOrigin = 'anonymous';
+        fbImg.src = urlImagenActual;
+        fotosParaAnimar = [fbImg];
+      }
 
       function animarPaso() {
         if (frame >= totalFrames) {
@@ -1249,98 +1264,145 @@
           return;
         }
 
-        const t = frame / totalFrames;
+        const t = frame / totalFrames; // 0.0 a 1.0
 
-        const grad = vCtx.createRadialGradient(540, 960, 50, 540, 960, 1100);
-        grad.addColorStop(0, '#0a301a');
-        grad.addColorStop(0.6, '#06170d');
-        grad.addColorStop(1, '#020704');
-        vCtx.fillStyle = grad;
+        // 1. Fondo base oscuro
+        vCtx.fillStyle = '#030c06';
         vCtx.fillRect(0, 0, 1080, 1920);
 
-        if (fotosSubidasImgObjects.length > 0) {
-          vCtx.save();
-          vCtx.globalAlpha = 0.35;
+        // 2. Animación fluida de la foto o fotos (Sin tapar, máxima nitidez)
+        const numFotos = fotosParaAnimar.length;
+        if (numFotos === 1) {
+          // 1 sola foto: Zoom suave cinemático Ken Burns (1.0 -> 1.12)
           const zoom = 1.0 + t * 0.12;
-          vCtx.translate(540, 960);
-          vCtx.scale(zoom, zoom);
-          vCtx.translate(-540, -960);
-          dibujarComposicionMosaico(vCtx, 1080, 1920, fotosSubidasImgObjects, true);
-          vCtx.restore();
+          const panX = Math.sin(t * Math.PI) * 20;
+          dibujarFotoKenBurns(vCtx, fotosParaAnimar[0], zoom, panX, 0);
+        } else {
+          // Múltiples fotos: Transición y fundido suave entre cada una
+          const seg = 1.0 / numFotos;
+          const idx = Math.min(Math.floor(t / seg), numFotos - 1);
+          const nextIdx = (idx + 1) % numFotos;
+          const p = (t - idx * seg) / seg; // 0.0 a 1.0 dentro de esta foto
+
+          const zoom1 = 1.0 + p * 0.10;
+          dibujarFotoKenBurns(vCtx, fotosParaAnimar[idx], zoom1, 0, 0);
+
+          // Fundido encadenado en los últimos instantes de cada foto
+          if (p > 0.75) {
+            const fade = (p - 0.75) / 0.25;
+            const zoom2 = 1.0 + (p - 0.75) * 0.04;
+            vCtx.save();
+            vCtx.globalAlpha = fade;
+            dibujarFotoKenBurns(vCtx, fotosParaAnimar[nextIdx], zoom2, 0, 0);
+            vCtx.restore();
+          }
         }
 
-        vCtx.save();
-        vCtx.strokeStyle = 'rgba(234, 179, 8, ' + (0.15 + Math.sin(t * Math.PI * 4) * 0.08) + ')';
-        vCtx.lineWidth = 10;
-        vCtx.beginPath();
-        vCtx.arc(540, 960, 420 + Math.sin(t * Math.PI * 2) * 20, 0, Math.PI * 2);
-        vCtx.stroke();
-        vCtx.restore();
+        // 3. Degradado suave superior e inferior para legibilidad (deja libre el 80% del centro)
+        // Sombra superior suave
+        const gradTop = vCtx.createLinearGradient(0, 0, 0, 320);
+        gradTop.addColorStop(0, 'rgba(2, 9, 5, 0.92)');
+        gradTop.addColorStop(0.6, 'rgba(2, 9, 5, 0.45)');
+        gradTop.addColorStop(1, 'rgba(2, 9, 5, 0.0)');
+        vCtx.fillStyle = gradTop;
+        vCtx.fillRect(0, 0, 1080, 320);
 
+        // Sombra inferior suave (donde va el texto para no tapar la foto central)
+        const gradBottom = vCtx.createLinearGradient(0, 1420, 0, 1920);
+        gradBottom.addColorStop(0, 'rgba(2, 9, 5, 0.0)');
+        gradBottom.addColorStop(0.3, 'rgba(2, 9, 5, 0.65)');
+        gradBottom.addColorStop(1, 'rgba(2, 9, 5, 0.95)');
+        vCtx.fillStyle = gradBottom;
+        vCtx.fillRect(0, 1420, 1080, 500);
+
+        // 4. CABECERA OFICIAL (Se muestra de una vez)
         vCtx.textAlign = 'center';
-        vCtx.fillStyle = '#eab308';
-        vCtx.font = '900 48px Montserrat, sans-serif';
-        vCtx.shadowColor = 'rgba(0,0,0,0.8)';
-        vCtx.shadowBlur = 12;
-        vCtx.fillText('CLUB BALONCESTO CÁRTAMA', 540, 240);
-
-        const pulse = 1.0 + Math.sin(t * Math.PI * 6) * 0.05;
         if (logoOficialCartel.complete && logoOficialCartel.naturalWidth > 0) {
-          vCtx.save();
-          vCtx.translate(540, 390);
-          vCtx.scale(pulse, pulse);
-          vCtx.drawImage(logoOficialCartel, -80, -80, 160, 160);
-          vCtx.restore();
+          try { vCtx.drawImage(logoOficialCartel, 540 - 50, 60, 100, 100); } catch(e){}
         }
 
-        vCtx.fillStyle = 'rgba(7, 25, 16, 0.9)';
-        roundRect(vCtx, 120, 720, 840, 480, 36, true, false);
-        vCtx.strokeStyle = '#eab308';
-        vCtx.lineWidth = 5;
-        roundRect(vCtx, 120, 720, 840, 480, 36, false, true);
-
-        vCtx.fillStyle = '#fde047';
-        vCtx.font = '900 42px Montserrat, sans-serif';
-        vCtx.fillText(tit, 540, 810);
-
         vCtx.fillStyle = '#eab308';
-        vCtx.font = '900 38px Montserrat, sans-serif';
-        vCtx.fillText('CB CÁRTAMA', 320, 900);
-        vCtx.fillStyle = '#cbd5e1';
-        vCtx.fillText(riv.length > 15 ? riv.substring(0, 13) + '...' : riv, 760, 900);
+        vCtx.font = '900 36px Montserrat, sans-serif';
+        vCtx.shadowColor = 'rgba(0,0,0,0.9)';
+        vCtx.shadowBlur = 10;
+        vCtx.fillText('CLUB BALONCESTO CÁRTAMA', 540, 205);
 
+        // Badge de categoría
+        vCtx.fillStyle = '#15803d';
+        roundRect(vCtx, 540 - 180, 225, 360, 38, 19, true, false);
+        vCtx.strokeStyle = '#eab308';
+        vCtx.lineWidth = 2;
+        roundRect(vCtx, 540 - 180, 225, 360, 38, 19, false, true);
         vCtx.fillStyle = '#ffffff';
-        vCtx.font = '900 150px Montserrat, Arial Black, sans-serif';
-        vCtx.shadowColor = 'rgba(234, 179, 8, 0.4)';
-        vCtx.shadowBlur = 25;
-        vCtx.fillText(pLoc, 320, 1070);
-        vCtx.fillText(pRiv, 760, 1070);
+        vCtx.font = '900 18px Montserrat, sans-serif';
+        vCtx.shadowBlur = 0;
+        vCtx.fillText(categoria, 540, 250);
+
+        // 5. TEXTO INFERIOR COMPLETO (Se muestra de una vez, abajo, sin tapar la foto en el centro)
+        vCtx.fillStyle = '#fde047';
+        vCtx.font = '900 36px Montserrat, Arial Black, sans-serif';
+        vCtx.shadowColor = 'rgba(0,0,0,0.95)';
+        vCtx.shadowBlur = 12;
+        vCtx.fillText(titular, 540, 1550);
+
+        // Copy multilínea sin tapar la foto
+        vCtx.fillStyle = '#f8fafc';
+        vCtx.font = '600 24px Montserrat, sans-serif';
+        vCtx.shadowBlur = 6;
+        wrapTextCanvas(vCtx, copyTexto, 540, 1605, 920, 34, 4);
         vCtx.shadowBlur = 0;
 
-        vCtx.fillStyle = '#eab308';
-        vCtx.font = '900 50px Montserrat, sans-serif';
-        vCtx.fillText('VS', 540, 1020);
-
+        // Distintivo de canal inferior
         vCtx.fillStyle = '#166534';
-        roundRect(vCtx, 290, 1280, 500, 60, 30, true, false);
+        roundRect(vCtx, 540 - 200, 1780, 400, 52, 26, true, false);
         vCtx.strokeStyle = '#22c55e';
-        vCtx.lineWidth = 3;
-        roundRect(vCtx, 290, 1280, 500, 60, 30, false, true);
+        vCtx.lineWidth = 2;
+        roundRect(vCtx, 540 - 200, 1780, 400, 52, 26, false, true);
         vCtx.fillStyle = '#ffffff';
-        vCtx.font = '900 28px Montserrat, sans-serif';
-        vCtx.fillText('🏀 ¡ADN CÁRTAMA!', 540, 1322);
-
-        if (t > 0.6) {
-          vCtx.fillStyle = '#facc15';
-          vCtx.font = '900 36px Montserrat, sans-serif';
-          vCtx.fillText('🔥 SÍGUENOS EN TIKTOK @cbcartama 🔥', 540, 1500);
-        }
+        vCtx.font = '900 22px Montserrat, sans-serif';
+        vCtx.fillText('🏀 @cbcartama · TikTok & Reels', 540, 1813);
 
         frame++;
         requestAnimationFrame(animarPaso);
       }
 
       animarPaso();
+    }
+
+    function dibujarFotoKenBurns(ctx, img, zoom, panX, panY) {
+      if (!img || !img.complete || !img.naturalWidth) return;
+      ctx.save();
+      ctx.translate(540 + panX, 960 + panY);
+      ctx.scale(zoom, zoom);
+      const scale = Math.max(1080 / img.naturalWidth, 1920 / img.naturalHeight);
+      const nw = img.naturalWidth * scale;
+      const nh = img.naturalHeight * scale;
+      ctx.drawImage(img, -nw / 2, -nh / 2, nw, nh);
+      ctx.restore();
+    }
+
+    function wrapTextCanvas(ctx, text, x, y, maxWidth, lineHeight, maxLines) {
+      if (!text) return;
+      const words = text.split(' ');
+      let line = '';
+      let count = 0;
+      for (let n = 0; n < words.length; n++) {
+        const testLine = line + words[n] + ' ';
+        const metrics = ctx.measureText(testLine);
+        if (metrics.width > maxWidth && n > 0) {
+          ctx.fillText(line.trim(), x, y);
+          line = words[n] + ' ';
+          y += lineHeight;
+          count++;
+          if (maxLines && count >= maxLines - 1) {
+            ctx.fillText(line.trim() + '...', x, y);
+            return;
+          }
+        } else {
+          line = testLine;
+        }
+      }
+      ctx.fillText(line.trim(), x, y);
     }
 
     function descargarVideoActual() {
