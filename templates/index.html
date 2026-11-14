@@ -563,20 +563,13 @@
           <div class="mt-4 p-3.5 bg-[#05110a] border border-emerald-900/80 rounded-2xl space-y-2.5 max-w-md mx-auto">
             <label class="flex items-start gap-2.5 text-xs text-emerald-200 cursor-pointer select-none">
               <input type="checkbox" id="checkSeguridad_whatsapp" onchange="toggleBotonPublicar('whatsapp')" class="w-4 h-4 mt-0.5 rounded text-emerald-600 focus:ring-emerald-500 bg-slate-900 border-emerald-800">
-              <span class="font-medium">He revisado el texto y confirmo el envío a <strong>WhatsApp</strong></span>
+              <span class="font-medium">He revisado el texto y confirmo la difusión en el <strong>Canal de WhatsApp</strong></span>
             </label>
-            <div class="grid grid-cols-1 sm:grid-cols-2 gap-2">
-              <button id="btnPublicar_whatsapp" disabled onclick="publicarEnWhatsApp()" 
-                class="py-3 px-3 rounded-xl font-bold flex items-center justify-center gap-1.5 text-xs transition bg-slate-800 text-slate-500 border border-slate-700/60 cursor-not-allowed">
-                <i class="fab fa-whatsapp text-sm"></i>
-                <span>💬 Grupos del Club</span>
-              </button>
-              <button id="btnPublicar_whatsapp_canal" disabled onclick="publicarEnCanalWhatsApp()" 
-                class="py-3 px-3 rounded-xl font-bold flex items-center justify-center gap-1.5 text-xs transition bg-slate-800 text-slate-500 border border-slate-700/60 cursor-not-allowed">
-                <i class="fas fa-bullhorn text-sm"></i>
-                <span>📢 Canal Oficial</span>
-              </button>
-            </div>
+            <button id="btnPublicar_whatsapp" disabled onclick="publicarEnCanalWhatsApp()" 
+              class="w-full py-3 px-4 rounded-xl font-bold flex items-center justify-center gap-2 text-xs transition bg-slate-800 text-slate-500 border border-slate-700/60 cursor-not-allowed">
+              <i class="fab fa-whatsapp text-sm"></i>
+              <span>📢 Difundir en Canal Oficial de WhatsApp</span>
+            </button>
           </div>
         </div>
 
@@ -818,18 +811,11 @@
     function toggleBotonPublicar(plat) {
       const checkbox = document.getElementById(`checkSeguridad_${plat}`);
       const boton = document.getElementById(`btnPublicar_${plat}`);
-      const botonCanal = document.getElementById(`btnPublicar_${plat}_canal`);
       if (!checkbox || !boton) return;
 
       if (checkbox.checked) {
         boton.disabled = false;
         boton.classList.remove('bg-slate-800', 'text-slate-500', 'border-slate-700/60', 'cursor-not-allowed');
-
-        if (botonCanal) {
-          botonCanal.disabled = false;
-          botonCanal.classList.remove('bg-slate-800', 'text-slate-500', 'border-slate-700/60', 'cursor-not-allowed');
-          botonCanal.classList.add('bg-emerald-700', 'text-yellow-300', 'hover:bg-emerald-600', 'cursor-pointer', 'shadow-lg');
-        }
 
         // Estilos coloridos según red social
         if (plat === 'x') {
@@ -847,14 +833,7 @@
         }
       } else {
         boton.disabled = true;
-        boton.className = (plat === 'whatsapp') 
-          ? 'py-3 px-3 rounded-xl font-bold flex items-center justify-center gap-1.5 text-xs transition bg-slate-800 text-slate-500 border border-slate-700/60 cursor-not-allowed'
-          : 'w-full py-3 px-4 rounded-xl font-bold flex items-center justify-center gap-2 text-xs transition bg-slate-800 text-slate-500 border border-slate-700/60 cursor-not-allowed';
-
-        if (botonCanal) {
-          botonCanal.disabled = true;
-          botonCanal.className = 'py-3 px-3 rounded-xl font-bold flex items-center justify-center gap-1.5 text-xs transition bg-slate-800 text-slate-500 border border-slate-700/60 cursor-not-allowed';
-        }
+        boton.className = 'w-full py-3 px-4 rounded-xl font-bold flex items-center justify-center gap-2 text-xs transition bg-slate-800 text-slate-500 border border-slate-700/60 cursor-not-allowed';
       }
     }
 
