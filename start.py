@@ -20,7 +20,7 @@ app.config['SECRET_KEY'] = os.environ.get("SECRET_KEY", "cbe-super-secret-key-20
 app.config['UPLOAD_FOLDER'] = os.path.join(os.path.dirname(__file__), 'static', 'uploads')
 app.config['DB_PATH'] = os.path.join(os.path.dirname(__file__), 'database', 'auditoria_local.db')
 app.config['MAX_CONTENT_LENGTH'] = 16 * 1024 * 1024  # Máximo 16 MB por subida
-ALLOWED_EXTENSIONS = {'png', 'jpg', 'jpeg', 'webp', 'gif'}
+ALLOWED_EXTENSIONS = {'png', 'jpg', 'jpeg', 'webp', 'gif', 'mp4', 'webm', 'mov'}
 
 # Credenciales de Administrador (limpiando posibles espacios accidentales)
 ADMIN_USERNAME = os.environ.get("ADMIN_USERNAME", "admin").strip()
@@ -234,32 +234,47 @@ def uploaded_file(filename):
 @login_required
 def upload_file():
     user = session.get('user', 'Admin')
-    if 'foto' not in request.files:
-        return jsonify({'error': 'No se envió ninguna imagen'}), 400
-    file = request.files['foto']
-    if file.filename == '':
-        return jsonify({'error': 'Archivo no seleccionado'}), 400
-    if file and allowed_file(file.filename):
-        ext = file.filename.rsplit('.', 1)[1].lower()
-        unique_name = f"{uuid.uuid4().hex[:12]}.{ext}"
-        filepath = os.path.join(app.config['UPLOAD_FOLDER'], unique_name)
-        file.save(filepath)
-        
-        # Construir URL pública absoluta válida para que Facebook / Instagram puedan descargarla
-        base_url = request.host_url.rstrip('/')
-        if request.headers.get('X-Forwarded-Proto') == 'https':
-            base_url = base_url.replace('http://', 'https://')
-        if 'localhost' in base_url or '127.0.0.1' in base_url or '192.168.' in base_url:
-            base_url = "https://redes.cbcartama.com"
-        full_url = f"{base_url}/uploads/{unique_name}"
+    # Soporta subida de 1 o varias imágenes / vídeos
+    files = request.files.getlist('fotos') or request.files.getlist('foto')
+    if not files and 'video' in request.files:
+        files = [request.files['video']]
+    
+    if not files or files[0].filename == '':
+        return jsonify({'error': 'No se envió ningún archivo válido'}), 400
 
-        registrar_auditoria(
-            user, 
-            "SUBIDA_FOTO", 
-            f"Subida de imagen: {file.filename} -> Guardada como {unique_name}"
-        )
-        return jsonify({'url': full_url, 'filename': unique_name})
-    return jsonify({'error': 'Formato de imagen no permitido (Usa JPG, PNG o WEBP)'}), 400
+    base_url = request.host_url.rstrip('/')
+    if request.headers.get('X-Forwarded-Proto') == 'https':
+        base_url = base_url.replace('http://', 'https://')
+    if 'localhost' in base_url or '127.0.0.1' in base_url or '192.168.' in base_url:
+        base_url = "https://redes.cbcartama.com"
+
+    saved_urls = []
+    saved_filenames = []
+
+    for file in files:
+        if file and allowed_file(file.filename):
+            ext = file.filename.rsplit('.', 1)[1].lower()
+            unique_name = f"{uuid.uuid4().hex[:12]}.{ext}"
+            filepath = os.path.join(app.config['UPLOAD_FOLDER'], unique_name)
+            file.save(filepath)
+            full_url = f"{base_url}/uploads/{unique_name}"
+            saved_urls.append(full_url)
+            saved_filenames.append(unique_name)
+            registrar_auditoria(
+                user, 
+                "SUBIDA_ARCHIVO", 
+                f"Archivo: {file.filename} -> {unique_name}"
+            )
+
+    if not saved_urls:
+        return jsonify({'error': 'Formato no permitido (Usa JPG, PNG, WEBP, MP4)'}), 400
+
+    return jsonify({
+        'url': saved_urls[0],
+        'urls': saved_urls,
+        'filename': saved_filenames[0],
+        'filenames': saved_filenames
+    })
 
 @app.route('/api/supervisar', methods=['POST'])
 @login_required
@@ -376,6 +391,7 @@ def publicar_red():
     red = data.get('red', '').lower()
     texto = data.get('texto', '').strip()
     url_imagen = data.get('url_imagen', '').strip()
+    url_video = data.get('url_video', '').strip()
 
     # Garantizar que la imagen sea una URL pública absoluta (Facebook/Instagram exigen https://)
     base_url = request.host_url.rstrip('/')
@@ -425,6 +441,7 @@ def publicar_red():
             "red": red,
             "texto": texto,
             "imagen": url_imagen,
+            "video": url_video,
             "usuario": user,
             "fecha": datetime.now().isoformat()
         }

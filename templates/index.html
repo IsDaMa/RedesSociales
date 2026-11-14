@@ -167,41 +167,41 @@
           </button>
         </div>
 
-        <!-- SUBIDA DE FOTOGRAFÍAS -->
+        <!-- SUBIDA DE FOTOGRAFÍAS Y MOSAICO INTELIGENTE -->
         <div class="mt-4">
           <div class="flex items-center justify-between mb-2">
             <label class="text-xs font-semibold text-emerald-200 flex items-center">
-              <i class="fas fa-camera text-yellow-400 mr-1.5"></i> Fotografía del Encuentro
+              <i class="fas fa-camera text-yellow-400 mr-1.5"></i> Fotos del Encuentro (1 a 4)
             </label>
             <button type="button" onclick="abrirModalCartel()" 
               class="text-[11px] font-bold text-yellow-400 hover:text-yellow-300 bg-yellow-500/10 hover:bg-yellow-500/20 border border-yellow-500/30 px-2.5 py-1 rounded-xl transition flex items-center gap-1.5 shadow-sm">
-              <i class="fas fa-palette"></i> Generar Cartel / Marcador HD
+              <i class="fas fa-palette"></i> Generar Cartel / Mosaico HD
             </button>
           </div>
 
           <div id="dropzone" onclick="document.getElementById('fileInput').click()" 
-            class="border-2 border-dashed border-emerald-900/80 hover:border-yellow-400/60 bg-[#05110a]/60 hover:bg-[#05110a] rounded-2xl p-4 text-center cursor-pointer transition group">
+            class="border-2 border-dashed border-emerald-900/80 hover:border-yellow-400/60 bg-[#05110a]/60 hover:bg-[#05110a] rounded-2xl p-3 text-center cursor-pointer transition group">
             
-            <input type="file" id="fileInput" accept="image/*" class="hidden" onchange="handleFileSelect(event)">
+            <input type="file" id="fileInput" accept="image/*" multiple class="hidden" onchange="handleFileSelect(event)">
             
             <div id="uploadPlaceholder">
               <i class="fas fa-cloud-arrow-up text-2xl text-emerald-600 group-hover:text-yellow-400 transition mb-1"></i>
-              <p class="text-xs text-emerald-200 font-medium">Toca para abrir <span class="text-yellow-400 underline">Cámara o Galería</span></p>
-              <p class="text-[10px] text-emerald-500 mt-0.5">JPG, PNG o WEBP</p>
+              <p class="text-xs text-emerald-200 font-medium">Toca para subir <span class="text-yellow-400 underline">hasta 4 fotos</span></p>
+              <p class="text-[10px] text-emerald-500 mt-0.5">JPG, PNG o WEBP · Crea collage automático</p>
             </div>
 
-            <!-- PREVIEW DE IMAGEN CARGADA -->
-            <div id="uploadPreviewContainer" class="hidden flex items-center justify-between bg-[#071a10] p-2.5 rounded-xl border border-emerald-900">
-              <div class="flex items-center space-x-3 overflow-hidden">
-                <img id="uploadPreviewImg" src="" alt="Foto" class="w-12 h-12 object-cover rounded-lg border border-emerald-700">
-                <div class="text-left truncate">
-                  <p id="uploadFilename" class="text-xs font-semibold text-slate-200 truncate">foto.jpg</p>
-                  <p class="text-[10px] text-yellow-400 flex items-center gap-1"><i class="fas fa-circle-check"></i> Foto lista para las redes</p>
+            <!-- PREVIEW DE IMÁGENES CARGADAS (1 A 4) -->
+            <div id="uploadPreviewContainer" class="hidden space-y-2">
+              <div id="uploadPreviewList" class="grid grid-cols-2 sm:grid-cols-4 gap-2"></div>
+              <div class="flex items-center justify-between bg-[#071a10] p-2 rounded-xl border border-emerald-900 text-left">
+                <div class="truncate">
+                  <p id="uploadFilename" class="text-xs font-semibold text-slate-200 truncate">Fotos cargadas</p>
+                  <p id="uploadMosaicBadge" class="text-[10px] text-yellow-400 flex items-center gap-1"><i class="fas fa-table-cells"></i> Mosaico inteligente activo</p>
                 </div>
+                <button type="button" onclick="removeImage(event)" class="text-slate-400 hover:text-red-400 p-2 text-sm transition" title="Quitar fotos">
+                  <i class="fas fa-trash-can"></i>
+                </button>
               </div>
-              <button type="button" onclick="removeImage(event)" class="text-slate-400 hover:text-red-400 p-2 text-sm transition">
-                <i class="fas fa-trash-can"></i>
-              </button>
             </div>
           </div>
         </div>
@@ -238,6 +238,33 @@
     <!-- COLUMNA 2: PREVISUALIZADOR Y PUBLICACIÓN 1 A 1 CON CONFIRMACIÓN -->
     <!-- ============================================================== -->
     <section id="pane-preview" class="lg:col-span-7 space-y-4 hidden lg:block">
+      
+      <!-- BANNER MAESTRO: PUBLICAR EN TODAS LAS REDES A LA VEZ -->
+      <div class="bg-gradient-to-r from-emerald-950 via-slate-900 to-emerald-950 p-3.5 rounded-3xl border border-yellow-500/40 shadow-xl flex flex-col sm:flex-row items-center justify-between gap-3">
+        <div class="flex items-center gap-3 w-full sm:w-auto">
+          <div class="w-10 h-10 rounded-2xl bg-yellow-500/20 border border-yellow-500/40 flex items-center justify-center text-yellow-400 text-lg flex-shrink-0 shadow-inner">
+            <i class="fas fa-rocket"></i>
+          </div>
+          <div>
+            <h4 class="text-xs font-black text-white flex items-center gap-2">
+              PUBLICACIÓN SIMULTÁNEA
+              <span class="text-[9px] font-bold px-2 py-0.5 rounded-full bg-emerald-500/20 text-emerald-300 border border-emerald-500/30 uppercase">Todas las Redes</span>
+            </h4>
+            <p class="text-[11px] text-slate-300">Publica a la vez en Instagram, Facebook, X, Web y difunde en WhatsApp/TikTok con un clic.</p>
+          </div>
+        </div>
+        <div class="flex items-center gap-2 w-full sm:w-auto justify-end">
+          <label class="text-[11px] text-slate-300 flex items-center gap-1.5 cursor-pointer bg-slate-950/70 hover:bg-slate-950 px-2.5 py-2 rounded-xl border border-emerald-900 select-none transition">
+            <input type="checkbox" id="checkSeguridad_todas" onchange="toggleBotonPublicarTodas()" class="w-3.5 h-3.5 rounded text-yellow-500 focus:ring-yellow-400 bg-slate-900 border-emerald-800">
+            <span class="font-bold text-slate-200">Revisado</span>
+          </label>
+          <button id="btnPublicarTodas" disabled onclick="publicarEnTodasALaVez()" 
+            class="bg-gradient-to-r from-yellow-500 via-amber-500 to-yellow-600 hover:opacity-95 disabled:opacity-40 disabled:cursor-not-allowed text-slate-950 font-black px-4 py-2.5 rounded-xl text-xs flex items-center gap-2 transition shadow-lg whitespace-nowrap">
+            <i class="fas fa-paper-plane"></i>
+            <span>🚀 Publicar en Todas a la Vez</span>
+          </button>
+        </div>
+      </div>
       
       <!-- PESTAÑAS DE CANALES -->
       <div class="flex items-center justify-between flex-wrap gap-2">
@@ -538,11 +565,18 @@
               <input type="checkbox" id="checkSeguridad_whatsapp" onchange="toggleBotonPublicar('whatsapp')" class="w-4 h-4 mt-0.5 rounded text-emerald-600 focus:ring-emerald-500 bg-slate-900 border-emerald-800">
               <span class="font-medium">He revisado el texto y confirmo el envío a <strong>WhatsApp</strong></span>
             </label>
-            <button id="btnPublicar_whatsapp" disabled onclick="publicarEnWhatsApp()" 
-              class="w-full py-3 px-4 rounded-xl font-bold flex items-center justify-center gap-2 text-xs transition bg-slate-800 text-slate-500 border border-slate-700/60 cursor-not-allowed">
-              <i class="fab fa-whatsapp text-sm"></i>
-              <span>💬 Enviar a Grupos de WhatsApp</span>
-            </button>
+            <div class="grid grid-cols-1 sm:grid-cols-2 gap-2">
+              <button id="btnPublicar_whatsapp" disabled onclick="publicarEnWhatsApp()" 
+                class="py-3 px-3 rounded-xl font-bold flex items-center justify-center gap-1.5 text-xs transition bg-slate-800 text-slate-500 border border-slate-700/60 cursor-not-allowed">
+                <i class="fab fa-whatsapp text-sm"></i>
+                <span>💬 Grupos del Club</span>
+              </button>
+              <button id="btnPublicar_whatsapp_canal" disabled onclick="publicarEnCanalWhatsApp()" 
+                class="py-3 px-3 rounded-xl font-bold flex items-center justify-center gap-1.5 text-xs transition bg-slate-800 text-slate-500 border border-slate-700/60 cursor-not-allowed">
+                <i class="fas fa-bullhorn text-sm"></i>
+                <span>📢 Canal Oficial</span>
+              </button>
+            </div>
           </div>
         </div>
 
@@ -555,7 +589,8 @@
             <!-- Smartphone 9:16 -->
             <div class="md:col-span-5 max-w-[260px] mx-auto w-full aspect-[9/16] bg-black rounded-[32px] border-4 border-emerald-900 relative overflow-hidden shadow-2xl flex flex-col justify-between p-3.5 text-white">
               <img id="preview-tiktok-img" src="https://images.unsplash.com/photo-1546519638-68e109498ffc?w=800&auto=format&fit=crop" class="absolute inset-0 w-full h-full object-cover opacity-60">
-              <div class="absolute inset-0 bg-gradient-to-b from-black/50 via-transparent to-black/90"></div>
+              <video id="preview-tiktok-video" class="hidden absolute inset-0 w-full h-full object-cover" autoplay loop muted playsinline></video>
+              <div class="absolute inset-0 bg-gradient-to-b from-black/50 via-transparent to-black/90 pointer-events-none"></div>
 
               <div class="relative z-10 flex justify-between items-center text-xs font-bold pt-1">
                 <span>Siguiendo</span>
@@ -640,15 +675,25 @@
 
           <!-- PANEL DE SUPERVISIÓN Y PUBLICACIÓN SEGURA 1 A 1 EN TIKTOK -->
           <div class="mt-4 p-3.5 bg-[#05110a] border border-emerald-900/80 rounded-2xl space-y-2.5 max-w-lg mx-auto">
+            <!-- Botón Generador de Vídeo Automático -->
+            <button id="btnGenerarVideoTikTok" onclick="generarVideoTikTokAutomatico()" 
+              class="w-full bg-gradient-to-r from-emerald-600 via-green-600 to-yellow-500 hover:opacity-95 text-slate-950 font-black py-2.5 px-3 rounded-xl text-xs flex items-center justify-center gap-2 shadow-lg transition">
+              <i class="fas fa-clapperboard"></i>
+              <span id="btnGenerarVideoText">🎬 Generar Vídeo Motion Graphics (9:16)</span>
+            </button>
+
             <label class="flex items-start gap-2.5 text-xs text-emerald-200 cursor-pointer select-none">
               <input type="checkbox" id="checkSeguridad_tiktok" onchange="toggleBotonPublicar('tiktok')" class="w-4 h-4 mt-0.5 rounded text-emerald-600 focus:ring-emerald-500 bg-slate-900 border-emerald-800">
-              <span class="font-medium">He revisado el guion y confirmo la subida a <strong>TikTok</strong></span>
+              <span class="font-medium">He revisado el vídeo/guion y confirmo la subida a <strong>TikTok</strong></span>
             </label>
             <div class="flex gap-2">
               <button id="btnPublicar_tiktok" disabled onclick="publicarEnTikTok()" 
                 class="flex-1 py-3 px-4 rounded-xl font-bold flex items-center justify-center gap-2 text-xs transition bg-slate-800 text-slate-500 border border-slate-700/60 cursor-not-allowed">
                 <i class="fab fa-tiktok text-sm"></i>
                 <span>🎵 Subir a TikTok Creator Center</span>
+              </button>
+              <button id="btnDescargarVideo" class="hidden bg-yellow-500/10 hover:bg-yellow-500/20 text-yellow-400 font-bold py-3 px-3 rounded-xl border border-yellow-500/40 text-xs flex items-center justify-center gap-1.5 transition whitespace-nowrap" onclick="descargarVideoActual()" title="Descargar archivo MP4">
+                <i class="fas fa-video"></i> MP4
               </button>
               <button onclick="descargarFoto()" class="bg-emerald-950/80 hover:bg-emerald-900 text-emerald-300 font-semibold py-3 px-3 rounded-xl border border-emerald-800 text-xs flex items-center justify-center gap-1.5 transition whitespace-nowrap">
                 <i class="fas fa-download"></i> Foto
@@ -773,11 +818,18 @@
     function toggleBotonPublicar(plat) {
       const checkbox = document.getElementById(`checkSeguridad_${plat}`);
       const boton = document.getElementById(`btnPublicar_${plat}`);
+      const botonCanal = document.getElementById(`btnPublicar_${plat}_canal`);
       if (!checkbox || !boton) return;
 
       if (checkbox.checked) {
         boton.disabled = false;
         boton.classList.remove('bg-slate-800', 'text-slate-500', 'border-slate-700/60', 'cursor-not-allowed');
+
+        if (botonCanal) {
+          botonCanal.disabled = false;
+          botonCanal.classList.remove('bg-slate-800', 'text-slate-500', 'border-slate-700/60', 'cursor-not-allowed');
+          botonCanal.classList.add('bg-emerald-700', 'text-yellow-300', 'hover:bg-emerald-600', 'cursor-pointer', 'shadow-lg');
+        }
 
         // Estilos coloridos según red social
         if (plat === 'x') {
@@ -795,8 +847,129 @@
         }
       } else {
         boton.disabled = true;
-        boton.className = 'w-full py-3 px-4 rounded-xl font-bold flex items-center justify-center gap-2 text-xs transition bg-slate-800 text-slate-500 border border-slate-700/60 cursor-not-allowed';
+        boton.className = (plat === 'whatsapp') 
+          ? 'py-3 px-3 rounded-xl font-bold flex items-center justify-center gap-1.5 text-xs transition bg-slate-800 text-slate-500 border border-slate-700/60 cursor-not-allowed'
+          : 'w-full py-3 px-4 rounded-xl font-bold flex items-center justify-center gap-2 text-xs transition bg-slate-800 text-slate-500 border border-slate-700/60 cursor-not-allowed';
+
+        if (botonCanal) {
+          botonCanal.disabled = true;
+          botonCanal.className = 'py-3 px-3 rounded-xl font-bold flex items-center justify-center gap-1.5 text-xs transition bg-slate-800 text-slate-500 border border-slate-700/60 cursor-not-allowed';
+        }
       }
+    }
+
+    function toggleBotonPublicarTodas() {
+      const chk = document.getElementById('checkSeguridad_todas');
+      const btn = document.getElementById('btnPublicarTodas');
+      if (!chk || !btn) return;
+      btn.disabled = !chk.checked;
+    }
+
+    // ==============================================================
+    // 5. PUBLICAR EN TODAS LAS REDES A LA VEZ
+    // ==============================================================
+    async function publicarEnTodasALaVez() {
+      const chk = document.getElementById('checkSeguridad_todas');
+      if (!chk || !chk.checked) {
+        alert('Por favor marca la casilla de revisión antes de publicar en todas las redes.');
+        return;
+      }
+
+      const modal = document.getElementById('modalProgresoPublicacion');
+      if (modal) modal.classList.remove('hidden');
+
+      const setStatus = (id, html, isDone) => {
+        const el = document.getElementById(`status-icon-${id}`);
+        if (el) {
+          el.innerHTML = html;
+          if (isDone) el.className = 'text-xs text-emerald-400 font-bold flex items-center gap-1.5';
+        }
+      };
+
+      const txtInsta = document.getElementById('preview-instagram-text').innerText;
+      const txtFb = document.getElementById('preview-facebook-text').innerText;
+      const txtX = document.getElementById('preview-x-text').innerText;
+      const webTit = document.getElementById('preview-web-title').innerText;
+      const webBody = document.getElementById('preview-web-body').innerText;
+
+      // 1. Instagram
+      try {
+        const resInsta = await fetch('/api/publicar_red', {
+          method: 'POST',
+          headers: { 'Content-Type': 'application/json' },
+          body: JSON.stringify({ red: 'instagram', texto: txtInsta, url_imagen: urlImagenActual })
+        }).then(r => r.json());
+        if (resInsta.success) {
+          setStatus('instagram', '<i class="fas fa-circle-check"></i> Publicado en Instagram', true);
+        } else {
+          setStatus('instagram', '<i class="fas fa-triangle-exclamation text-amber-400"></i> ' + (resInsta.error || 'Aviso en Instagram'));
+        }
+      } catch (e) {
+        setStatus('instagram', '<i class="fas fa-circle-xmark text-red-400"></i> Error');
+      }
+
+      // 2. Facebook
+      try {
+        const resFb = await fetch('/api/publicar_red', {
+          method: 'POST',
+          headers: { 'Content-Type': 'application/json' },
+          body: JSON.stringify({ red: 'facebook', texto: txtFb, url_imagen: urlImagenActual })
+        }).then(r => r.json());
+        if (resFb.success) {
+          setStatus('facebook', '<i class="fas fa-circle-check"></i> Publicado en Facebook', true);
+        } else {
+          setStatus('facebook', '<i class="fas fa-triangle-exclamation text-amber-400"></i> ' + (resFb.error || 'Aviso en Facebook'));
+        }
+      } catch (e) {
+        setStatus('facebook', '<i class="fas fa-circle-xmark text-red-400"></i> Error');
+      }
+
+      // 3. X / Twitter
+      try {
+        const resX = await fetch('/api/publicar_red', {
+          method: 'POST',
+          headers: { 'Content-Type': 'application/json' },
+          body: JSON.stringify({ red: 'x', texto: txtX, url_imagen: urlImagenActual })
+        }).then(r => r.json());
+        if (resX.success) {
+          setStatus('x', '<i class="fas fa-circle-check"></i> Publicado en X', true);
+        } else {
+          setStatus('x', '<i class="fas fa-triangle-exclamation text-amber-400"></i> ' + (resX.error || 'Aviso en X'));
+        }
+      } catch (e) {
+        setStatus('x', '<i class="fas fa-circle-xmark text-red-400"></i> Error');
+      }
+
+      // 4. Web Oficial
+      try {
+        const resWeb = await fetch('/api/publicar_web', {
+          method: 'POST',
+          headers: { 'Content-Type': 'application/json' },
+          body: JSON.stringify({ titulo: webTit, contenido: webBody })
+        }).then(r => r.json());
+        if (resWeb.success) {
+          setStatus('web', '<i class="fas fa-circle-check"></i> Publicada en cbcartama.com', true);
+        } else {
+          setStatus('web', '<i class="fas fa-triangle-exclamation text-amber-400"></i> ' + (resWeb.error || 'Aviso en Web'));
+        }
+      } catch (e) {
+        setStatus('web', '<i class="fas fa-circle-xmark text-red-400"></i> Error');
+      }
+
+      // WhatsApp listo
+      setStatus('whatsapp', '<i class="fas fa-circle-check"></i> Mensaje listo', true);
+
+      const btnCerrar = document.getElementById('btnCerrarModalProgreso');
+      if (btnCerrar) {
+        btnCerrar.disabled = false;
+        btnCerrar.classList.remove('opacity-40', 'cursor-not-allowed');
+      }
+      mostrarToast('🎉 ¡Publicación simultánea en todas las redes finalizada!');
+    }
+
+    function cerrarModalProgreso() {
+      const modal = document.getElementById('modalProgresoPublicacion');
+      if (modal) modal.classList.add('hidden');
     }
 
     function actualizarContadorX() {
@@ -807,12 +980,20 @@
       charElem.className = len <= 280 ? 'text-emerald-400 font-mono font-semibold' : 'text-red-400 font-mono font-bold';
     }
 
+    // ==============================================================
+    // 4. SUBIDA MÚLTIPLE DE FOTOGRAFÍAS Y MOSAICO / COLLAGE INTELIGENTE
+    // ==============================================================
+    let fotosSubidasURLs = [];
+    let fotosSubidasImgObjects = [];
+    let urlVideoActual = null;
+    let videoBlobActual = null;
+
     function handleFileSelect(event) {
-      const file = event.target.files[0];
-      if (!file) return;
+      const files = Array.from(event.target.files).slice(0, 4);
+      if (!files.length) return;
 
       const formData = new FormData();
-      formData.append('foto', file);
+      files.forEach(f => formData.append('fotos', f));
 
       fetch('/api/upload', {
         method: 'POST',
@@ -820,38 +1001,163 @@
       })
       .then(res => res.json())
       .then(data => {
-        if (data.url) {
-          urlImagenActual = data.url;
-          actualizarImagenesPreview(data.url);
-          document.getElementById('uploadPlaceholder').classList.add('hidden');
-          document.getElementById('uploadPreviewContainer').classList.remove('hidden');
-          document.getElementById('uploadPreviewImg').src = data.url;
-          document.getElementById('uploadFilename').textContent = file.name;
+        if (data.urls && data.urls.length) {
+          fotosSubidasURLs = data.urls;
+          cargarImagenesYRenderizarMosaico(data.urls, files.map(f => f.name));
+        } else if (data.url) {
+          fotosSubidasURLs = [data.url];
+          cargarImagenesYRenderizarMosaico([data.url], [files[0].name]);
         } else {
-          alert(data.error || 'Error al subir imagen');
+          alert(data.error || 'Error al subir imágenes');
         }
       })
       .catch(() => {
-        const reader = new FileReader();
-        reader.onload = function(e) {
-          urlImagenActual = e.target.result;
-          actualizarImagenesPreview(e.target.result);
-          document.getElementById('uploadPlaceholder').classList.add('hidden');
-          document.getElementById('uploadPreviewContainer').classList.remove('hidden');
-          document.getElementById('uploadPreviewImg').src = e.target.result;
-          document.getElementById('uploadFilename').textContent = file.name;
-        };
-        reader.readAsDataURL(file);
+        const dataUrls = [];
+        let leidos = 0;
+        files.forEach((f, idx) => {
+          const reader = new FileReader();
+          reader.onload = (e) => {
+            dataUrls[idx] = e.target.result;
+            leidos++;
+            if (leidos === files.length) {
+              fotosSubidasURLs = dataUrls;
+              cargarImagenesYRenderizarMosaico(dataUrls, files.map(fl => fl.name));
+            }
+          };
+          reader.readAsDataURL(f);
+        });
       });
+    }
+
+    function cargarImagenesYRenderizarMosaico(urls, nombres) {
+      document.getElementById('uploadPlaceholder').classList.add('hidden');
+      const prevC = document.getElementById('uploadPreviewContainer');
+      prevC.classList.remove('hidden');
+
+      const listDiv = document.getElementById('uploadPreviewList');
+      listDiv.innerHTML = '';
+      fotosSubidasImgObjects = [];
+
+      let cargadas = 0;
+      urls.forEach((u, i) => {
+        const item = document.createElement('div');
+        item.className = 'relative aspect-square rounded-xl overflow-hidden border border-emerald-700 bg-black/40 group shadow';
+        item.innerHTML = `
+          <img src="${u}" class="w-full h-full object-cover">
+          <span class="absolute top-1 left-1 bg-black/80 text-yellow-400 font-bold text-[9px] px-1.5 py-0.5 rounded">#${i + 1}</span>
+        `;
+        listDiv.appendChild(item);
+
+        const imgObj = new Image();
+        imgObj.crossOrigin = 'anonymous';
+        imgObj.onload = () => {
+          cargadas++;
+          if (cargadas === urls.length) {
+            if (urls.length > 1) {
+              generarMosaicoFotos(urls.length);
+              document.getElementById('uploadFilename').textContent = `${urls.length} fotos cargadas`;
+              document.getElementById('uploadMosaicBadge').innerHTML = '<i class="fas fa-table-cells text-yellow-400"></i> Mosaico inteligente activo';
+            } else {
+              urlImagenActual = urls[0];
+              actualizarImagenesPreview(urls[0]);
+              document.getElementById('uploadFilename').textContent = nombres[0] || 'foto.jpg';
+              document.getElementById('uploadMosaicBadge').innerHTML = '<i class="fas fa-circle-check text-yellow-400"></i> Foto lista para las redes';
+            }
+            renderizarCartelCanvas();
+          }
+        };
+        imgObj.src = u;
+        fotosSubidasImgObjects.push(imgObj);
+      });
+    }
+
+    function generarMosaicoFotos(numFotos) {
+      if (!fotosSubidasImgObjects.length) return;
+      const cvs = document.createElement('canvas');
+      cvs.width = 1080;
+      cvs.height = 1080;
+      const ctx = cvs.getContext('2d');
+
+      dibujarComposicionMosaico(ctx, 1080, 1080, fotosSubidasImgObjects, false);
+
+      const mosaicoUrl = cvs.toDataURL('image/jpeg', 0.95);
+      urlImagenActual = mosaicoUrl;
+      actualizarImagenesPreview(mosaicoUrl);
+      mostrarToast(`✨ ¡Mosaico de ${numFotos} fotos generado con éxito!`);
+    }
+
+    function dibujarComposicionMosaico(ctx, W, H, imgs, isStory) {
+      ctx.fillStyle = '#05140b';
+      ctx.fillRect(0, 0, W, H);
+
+      const gap = 8;
+      ctx.strokeStyle = '#eab308';
+      ctx.lineWidth = 4;
+
+      if (imgs.length === 1) {
+        drawImageCover(ctx, imgs[0], 0, 0, W, H);
+      } else if (imgs.length === 2) {
+        if (isStory) {
+          const h2 = (H - gap) / 2;
+          drawImageCover(ctx, imgs[0], 0, 0, W, h2);
+          drawImageCover(ctx, imgs[1], 0, h2 + gap, W, h2);
+          ctx.strokeRect(0, 0, W, h2);
+          ctx.strokeRect(0, h2 + gap, W, h2);
+        } else {
+          const w2 = (W - gap) / 2;
+          drawImageCover(ctx, imgs[0], 0, 0, w2, H);
+          drawImageCover(ctx, imgs[1], w2 + gap, 0, w2, H);
+          ctx.strokeRect(0, 0, w2, H);
+          ctx.strokeRect(w2 + gap, 0, w2, H);
+        }
+      } else if (imgs.length === 3) {
+        const w2 = (W - gap) / 2;
+        const h2 = (H - gap) / 2;
+        drawImageCover(ctx, imgs[0], 0, 0, w2, H);
+        drawImageCover(ctx, imgs[1], w2 + gap, 0, w2, h2);
+        drawImageCover(ctx, imgs[2], w2 + gap, h2 + gap, w2, h2);
+        ctx.strokeRect(0, 0, w2, H);
+        ctx.strokeRect(w2 + gap, 0, w2, h2);
+        ctx.strokeRect(w2 + gap, h2 + gap, w2, h2);
+      } else if (imgs.length >= 4) {
+        const w2 = (W - gap) / 2;
+        const h2 = (H - gap) / 2;
+        drawImageCover(ctx, imgs[0], 0, 0, w2, h2);
+        drawImageCover(ctx, imgs[1], w2 + gap, 0, w2, h2);
+        drawImageCover(ctx, imgs[2], 0, h2 + gap, w2, h2);
+        drawImageCover(ctx, imgs[3], w2 + gap, h2 + gap, w2, h2);
+        ctx.strokeRect(0, 0, w2, h2);
+        ctx.strokeRect(w2 + gap, 0, w2, h2);
+        ctx.strokeRect(0, h2 + gap, w2, h2);
+        ctx.strokeRect(w2 + gap, h2 + gap, w2, h2);
+      }
+    }
+
+    function drawImageCover(ctx, img, x, y, w, h) {
+      if (!img || !img.width) return;
+      ctx.save();
+      ctx.beginPath();
+      ctx.rect(x, y, w, h);
+      ctx.clip();
+      const scale = Math.max(w / img.width, h / img.height);
+      const nw = img.width * scale;
+      const nh = img.height * scale;
+      const nx = x + (w - nw) / 2;
+      const ny = y + (h - nh) / 2;
+      ctx.drawImage(img, nx, ny, nw, nh);
+      ctx.restore();
     }
 
     function removeImage(event) {
       event.stopPropagation();
       document.getElementById('fileInput').value = '';
+      fotosSubidasURLs = [];
+      fotosSubidasImgObjects = [];
       document.getElementById('uploadPreviewContainer').classList.add('hidden');
       document.getElementById('uploadPlaceholder').classList.remove('hidden');
       urlImagenActual = 'https://images.unsplash.com/photo-1546519638-68e109498ffc?w=1080&h=1080&fit=crop&fm=jpg';
       actualizarImagenesPreview(urlImagenActual);
+      renderizarCartelCanvas();
     }
 
     function actualizarImagenesPreview(url) {
@@ -861,6 +1167,202 @@
       document.getElementById('preview-whatsapp-img').src = url;
       document.getElementById('preview-tiktok-img').src = url;
       document.getElementById('preview-web-img').src = url;
+    }
+
+    // ==============================================================
+    // 2. GENERADOR DE VÍDEO VERTICAL AUTOMÁTICO (TIKTOK / REELS 9:16)
+    // ==============================================================
+    function generarVideoTikTokAutomatico() {
+      const btn = document.getElementById('btnGenerarVideoTikTok');
+      const btnTxt = document.getElementById('btnGenerarVideoText');
+      const origTxt = btnTxt.innerHTML;
+      btn.disabled = true;
+      btnTxt.innerHTML = '<i class="fas fa-spinner fa-spin mr-1"></i> Renderizando animación 9:16...';
+
+      const vCanvas = document.createElement('canvas');
+      vCanvas.width = 1080;
+      vCanvas.height = 1920;
+      const vCtx = vCanvas.getContext('2d');
+
+      const stream = vCanvas.captureStream(30);
+      let options = { mimeType: 'video/webm;codecs=vp9' };
+      if (!MediaRecorder.isTypeSupported(options.mimeType)) {
+        options = { mimeType: 'video/webm' };
+        if (!MediaRecorder.isTypeSupported(options.mimeType)) {
+          options = { mimeType: 'video/mp4' };
+        }
+      }
+
+      let recorder;
+      try {
+        recorder = new MediaRecorder(stream, options);
+      } catch (e) {
+        recorder = new MediaRecorder(stream);
+      }
+
+      const chunks = [];
+      recorder.ondataavailable = e => { if (e.data.size > 0) chunks.push(e.data); };
+      recorder.onstop = () => {
+        videoBlobActual = new Blob(chunks, { type: recorder.mimeType || 'video/mp4' });
+        const videoLocalUrl = URL.createObjectURL(videoBlobActual);
+
+        const videoElem = document.getElementById('preview-tiktok-video');
+        const imgElem = document.getElementById('preview-tiktok-img');
+        if (videoElem && imgElem) {
+          videoElem.src = videoLocalUrl;
+          imgElem.classList.add('hidden');
+          videoElem.classList.remove('hidden');
+          videoElem.play().catch(() => {});
+        }
+
+        const btnD = document.getElementById('btnDescargarVideo');
+        if (btnD) btnD.classList.remove('hidden');
+
+        const fd = new FormData();
+        fd.append('video', videoBlobActual, 'video_tiktok_cartama.mp4');
+        fetch('/api/upload', { method: 'POST', body: fd })
+          .then(r => r.json())
+          .then(data => {
+            if (data.url) urlVideoActual = data.url;
+          })
+          .catch(() => {});
+
+        btn.disabled = false;
+        btnTxt.innerHTML = origTxt;
+        mostrarToast('🎉 ¡Vídeo vertical generado con éxito! Reproduciéndose en el móvil.');
+      };
+
+      recorder.start();
+
+      const totalFrames = 150;
+      let frame = 0;
+
+      const tit = (document.getElementById('cartelTitular') ? document.getElementById('cartelTitular').value : 'CB CÁRTAMA').toUpperCase();
+      const pLoc = document.getElementById('cartelPuntosLocal') ? document.getElementById('cartelPuntosLocal').value : '78';
+      const pRiv = document.getElementById('cartelPuntosRival') ? document.getElementById('cartelPuntosRival').value : '65';
+      const riv = (document.getElementById('cartelRival') ? document.getElementById('cartelRival').value : 'RIVAL').toUpperCase();
+
+      function animarPaso() {
+        if (frame >= totalFrames) {
+          recorder.stop();
+          return;
+        }
+
+        const t = frame / totalFrames;
+
+        const grad = vCtx.createRadialGradient(540, 960, 50, 540, 960, 1100);
+        grad.addColorStop(0, '#0a301a');
+        grad.addColorStop(0.6, '#06170d');
+        grad.addColorStop(1, '#020704');
+        vCtx.fillStyle = grad;
+        vCtx.fillRect(0, 0, 1080, 1920);
+
+        if (fotosSubidasImgObjects.length > 0) {
+          vCtx.save();
+          vCtx.globalAlpha = 0.35;
+          const zoom = 1.0 + t * 0.12;
+          vCtx.translate(540, 960);
+          vCtx.scale(zoom, zoom);
+          vCtx.translate(-540, -960);
+          dibujarComposicionMosaico(vCtx, 1080, 1920, fotosSubidasImgObjects, true);
+          vCtx.restore();
+        }
+
+        vCtx.save();
+        vCtx.strokeStyle = 'rgba(234, 179, 8, ' + (0.15 + Math.sin(t * Math.PI * 4) * 0.08) + ')';
+        vCtx.lineWidth = 10;
+        vCtx.beginPath();
+        vCtx.arc(540, 960, 420 + Math.sin(t * Math.PI * 2) * 20, 0, Math.PI * 2);
+        vCtx.stroke();
+        vCtx.restore();
+
+        vCtx.textAlign = 'center';
+        vCtx.fillStyle = '#eab308';
+        vCtx.font = '900 48px Montserrat, sans-serif';
+        vCtx.shadowColor = 'rgba(0,0,0,0.8)';
+        vCtx.shadowBlur = 12;
+        vCtx.fillText('CLUB BALONCESTO CÁRTAMA', 540, 240);
+
+        const pulse = 1.0 + Math.sin(t * Math.PI * 6) * 0.05;
+        if (logoOficialCartel.complete && logoOficialCartel.naturalWidth > 0) {
+          vCtx.save();
+          vCtx.translate(540, 390);
+          vCtx.scale(pulse, pulse);
+          vCtx.drawImage(logoOficialCartel, -80, -80, 160, 160);
+          vCtx.restore();
+        }
+
+        vCtx.fillStyle = 'rgba(7, 25, 16, 0.9)';
+        roundRect(vCtx, 120, 720, 840, 480, 36, true, false);
+        vCtx.strokeStyle = '#eab308';
+        vCtx.lineWidth = 5;
+        roundRect(vCtx, 120, 720, 840, 480, 36, false, true);
+
+        vCtx.fillStyle = '#fde047';
+        vCtx.font = '900 42px Montserrat, sans-serif';
+        vCtx.fillText(tit, 540, 810);
+
+        vCtx.fillStyle = '#eab308';
+        vCtx.font = '900 38px Montserrat, sans-serif';
+        vCtx.fillText('CB CÁRTAMA', 320, 900);
+        vCtx.fillStyle = '#cbd5e1';
+        vCtx.fillText(riv.length > 15 ? riv.substring(0, 13) + '...' : riv, 760, 900);
+
+        vCtx.fillStyle = '#ffffff';
+        vCtx.font = '900 150px Montserrat, Arial Black, sans-serif';
+        vCtx.shadowColor = 'rgba(234, 179, 8, 0.4)';
+        vCtx.shadowBlur = 25;
+        vCtx.fillText(pLoc, 320, 1070);
+        vCtx.fillText(pRiv, 760, 1070);
+        vCtx.shadowBlur = 0;
+
+        vCtx.fillStyle = '#eab308';
+        vCtx.font = '900 50px Montserrat, sans-serif';
+        vCtx.fillText('VS', 540, 1020);
+
+        vCtx.fillStyle = '#166534';
+        roundRect(vCtx, 290, 1280, 500, 60, 30, true, false);
+        vCtx.strokeStyle = '#22c55e';
+        vCtx.lineWidth = 3;
+        roundRect(vCtx, 290, 1280, 500, 60, 30, false, true);
+        vCtx.fillStyle = '#ffffff';
+        vCtx.font = '900 28px Montserrat, sans-serif';
+        vCtx.fillText('🏀 ¡ADN CÁRTAMA!', 540, 1322);
+
+        if (t > 0.6) {
+          vCtx.fillStyle = '#facc15';
+          vCtx.font = '900 36px Montserrat, sans-serif';
+          vCtx.fillText('🔥 SÍGUENOS EN TIKTOK @cbcartama 🔥', 540, 1500);
+        }
+
+        frame++;
+        requestAnimationFrame(animarPaso);
+      }
+
+      animarPaso();
+    }
+
+    function descargarVideoActual() {
+      if (!videoBlobActual) return;
+      const a = document.createElement('a');
+      a.href = URL.createObjectURL(videoBlobActual);
+      a.download = `video_cbcartama_tiktok_${Date.now()}.mp4`;
+      document.body.appendChild(a);
+      a.click();
+      document.body.removeChild(a);
+      mostrarToast('📥 Vídeo MP4 descargado listo para TikTok o Reels.');
+    }
+
+    // ==============================================================
+    // 3. DIFUSIÓN EN CANAL OFICIAL DE WHATSAPP
+    // ==============================================================
+    function publicarEnCanalWhatsApp() {
+      const texto = document.getElementById('preview-whatsapp-text').innerText;
+      const textoCanal = `📢 *COMUNICADO OFICIAL · CB CÁRTAMA*\n\n${texto}\n\n🌐 Más información y crónicas en: https://cbcartama.com`;
+      registrarAccionEnServidor('PUBLICACION_WHATSAPP_CANAL', 'Difusión en Canal Oficial WhatsApp');
+      mostrarToast('📢 Abriendo WhatsApp para publicar en el Canal Oficial...');
+      const waUrl = `https://api.whatsapp.com/send?text=${encodeURIComponent(textoCanal)}`;
+      window.open(waUrl, '_blank');
     }
 
     function supervisarConGemini() {
@@ -1405,6 +1907,16 @@
       ctx.fillStyle = gradFondo;
       ctx.fillRect(0, 0, W, H);
 
+      // Si hay fotos subidas, integrar el mosaico en el fondo con overlay
+      if (typeof fotosSubidasImgObjects !== 'undefined' && fotosSubidasImgObjects.length > 0) {
+        ctx.save();
+        ctx.globalAlpha = 0.40;
+        dibujarComposicionMosaico(ctx, W, H, fotosSubidasImgObjects, isStory);
+        ctx.restore();
+        ctx.fillStyle = 'rgba(4, 18, 10, 0.65)';
+        ctx.fillRect(0, 0, W, H);
+      }
+
       // 2. Líneas geométricas de cancha
       ctx.save();
       ctx.strokeStyle = 'rgba(234, 179, 8, 0.12)';
@@ -1781,6 +2293,83 @@
     }
 
   </script>
+
+  <!-- MODAL DE PROGRESO DE PUBLICACIÓN SIMULTÁNEA -->
+  <div id="modalProgresoPublicacion" class="hidden fixed inset-0 z-50 flex items-center justify-center p-4 bg-black/85 backdrop-blur-md">
+    <div class="bg-[#071910] border border-yellow-500/50 rounded-3xl max-w-lg w-full p-5 sm:p-6 shadow-2xl space-y-4">
+      <div class="flex items-center justify-between border-b border-emerald-950 pb-3">
+        <div class="flex items-center gap-3">
+          <div class="w-10 h-10 rounded-2xl bg-yellow-500/20 text-yellow-400 flex items-center justify-center text-lg border border-yellow-500/40">
+            <i class="fas fa-rocket"></i>
+          </div>
+          <div>
+            <h3 class="text-sm sm:text-base font-black text-white">Publicando en Todas las Redes</h3>
+            <p class="text-[11px] text-emerald-400/80">Sincronizando contenidos en los canales oficiales</p>
+          </div>
+        </div>
+      </div>
+
+      <!-- LISTA DE ESTADO DE CADA RED -->
+      <div class="space-y-2.5 my-3">
+        <div id="status-row-instagram" class="flex items-center justify-between p-3 rounded-2xl bg-slate-950/70 border border-emerald-900/60">
+          <div class="flex items-center gap-2.5 text-xs font-semibold text-slate-200">
+            <i class="fab fa-instagram text-pink-400 text-base"></i>
+            <span>Instagram Feed (@cb_baloncestocartama)</span>
+          </div>
+          <div id="status-icon-instagram" class="text-xs text-yellow-400 flex items-center gap-1.5">
+            <i class="fas fa-circle-notch fa-spin"></i> <span>Enviando...</span>
+          </div>
+        </div>
+
+        <div id="status-row-facebook" class="flex items-center justify-between p-3 rounded-2xl bg-slate-950/70 border border-emerald-900/60">
+          <div class="flex items-center gap-2.5 text-xs font-semibold text-slate-200">
+            <i class="fab fa-facebook text-blue-400 text-base"></i>
+            <span>Facebook Page (Club Baloncesto Cártama)</span>
+          </div>
+          <div id="status-icon-facebook" class="text-xs text-yellow-400 flex items-center gap-1.5">
+            <i class="fas fa-circle-notch fa-spin"></i> <span>Enviando...</span>
+          </div>
+        </div>
+
+        <div id="status-row-x" class="flex items-center justify-between p-3 rounded-2xl bg-slate-950/70 border border-emerald-900/60">
+          <div class="flex items-center gap-2.5 text-xs font-semibold text-slate-200">
+            <i class="fab fa-x-twitter text-white text-base"></i>
+            <span>X / Twitter (@CB_Cartama)</span>
+          </div>
+          <div id="status-icon-x" class="text-xs text-yellow-400 flex items-center gap-1.5">
+            <i class="fas fa-circle-notch fa-spin"></i> <span>Enviando...</span>
+          </div>
+        </div>
+
+        <div id="status-row-web" class="flex items-center justify-between p-3 rounded-2xl bg-slate-950/70 border border-emerald-900/60">
+          <div class="flex items-center gap-2.5 text-xs font-semibold text-slate-200">
+            <i class="fas fa-globe text-yellow-400 text-base"></i>
+            <span>Web Oficial (cbcartama.com)</span>
+          </div>
+          <div id="status-icon-web" class="text-xs text-yellow-400 flex items-center gap-1.5">
+            <i class="fas fa-circle-notch fa-spin"></i> <span>Guardando...</span>
+          </div>
+        </div>
+
+        <div id="status-row-whatsapp" class="flex items-center justify-between p-3 rounded-2xl bg-slate-950/70 border border-emerald-900/60">
+          <div class="flex items-center gap-2.5 text-xs font-semibold text-slate-200">
+            <i class="fab fa-whatsapp text-emerald-400 text-base"></i>
+            <span>WhatsApp (Canal Oficial & Grupos)</span>
+          </div>
+          <div id="status-icon-whatsapp" class="text-xs text-emerald-400 flex items-center gap-1.5">
+            <i class="fas fa-circle-check"></i> <span>Listo</span>
+          </div>
+        </div>
+      </div>
+
+      <div class="pt-2 flex justify-end">
+        <button id="btnCerrarModalProgreso" onclick="cerrarModalProgreso()" disabled 
+          class="bg-emerald-600 hover:bg-emerald-500 disabled:opacity-40 disabled:cursor-not-allowed text-white font-bold py-2.5 px-6 rounded-xl text-xs transition shadow-lg">
+          Finalizar
+        </button>
+      </div>
+    </div>
+  </div>
 
   <!-- MODAL GENERADOR DE CARTELES Y MARCADORES OFICIALES CB CÁRTAMA -->
   <div id="modalCartel" class="hidden fixed inset-0 z-50 flex items-center justify-center p-3 sm:p-6 bg-black/90 backdrop-blur-md overflow-y-auto">
