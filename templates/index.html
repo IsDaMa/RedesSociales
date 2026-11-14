@@ -919,7 +919,29 @@
         setStatus('x', '<i class="fas fa-circle-xmark text-red-400"></i> Error');
       }
 
-      // 4. Web Oficial
+      // 4. TikTok (vía Make & Buffer)
+      const txtTiktok = document.getElementById('preview-tiktok-caption').innerText;
+      try {
+        const resTk = await fetch('/api/publicar_red', {
+          method: 'POST',
+          headers: { 'Content-Type': 'application/json' },
+          body: JSON.stringify({ 
+            red: 'tiktok', 
+            texto: txtTiktok, 
+            url_imagen: urlImagenActual, 
+            url_video: urlVideoActual 
+          })
+        }).then(r => r.json());
+        if (resTk.success) {
+          setStatus('tiktok', '<i class="fas fa-circle-check"></i> Publicado en TikTok', true);
+        } else {
+          setStatus('tiktok', '<i class="fas fa-triangle-exclamation text-amber-400"></i> ' + (resTk.error || 'Aviso en TikTok'));
+        }
+      } catch (e) {
+        setStatus('tiktok', '<i class="fas fa-circle-xmark text-red-400"></i> Error');
+      }
+
+      // 5. Web Oficial
       try {
         const resWeb = await fetch('/api/publicar_web', {
           method: 'POST',
@@ -1608,15 +1630,37 @@
       window.open(waUrl, '_blank');
     }
 
-    // 5. Publicar en TikTok
+    // 5. Publicar en TikTok (vía Make & Buffer)
     function publicarEnTikTok() {
       const copy = document.getElementById('preview-tiktok-caption').innerText;
-      navigator.clipboard.writeText(copy).then(() => {
-        registrarAccionEnServidor('PUBLICACION_TIKTOK', 'Acceso a TikTok Creator Center');
-        mostrarToast('🎵 Descripción copiada. Abriendo TikTok Creator Center...');
-        setTimeout(() => {
-          window.open('https://www.tiktok.com/creator-center/upload', '_blank');
-        }, 500);
+      const btn = document.getElementById('btnPublicar_tiktok');
+      const origHtml = btn.innerHTML;
+      btn.innerHTML = '<i class="fas fa-spinner fa-spin mr-1.5"></i> Publicando en TikTok...';
+
+      fetch('/api/publicar_red', {
+        method: 'POST',
+        headers: { 'Content-Type': 'application/json' },
+        body: JSON.stringify({ 
+          red: 'tiktok', 
+          texto: copy, 
+          url_imagen: urlImagenActual, 
+          url_video: urlVideoActual 
+        })
+      })
+      .then(r => r.json())
+      .then(res => {
+        btn.innerHTML = origHtml;
+        if (res.success) {
+          mostrarToast('🎉 ¡Publicado con éxito en TikTok vía Make y Buffer!');
+        } else {
+          navigator.clipboard.writeText(copy);
+          alert('Respuesta de Make: ' + (res.error || 'Revisa la configuración en Make/Buffer.'));
+        }
+      })
+      .catch(err => {
+        btn.innerHTML = origHtml;
+        navigator.clipboard.writeText(copy);
+        alert('Error al conectar con Make: ' + err);
       });
     }
 
@@ -2316,6 +2360,16 @@
             <span>X / Twitter (@CB_Cartama)</span>
           </div>
           <div id="status-icon-x" class="text-xs text-yellow-400 flex items-center gap-1.5">
+            <i class="fas fa-circle-notch fa-spin"></i> <span>Enviando...</span>
+          </div>
+        </div>
+
+        <div id="status-row-tiktok" class="flex items-center justify-between p-3 rounded-2xl bg-slate-950/70 border border-emerald-900/60">
+          <div class="flex items-center gap-2.5 text-xs font-semibold text-slate-200">
+            <i class="fab fa-tiktok text-white text-base"></i>
+            <span>TikTok (@cbcartama)</span>
+          </div>
+          <div id="status-icon-tiktok" class="text-xs text-yellow-400 flex items-center gap-1.5">
             <i class="fas fa-circle-notch fa-spin"></i> <span>Enviando...</span>
           </div>
         </div>
