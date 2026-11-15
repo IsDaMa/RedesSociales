@@ -349,35 +349,72 @@ def publicar_web():
     data = request.json or {}
     titulo = data.get('titulo', '').strip()
     contenido = data.get('contenido', '').strip()
+    url_imagen = data.get('url_imagen', '').strip()
 
     if not titulo or not contenido:
         return jsonify({'error': 'Título y contenido requeridos'}), 400
 
+    base_url = request.host_url.rstrip('/')
+    if request.headers.get('X-Forwarded-Proto') == 'https':
+        base_url = base_url.replace('http://', 'https://')
+    if 'localhost' in base_url or '127.0.0.1' in base_url or '192.168.' in base_url:
+        base_url = "https://redes.cbcartama.com"
+
+    if url_imagen.startswith('data:image'):
+        try:
+            import base64
+            header, encoded = url_imagen.split(',', 1)
+            ext = 'jpg' if 'jpeg' in header.lower() else 'png'
+            unique_name = f"web_{uuid.uuid4().hex[:10]}.{ext}"
+            filepath = os.path.join(app.config['UPLOAD_FOLDER'], unique_name)
+            with open(filepath, 'wb') as f:
+                f.write(base64.b64decode(encoded))
+            url_imagen = f"{base_url}/uploads/{unique_name}"
+        except Exception as e:
+            print(f"Aviso guardando imagen base64 para web: {e}")
+    elif url_imagen.startswith('/'):
+        url_imagen = f"{base_url}{url_imagen}"
+
+    # Embed tag [IMAGEN: url] en contenido para compatibilidad total con la web
+    contenido_con_imagen = contenido
+    if url_imagen:
+        contenido_con_imagen = f"{contenido}\n\n[IMAGEN: {url_imagen}]"
+
     id_noticia = None
     if client_supabase:
+        # Intento 1: con url_imagen
         try:
-            # 1. Intentar con esquema de tabla noticias con 'publicado_noticia'
             res = client_supabase.table("noticias").insert({
                 "titulo": titulo,
-                "contenido": contenido,
+                "contenido": contenido_con_imagen,
+                "url_imagen": url_imagen,
                 "publicado_noticia": True
             }).execute()
             if res.data:
                 id_noticia = res.data[0].get('id')
-        except Exception as e:
-            print(f"Error al publicar en Supabase con publicado_noticia, reintentando con 'publicada': {e}")
+        except Exception:
             try:
-                # 2. Fallback por si la tabla usa la columna 'publicada' y 'autor'
+                # Intento 2: con imagen_url
                 res = client_supabase.table("noticias").insert({
                     "titulo": titulo,
-                    "contenido": contenido,
-                    "publicada": True,
-                    "autor": f"Redes Sociales ({user})"
+                    "contenido": contenido_con_imagen,
+                    "imagen_url": url_imagen,
+                    "publicado_noticia": True
                 }).execute()
                 if res.data:
                     id_noticia = res.data[0].get('id')
-            except Exception as e2:
-                print(f"Error en segundo intento de publicación en Supabase: {e2}")
+            except Exception:
+                try:
+                    # Intento 3: fallback sin columna extra, imagen via tag en contenido
+                    res = client_supabase.table("noticias").insert({
+                        "titulo": titulo,
+                        "contenido": contenido_con_imagen,
+                        "publicado_noticia": True
+                    }).execute()
+                    if res.data:
+                        id_noticia = res.data[0].get('id')
+                except Exception as e3:
+                    print(f"Error al insertar noticia en Supabase: {e3}")
 
     registrar_auditoria(user, "PUBLICACION_WEB", f"Noticia publicada en web: '{titulo}'")
     return jsonify({'success': True, 'id': id_noticia, 'message': 'Noticia publicada con éxito en la web del club.'})

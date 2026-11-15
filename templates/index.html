@@ -946,7 +946,7 @@
         const resWeb = await fetch('/api/publicar_web', {
           method: 'POST',
           headers: { 'Content-Type': 'application/json' },
-          body: JSON.stringify({ titulo: webTit, contenido: webBody })
+          body: JSON.stringify({ titulo: webTit, contenido: webBody, url_imagen: urlImagenActual })
         }).then(r => r.json());
         if (resWeb.success) {
           setStatus('web', '<i class="fas fa-circle-check"></i> Publicada en cbcartama.com', true);
@@ -1738,7 +1738,7 @@
       fetch('/api/publicar_web', {
         method: 'POST',
         headers: { 'Content-Type': 'application/json' },
-        body: JSON.stringify({ titulo: titulo, contenido: cuerpo })
+        body: JSON.stringify({ titulo: titulo, contenido: cuerpo, url_imagen: urlImagenActual })
       })
       .then(r => r.json())
       .then(res => {
