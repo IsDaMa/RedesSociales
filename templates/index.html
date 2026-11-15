@@ -345,8 +345,8 @@
             </div>
 
             <!-- Imagen Tweet -->
-            <div class="mt-3 rounded-2xl overflow-hidden border border-neutral-800 bg-neutral-900 max-h-72 flex items-center justify-center">
-              <img id="preview-x-img" src="https://images.unsplash.com/photo-1546519638-68e109498ffc?w=800&auto=format&fit=crop" alt="Basket" class="w-full h-full object-cover">
+            <div class="mt-3 rounded-2xl overflow-hidden border border-neutral-800 bg-[#030d07] max-h-80 flex items-center justify-center">
+              <img id="preview-x-img" src="https://images.unsplash.com/photo-1546519638-68e109498ffc?w=800&auto=format&fit=crop" alt="Basket" class="w-full h-full object-contain">
             </div>
 
             <!-- Contador de caracteres -->
@@ -398,8 +398,8 @@
             </div>
 
             <!-- IG Image Container -->
-            <div class="aspect-square bg-neutral-900 flex items-center justify-center overflow-hidden">
-              <img id="preview-instagram-img" src="https://images.unsplash.com/photo-1546519638-68e109498ffc?w=800&auto=format&fit=crop" alt="Post" class="w-full h-full object-cover">
+            <div class="aspect-square bg-[#030d07] flex items-center justify-center overflow-hidden">
+              <img id="preview-instagram-img" src="https://images.unsplash.com/photo-1546519638-68e109498ffc?w=800&auto=format&fit=crop" alt="Post" class="w-full h-full object-contain">
             </div>
 
             <!-- IG Icons Bar -->
@@ -478,8 +478,8 @@
             </div>
 
             <!-- Imagen Facebook -->
-            <div class="rounded-xl overflow-hidden border border-slate-800 mb-3 bg-slate-950 max-h-72 flex items-center justify-center">
-              <img id="preview-facebook-img" src="https://images.unsplash.com/photo-1546519638-68e109498ffc?w=800&auto=format&fit=crop" alt="Facebook Post" class="w-full h-full object-cover">
+            <div class="rounded-xl overflow-hidden border border-slate-800 mb-3 bg-[#030d07] max-h-80 flex items-center justify-center">
+              <img id="preview-facebook-img" src="https://images.unsplash.com/photo-1546519638-68e109498ffc?w=800&auto=format&fit=crop" alt="Facebook Post" class="w-full h-full object-contain">
             </div>
 
             <!-- Barra Likes y Compartir -->
@@ -533,8 +533,8 @@
             <div class="whatsapp-bg p-3.5 min-h-[350px] flex flex-col justify-end">
               <div class="bg-[#005c4b] text-white p-3.5 rounded-2xl rounded-tr-none max-w-[92%] self-end shadow-md">
                 
-                <div class="mb-2 rounded-xl overflow-hidden border border-emerald-800/50 max-h-48">
-                  <img id="preview-whatsapp-img" src="https://images.unsplash.com/photo-1546519638-68e109498ffc?w=800&auto=format&fit=crop" class="w-full h-full object-cover">
+                <div class="mb-2 rounded-xl overflow-hidden border border-emerald-800/50 max-h-64 bg-[#030d07] flex items-center justify-center">
+                  <img id="preview-whatsapp-img" src="https://images.unsplash.com/photo-1546519638-68e109498ffc?w=800&auto=format&fit=crop" class="w-full h-full object-contain">
                 </div>
 
                 <!-- Texto con Negritas (Editable) -->
@@ -711,8 +711,8 @@
             </div>
 
             <!-- Cabecera Noticia -->
-            <div class="relative h-48 sm:h-56 bg-slate-900 overflow-hidden">
-              <img id="preview-web-img" src="https://images.unsplash.com/photo-1546519638-68e109498ffc?w=800&auto=format&fit=crop" class="w-full h-full object-cover">
+            <div class="relative h-56 sm:h-64 bg-[#030d07] overflow-hidden flex items-center justify-center">
+              <img id="preview-web-img" src="https://images.unsplash.com/photo-1546519638-68e109498ffc?w=800&auto=format&fit=crop" class="w-full h-full object-contain">
               <div class="absolute inset-0 bg-gradient-to-t from-[#05110a] via-[#05110a]/40 to-transparent"></div>
               <div class="absolute bottom-3 left-4 right-4">
                 <span class="bg-yellow-500 text-slate-950 font-black text-[9px] uppercase px-2 py-0.5 rounded shadow">CB CÁRTAMA OFICIAL</span>
@@ -1088,65 +1088,111 @@
     }
 
     function dibujarComposicionMosaico(ctx, W, H, imgs, isStory) {
-      ctx.fillStyle = '#05140b';
+      // Fondo verde bosque oscuro oficial CB Cártama
+      ctx.fillStyle = '#041209';
       ctx.fillRect(0, 0, W, H);
 
-      const gap = 8;
+      const gap = 12; // Espaciado elegante
       ctx.strokeStyle = '#eab308';
       ctx.lineWidth = 4;
 
       if (imgs.length === 1) {
-        drawImageCover(ctx, imgs[0], 0, 0, W, H);
+        drawImageFit(ctx, imgs[0], 0, 0, W, H, 0);
       } else if (imgs.length === 2) {
-        if (isStory) {
+        const isHorizontal = imgs[0].width >= imgs[0].height && imgs[1].width >= imgs[1].height;
+        // Si las dos fotos son apaisadas o es formato vertical Story, apilar en 2 filas
+        if (isHorizontal || isStory) {
           const h2 = (H - gap) / 2;
-          drawImageCover(ctx, imgs[0], 0, 0, W, h2);
-          drawImageCover(ctx, imgs[1], 0, h2 + gap, W, h2);
-          ctx.strokeRect(0, 0, W, h2);
-          ctx.strokeRect(0, h2 + gap, W, h2);
+          drawImageFit(ctx, imgs[0], 0, 0, W, h2, 4);
+          drawImageFit(ctx, imgs[1], 0, h2 + gap, W, h2, 4);
+          ctx.strokeRect(2, 2, W - 4, h2 - 4);
+          ctx.strokeRect(2, h2 + gap + 2, W - 4, h2 - 4);
         } else {
+          // Si son verticales, dividir en 2 columnas
           const w2 = (W - gap) / 2;
-          drawImageCover(ctx, imgs[0], 0, 0, w2, H);
-          drawImageCover(ctx, imgs[1], w2 + gap, 0, w2, H);
-          ctx.strokeRect(0, 0, w2, H);
-          ctx.strokeRect(w2 + gap, 0, w2, H);
+          drawImageFit(ctx, imgs[0], 0, 0, w2, H, 4);
+          drawImageFit(ctx, imgs[1], w2 + gap, 0, w2, H, 4);
+          ctx.strokeRect(2, 2, w2 - 4, H - 4);
+          ctx.strokeRect(w2 + gap + 2, 2, w2 - 4, H - 4);
         }
       } else if (imgs.length === 3) {
-        const w2 = (W - gap) / 2;
-        const h2 = (H - gap) / 2;
-        drawImageCover(ctx, imgs[0], 0, 0, w2, H);
-        drawImageCover(ctx, imgs[1], w2 + gap, 0, w2, h2);
-        drawImageCover(ctx, imgs[2], w2 + gap, h2 + gap, w2, h2);
-        ctx.strokeRect(0, 0, w2, H);
-        ctx.strokeRect(w2 + gap, 0, w2, h2);
-        ctx.strokeRect(w2 + gap, h2 + gap, w2, h2);
+        if (isStory) {
+          const h1 = Math.round(H * 0.55);
+          const h2 = H - h1 - gap;
+          const w2 = (W - gap) / 2;
+          drawImageFit(ctx, imgs[0], 0, 0, W, h1, 4);
+          drawImageFit(ctx, imgs[1], 0, h1 + gap, w2, h2, 4);
+          drawImageFit(ctx, imgs[2], w2 + gap, h1 + gap, w2, h2, 4);
+          ctx.strokeRect(2, 2, W - 4, h1 - 4);
+          ctx.strokeRect(2, h1 + gap + 2, w2 - 4, h2 - 4);
+          ctx.strokeRect(w2 + gap + 2, h1 + gap + 2, w2 - 4, h2 - 4);
+        } else {
+          const w1 = Math.round(W * 0.55);
+          const w2 = W - w1 - gap;
+          const h2 = (H - gap) / 2;
+          drawImageFit(ctx, imgs[0], 0, 0, w1, H, 4);
+          drawImageFit(ctx, imgs[1], w1 + gap, 0, w2, h2, 4);
+          drawImageFit(ctx, imgs[2], w1 + gap, h2 + gap, w2, h2, 4);
+          ctx.strokeRect(2, 2, w1 - 4, H - 4);
+          ctx.strokeRect(w1 + gap + 2, 2, w2 - 4, h2 - 4);
+          ctx.strokeRect(w1 + gap + 2, h2 + gap + 2, w2 - 4, h2 - 4);
+        }
       } else if (imgs.length >= 4) {
         const w2 = (W - gap) / 2;
         const h2 = (H - gap) / 2;
-        drawImageCover(ctx, imgs[0], 0, 0, w2, h2);
-        drawImageCover(ctx, imgs[1], w2 + gap, 0, w2, h2);
-        drawImageCover(ctx, imgs[2], 0, h2 + gap, w2, h2);
-        drawImageCover(ctx, imgs[3], w2 + gap, h2 + gap, w2, h2);
-        ctx.strokeRect(0, 0, w2, h2);
-        ctx.strokeRect(w2 + gap, 0, w2, h2);
-        ctx.strokeRect(0, h2 + gap, w2, h2);
-        ctx.strokeRect(w2 + gap, h2 + gap, w2, h2);
+        drawImageFit(ctx, imgs[0], 0, 0, w2, h2, 4);
+        drawImageFit(ctx, imgs[1], w2 + gap, 0, w2, h2, 4);
+        drawImageFit(ctx, imgs[2], 0, h2 + gap, w2, h2, 4);
+        drawImageFit(ctx, imgs[3], w2 + gap, h2 + gap, w2, h2, 4);
+        ctx.strokeRect(2, 2, w2 - 4, h2 - 4);
+        ctx.strokeRect(w2 + gap + 2, 2, w2 - 4, h2 - 4);
+        ctx.strokeRect(2, h2 + gap + 2, w2 - 4, h2 - 4);
+        ctx.strokeRect(w2 + gap + 2, h2 + gap + 2, w2 - 4, h2 - 4);
       }
     }
 
-    function drawImageCover(ctx, img, x, y, w, h) {
-      if (!img || !img.width) return;
+    // Dibuja la foto COMPLETA sin recortar ni cortar cabezas/pies
+    function drawImageFit(ctx, img, x, y, w, h, pad = 0) {
+      if (!img || !img.width || !img.height) return;
+      ctx.save();
+
+      // 1. Fondo suave con degradado verde oscuro en la casilla
+      const grad = ctx.createLinearGradient(x, y, x, y + h);
+      grad.addColorStop(0, '#06170d');
+      grad.addColorStop(1, '#020704');
+      ctx.fillStyle = grad;
+      ctx.fillRect(x, y, w, h);
+
+      // 2. Fondo difuminado sutil de la propia imagen para que no queden huecos negros planos
       ctx.save();
       ctx.beginPath();
       ctx.rect(x, y, w, h);
       ctx.clip();
-      const scale = Math.max(w / img.width, h / img.height);
+      ctx.globalAlpha = 0.20;
+      const bgScale = Math.max(w / img.width, h / img.height);
+      const bgNw = img.width * bgScale;
+      const bgNh = img.height * bgScale;
+      ctx.drawImage(img, x + (w - bgNw) / 2, y + (h - bgNh) / 2, bgNw, bgNh);
+      ctx.restore();
+
+      // 3. FOTO PRINCIPAL: Dibujada al 100% COMPLETA (Math.min = contain)
+      const targetW = w - (pad * 2);
+      const targetH = h - (pad * 2);
+      const scale = Math.min(targetW / img.width, targetH / img.height);
       const nw = img.width * scale;
       const nh = img.height * scale;
-      const nx = x + (w - nw) / 2;
-      const ny = y + (h - nh) / 2;
+      const nx = x + pad + (targetW - nw) / 2;
+      const ny = y + pad + (targetH - nh) / 2;
+
+      ctx.shadowColor = 'rgba(0, 0, 0, 0.7)';
+      ctx.shadowBlur = 12;
       ctx.drawImage(img, nx, ny, nw, nh);
+
       ctx.restore();
+    }
+
+    function drawImageCover(ctx, img, x, y, w, h) {
+      drawImageFit(ctx, img, x, y, w, h, 0);
     }
 
     function removeImage(event) {
