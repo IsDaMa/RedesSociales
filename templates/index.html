@@ -158,13 +158,18 @@
 
         <!-- CAJA DE TEXTO PRINCIPAL -->
         <div class="relative">
-          <textarea id="textoBase" rows="6" 
+          <textarea id="textoBase" rows="6" autocomplete="off" spellcheck="false"
             placeholder="Escribe aquí los datos del partido, las notas del entrenador o el anuncio del club...&#10;&#10;Ejemplo: 'Jugamos este sábado a las 18:30h en la Ciudad Deportiva de Cártama contra CB El Palo. Entrada libre.'" 
             class="w-full bg-[#05110a] border border-emerald-900/80 rounded-2xl p-3.5 text-sm text-slate-100 placeholder-emerald-700/60 focus:outline-none focus:ring-2 focus:ring-yellow-400 focus:border-transparent transition resize-none"></textarea>
           
-          <button type="button" onclick="cargarEjemplo()" class="absolute bottom-3 right-3 text-xs text-yellow-400 hover:text-yellow-300 bg-[#092015]/90 border border-emerald-800 px-2.5 py-1 rounded-lg transition flex items-center gap-1 shadow">
-            <i class="fas fa-magic"></i> Cargar Ejemplo
-          </button>
+          <div class="absolute bottom-3 right-3 flex items-center gap-1.5">
+            <button type="button" onclick="resetearAplicacionCompleta(true)" title="Limpiar y empezar desde cero" class="text-xs text-emerald-400 hover:text-white bg-[#092015]/95 border border-emerald-800 px-2 py-1 rounded-lg transition flex items-center gap-1 shadow">
+              <i class="fas fa-trash-can"></i> Limpiar
+            </button>
+            <button type="button" onclick="cargarEjemplo()" class="text-xs text-yellow-400 hover:text-yellow-300 bg-[#092015]/95 border border-emerald-800 px-2.5 py-1 rounded-lg transition flex items-center gap-1 shadow">
+              <i class="fas fa-magic"></i> Cargar Ejemplo
+            </button>
+          </div>
         </div>
 
         <!-- SUBIDA DE FOTOGRAFÍAS Y MOSAICO INTELIGENTE -->
@@ -336,17 +341,12 @@
 
             <!-- Cuerpo Tweet (Editable in situ) -->
             <div contenteditable="true" spellcheck="false" class="mt-3 text-sm text-neutral-100 whitespace-pre-line leading-relaxed focus:outline-none p-1" id="preview-x-text" oninput="actualizarContadorX()">
-              ¡Día de partido en la Ciudad Deportiva de Cártama! 🏀 Nuestro equipo recibe este fin de semana a un gran rival. ¡Necesitamos que la grada ruja de verde y amarillo! 💪🔥
-
-              📅 Sábado | ⏱️ 18:30h
-              📍 Ciudad Deportiva de Cártama
-
-              ¡A por la victoria! #CBCártama #BaloncestoCártama
+              Redacta las notas del partido o anuncio en el panel de la izquierda y pulsa 'Supervisar con IA' para generar el contenido oficial adaptado a X.
             </div>
 
             <!-- Imagen Tweet -->
             <div class="mt-3 rounded-2xl overflow-hidden border border-neutral-800 bg-[#030d07] max-h-80 flex items-center justify-center">
-              <img id="preview-x-img" src="https://images.unsplash.com/photo-1546519638-68e109498ffc?w=800&auto=format&fit=crop" alt="Basket" class="w-full h-full object-contain">
+              <img id="preview-x-img" src="https://www.cbcartama.com/img/logo.webp" alt="CB Cártama" class="w-full h-full object-contain">
             </div>
 
             <!-- Contador de caracteres -->
@@ -399,7 +399,7 @@
 
             <!-- IG Image Container -->
             <div class="aspect-square bg-[#030d07] flex items-center justify-center overflow-hidden">
-              <img id="preview-instagram-img" src="https://images.unsplash.com/photo-1546519638-68e109498ffc?w=800&auto=format&fit=crop" alt="Post" class="w-full h-full object-contain">
+              <img id="preview-instagram-img" src="https://www.cbcartama.com/img/logo.webp" alt="Post" class="w-full h-full object-contain">
             </div>
 
             <!-- IG Icons Bar -->
@@ -412,20 +412,11 @@
                 </div>
                 <i class="far fa-bookmark"></i>
               </div>
-              <p class="text-xs font-bold mb-1">364 Me gusta</p>
+              <p class="text-xs font-bold mb-1">0 Me gusta</p>
               
               <!-- IG Caption (Editable) -->
               <div contenteditable="true" spellcheck="false" class="text-xs leading-relaxed whitespace-pre-line text-neutral-200 focus:outline-none p-1" id="preview-instagram-text">
-                <span class="font-bold text-white">cbcartama_oficial</span> 🏀 ¡ESTE FIN DE SEMANA TOCA VIBRAR CON EL CB CÁRTAMA! 💚💛
-
-                Llega una jornada clave para nuestra cantera y os necesitamos a todos en las gradas de la Ciudad Deportiva de Cártama. Ven a dejarte la voz y empujar a los nuestros desde el salto inicial.
-
-                📍 Ciudad Deportiva de Cártama
-                ⏱️ Sábado a las 18:30h
-
-                🎟️ Entrada libre hasta completar aforo. ¡Que retumbe nuestro pabellón! 🥁👏
-
-                #CBCártama #BaloncestoCártama #CanteraCártama #SomosVerdeYAmarillo #FamiliaCBCártama
+                <span class="font-bold text-white">cbcartama_oficial</span> Aquí aparecerá el texto optimizado para Instagram con hashtags oficiales tras pulsar 'Supervisar con IA'...
               </div>
             </div>
           </div>
@@ -470,16 +461,12 @@
 
             <!-- Texto Facebook (Editable) -->
             <div contenteditable="true" spellcheck="false" class="text-sm text-slate-200 leading-relaxed whitespace-pre-line mb-3 focus:outline-none p-1" id="preview-facebook-text">
-              ¡La emoción del mejor baloncesto regresa a la Ciudad Deportiva de Cártama!
-
-              Invitamos a todas las familias de Cártama, aficionados y simpatizantes a acompañar a nuestro equipo en una nueva jornada de liga.
-
-              ¡Vuestro apoyo desde la grada es fundamental para seguir creciendo juntos como club! 💚💛
+              Aquí se mostrará el texto adaptado para la comunidad y familias de Cártama en Facebook...
             </div>
 
             <!-- Imagen Facebook -->
             <div class="rounded-xl overflow-hidden border border-slate-800 mb-3 bg-[#030d07] max-h-80 flex items-center justify-center">
-              <img id="preview-facebook-img" src="https://images.unsplash.com/photo-1546519638-68e109498ffc?w=800&auto=format&fit=crop" alt="Facebook Post" class="w-full h-full object-contain">
+              <img id="preview-facebook-img" src="https://www.cbcartama.com/img/logo.webp" alt="Facebook Post" class="w-full h-full object-contain">
             </div>
 
             <!-- Barra Likes y Compartir -->
@@ -534,21 +521,14 @@
               <div class="bg-[#005c4b] text-white p-3.5 rounded-2xl rounded-tr-none max-w-[92%] self-end shadow-md">
                 
                 <div class="mb-2 rounded-xl overflow-hidden border border-emerald-800/50 max-h-64 bg-[#030d07] flex items-center justify-center">
-                  <img id="preview-whatsapp-img" src="https://images.unsplash.com/photo-1546519638-68e109498ffc?w=800&auto=format&fit=crop" class="w-full h-full object-contain">
+                  <img id="preview-whatsapp-img" src="https://www.cbcartama.com/img/logo.webp" class="w-full h-full object-contain">
                 </div>
 
                 <!-- Texto con Negritas (Editable) -->
                 <div contenteditable="true" spellcheck="false" class="text-xs leading-relaxed whitespace-pre-line text-emerald-50 focus:outline-none p-1" id="preview-whatsapp-text">
-                  🏀 *CONVOCATORIA DE PARTIDO - CB CÁRTAMA* 🏀
+                  🏀 *CB CÁRTAMA - COMUNICADO OFICIAL* 🏀
 
-                  Hola a todos/as, os dejamos los detalles del encuentro de este fin de semana:
-
-                  📅 *Día:* Sábado
-                  ⏱️ *Hora del partido:* 18:30h (Convocatoria: 17:30h)
-                  📍 *Pabellón:* Ciudad Deportiva de Cártama
-                  🆚 *Rival:* Por confirmar
-
-                  ¡Os esperamos a todas las familias de verde y amarillo animando! 👏🏀
+                  Aquí aparecerá la convocatoria o resultado preparado para WhatsApp...
                 </div>
 
                 <div class="flex items-center justify-end space-x-1 mt-1 text-[10px] text-emerald-200">
@@ -581,7 +561,7 @@
             
             <!-- Smartphone 9:16 -->
             <div class="md:col-span-5 max-w-[260px] mx-auto w-full aspect-[9/16] bg-black rounded-[32px] border-4 border-emerald-900 relative overflow-hidden shadow-2xl flex flex-col justify-between p-3.5 text-white">
-              <img id="preview-tiktok-img" src="https://images.unsplash.com/photo-1546519638-68e109498ffc?w=800&auto=format&fit=crop" class="absolute inset-0 w-full h-full object-cover opacity-60">
+              <img id="preview-tiktok-img" src="https://www.cbcartama.com/img/logo.webp" class="absolute inset-0 w-full h-full object-contain p-8 opacity-60">
               <video id="preview-tiktok-video" class="hidden absolute inset-0 w-full h-full object-cover" autoplay loop muted playsinline></video>
               <div class="absolute inset-0 bg-gradient-to-b from-black/50 via-transparent to-black/90 pointer-events-none"></div>
 
@@ -594,7 +574,7 @@
               <!-- Gancho 0-3s -->
               <div class="relative z-10 text-center my-auto px-1">
                 <span id="preview-tiktok-hook" class="inline-block bg-yellow-400 text-slate-950 font-black text-xs px-2.5 py-1.5 rounded-lg shadow-lg uppercase tracking-wide">
-                  ¡QUÉ FINAL EN CÁRTAMA! 😱🏀
+                  ¡DÍA DE PARTIDO! 🏀
                 </span>
               </div>
 
@@ -712,12 +692,12 @@
 
             <!-- Cabecera Noticia -->
             <div class="relative h-56 sm:h-64 bg-[#030d07] overflow-hidden flex items-center justify-center">
-              <img id="preview-web-img" src="https://images.unsplash.com/photo-1546519638-68e109498ffc?w=800&auto=format&fit=crop" class="w-full h-full object-contain">
+              <img id="preview-web-img" src="https://www.cbcartama.com/img/logo.webp" class="w-full h-full object-contain">
               <div class="absolute inset-0 bg-gradient-to-t from-[#05110a] via-[#05110a]/40 to-transparent"></div>
               <div class="absolute bottom-3 left-4 right-4">
                 <span class="bg-yellow-500 text-slate-950 font-black text-[9px] uppercase px-2 py-0.5 rounded shadow">CB CÁRTAMA OFICIAL</span>
                 <h2 contenteditable="true" spellcheck="false" id="preview-web-title" class="text-base sm:text-xl font-black text-white mt-1 leading-tight focus:outline-none">
-                  Previa de la Jornada: El CB Cártama defiende la Ciudad Deportiva
+                  Titular de Prensa Oficial
                 </h2>
               </div>
             </div>
@@ -731,9 +711,7 @@
               </div>
 
               <div contenteditable="true" spellcheck="false" id="preview-web-body" class="text-xs sm:text-sm leading-relaxed text-slate-200 space-y-2 whitespace-pre-line focus:outline-none p-1">
-                La Ciudad Deportiva de Cártama se prepara para vivir una vibrante jornada de baloncesto formativo y de competición. Nuestro equipo afronta el compromiso con la máxima ilusión tras una intensa semana de entrenamientos.
-
-                Desde el cuerpo técnico se hace un llamamiento a todas las familias de Cártama para llenar las gradas con nuestros colores verde y amarillo. ¡Vuestro aliento es nuestro mayor motor!
+                Aquí se redactará la crónica periodística oficial del partido o comunicado del club tras pulsar 'Supervisar con IA'...
               </div>
             </div>
           </div>
@@ -762,7 +740,7 @@
     let modoActual = 'prepartido';
     let plataformaActual = 'x';
     let datosGenerados = null;
-    let urlImagenActual = 'https://images.unsplash.com/photo-1546519638-68e109498ffc?w=1080&h=1080&fit=crop&fm=jpg';
+    let urlImagenActual = 'https://www.cbcartama.com/img/logo.webp';
 
     // Manejo de pestañas móviles
     function setMobileView(view) {
@@ -1202,7 +1180,7 @@
       fotosSubidasImgObjects = [];
       document.getElementById('uploadPreviewContainer').classList.add('hidden');
       document.getElementById('uploadPlaceholder').classList.remove('hidden');
-      urlImagenActual = 'https://images.unsplash.com/photo-1546519638-68e109498ffc?w=1080&h=1080&fit=crop&fm=jpg';
+      urlImagenActual = 'https://www.cbcartama.com/img/logo.webp';
       actualizarImagenesPreview(urlImagenActual);
       renderizarCartelCanvas();
     }
@@ -2422,6 +2400,97 @@
       cerrarModalCartel();
       mostrarToast('🎨 ¡Cartel aplicado a todas las publicaciones!');
     }
+
+    // ==============================================================
+    // RESET TOTAL DE LA APLICACIÓN AL ARRANCAR (DESDE CERO)
+    // ==============================================================
+    function resetearAplicacionCompleta(conAviso = false) {
+      // 1. Limpiar campos de texto principales
+      const tb = document.getElementById('textoBase');
+      if (tb) tb.value = '';
+
+      // 2. Limpiar archivos subidos y estados de fotos
+      const fi = document.getElementById('fileInput');
+      if (fi) fi.value = '';
+      if (typeof fotosSubidasURLs !== 'undefined') fotosSubidasURLs = [];
+      if (typeof fotosSubidasImgObjects !== 'undefined') fotosSubidasImgObjects = [];
+      
+      const ph = document.getElementById('uploadPlaceholder');
+      if (ph) ph.classList.remove('hidden');
+      const prevC = document.getElementById('uploadPreviewContainer');
+      if (prevC) prevC.classList.add('hidden');
+      const prevI = document.getElementById('uploadPreviewImg');
+      if (prevI) prevI.src = '';
+      const fn = document.getElementById('uploadFilename');
+      if (fn) fn.textContent = '';
+
+      // Resetear imagen actual al escudo oficial
+      urlImagenActual = 'https://www.cbcartama.com/img/logo.webp';
+      urlVideoActual = null;
+      actualizarImagenesPreview(urlImagenActual);
+
+      // Ocultar video de tiktok y restaurar imagen
+      const vElem = document.getElementById('preview-tiktok-video');
+      const iElem = document.getElementById('preview-tiktok-img');
+      if (vElem) {
+        try { vElem.pause(); } catch(e) {}
+        vElem.classList.add('hidden');
+        vElem.src = '';
+      }
+      if (iElem) iElem.classList.remove('hidden');
+
+      // 3. Resetear textos de previsualización a guías limpias
+      const pX = document.getElementById('preview-x-text');
+      if (pX) pX.innerText = "Redacta las notas del partido o anuncio en el panel de la izquierda y pulsa 'Supervisar con IA' para generar el contenido oficial adaptado a X.";
+      
+      const pIg = document.getElementById('preview-instagram-text');
+      if (pIg) pIg.innerText = "cbcartama_oficial\n\nAquí aparecerá el texto optimizado para Instagram con hashtags oficiales tras pulsar 'Supervisar con IA'...";
+
+      const pFb = document.getElementById('preview-facebook-text');
+      if (pFb) pFb.innerText = "Aquí se mostrará el texto adaptado para la comunidad y familias de Cártama en Facebook...";
+
+      const pWa = document.getElementById('preview-whatsapp-text');
+      if (pWa) pWa.innerText = "🏀 *CB CÁRTAMA - COMUNICADO OFICIAL* 🏀\n\nAquí aparecerá la convocatoria o resultado preparado para WhatsApp...";
+
+      const pWebTit = document.getElementById('preview-web-title');
+      if (pWebTit) pWebTit.innerText = "Titular de Prensa Oficial";
+
+      const pWebBody = document.getElementById('preview-web-body');
+      if (pWebBody) pWebBody.innerText = "Aquí se redactará la crónica periodística oficial del partido o comunicado del club tras pulsar 'Supervisar con IA'...";
+
+      const pTkHook = document.getElementById('preview-tiktok-hook');
+      if (pTkHook) pTkHook.innerText = "¡DÍA DE PARTIDO! 🏀";
+
+      const pTkCopy = document.getElementById('preview-tiktok-caption');
+      if (pTkCopy) pTkCopy.innerText = "Descripción oficial y sonido sugerido para TikTok / Reels...";
+
+      actualizarContadorX();
+
+      // 4. Desmarcar todos los checks de seguridad y deshabilitar botones de publicar
+      const redes = ['x', 'instagram', 'facebook', 'whatsapp', 'tiktok', 'web'];
+      redes.forEach(red => {
+        const chk = document.getElementById(`checkSeguridad_${red}`);
+        if (chk) chk.checked = false;
+        toggleBotonPublicar(red);
+      });
+
+      const chkTodas = document.getElementById('checkSeguridad_todas');
+      if (chkTodas) chkTodas.checked = false;
+      toggleBotonPublicarTodas();
+
+      // 5. Limpiar cualquier cache de sesión
+      try {
+        sessionStorage.clear();
+      } catch (e) {}
+
+      if (conAviso) {
+        mostrarToast('🧹 Aplicación limpia: listo para empezar desde cero.');
+      }
+    }
+
+    // Inicializar SIEMPRE limpio desde cero al cargar la página o al navegar hacia atrás/adelante (BFCache)
+    window.addEventListener('DOMContentLoaded', () => resetearAplicacionCompleta(false));
+    window.addEventListener('pageshow', () => resetearAplicacionCompleta(false));
 
   </script>
 

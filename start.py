@@ -124,6 +124,11 @@ def aplicar_cabeceras_seguridad(response):
     response.headers['X-Content-Type-Options'] = 'nosniff'
     response.headers['X-Frame-Options'] = 'SAMEORIGIN'
     response.headers['X-XSS-Protection'] = '1; mode=block'
+    # Evitar cualquier cacheado en navegador para que la app siempre arranque desde cero limpio
+    if request.path == '/' or request.path.startswith('/api/'):
+        response.headers['Cache-Control'] = 'no-store, no-cache, must-revalidate, max-age=0, post-check=0, pre-check=0'
+        response.headers['Pragma'] = 'no-cache'
+        response.headers['Expires'] = '0'
     return response
 
 def login_required(f):
@@ -222,10 +227,72 @@ def logout():
 def index():
     return render_template('index.html', username=session.get('user', 'Admin'))
 
+def guardar_archivo_persistente(filename: str, file_bytes: bytes):
+    """Guarda el archivo en el disco local y lo persiste de forma segura en Supabase
+    para que NUNCA se pierda por reinicios o suspensiones del tier gratuito de Render."""
+    sec_name = secure_filename(filename)
+    filepath = os.path.join(app.config['UPLOAD_FOLDER'], sec_name)
+    try:
+        os.makedirs(app.config['UPLOAD_FOLDER'], exist_ok=True)
+        with open(filepath, 'wb') as f:
+            f.write(file_bytes)
+    except Exception as e:
+        print(f"Aviso guardando en disco local: {e}")
+
+    if client_supabase:
+        try:
+            import base64
+            b64_str = base64.b64encode(file_bytes).decode('ascii')
+            # Limpiar registro previo si existiera e insertar nuevo
+            try:
+                client_supabase.table("noticias").delete().eq("titulo", f"__MEDIA__{sec_name}").execute()
+            except Exception:
+                pass
+            client_supabase.table("noticias").insert({
+                "titulo": f"__MEDIA__{sec_name}",
+                "contenido": b64_str,
+                "publicado_noticia": False
+            }).execute()
+        except Exception as e:
+            print(f"Aviso persistiendo archivo en Supabase: {e}")
+
+def recuperar_archivo_persistente(filename: str) -> bool:
+    """Si un archivo no está en el disco efímero de Render, lo restaura inmediatamente desde Supabase."""
+    sec_name = secure_filename(filename)
+    filepath = os.path.join(app.config['UPLOAD_FOLDER'], sec_name)
+    if os.path.exists(filepath) and os.path.getsize(filepath) > 0:
+        return True
+
+    if client_supabase:
+        try:
+            res = client_supabase.table("noticias").select("contenido").eq("titulo", f"__MEDIA__{sec_name}").limit(1).execute()
+            if res.data and len(res.data) > 0 and res.data[0].get('contenido'):
+                import base64
+                b64_str = res.data[0]['contenido']
+                if ',' in b64_str:
+                    b64_str = b64_str.split(',', 1)[1]
+                file_bytes = base64.b64decode(b64_str)
+                os.makedirs(app.config['UPLOAD_FOLDER'], exist_ok=True)
+                with open(filepath, 'wb') as f:
+                    f.write(file_bytes)
+                return True
+        except Exception as e:
+            print(f"Aviso recuperando archivo de Supabase: {e}")
+    return False
+
 @app.route('/uploads/<filename>')
 def uploaded_file(filename):
-    """Acceso público a las fotos subidas para que Facebook, Instagram y Make puedan descargarlas."""
-    return send_from_directory(app.config['UPLOAD_FOLDER'], secure_filename(filename))
+    """Acceso público a las fotos subidas para Facebook, Instagram, Web y Make.
+    Si el contenedor de Render se ha reiniciado, se descarga de forma transparente desde Supabase."""
+    sec_filename = secure_filename(filename)
+    recuperar_archivo_persistente(sec_filename)
+    
+    filepath = os.path.join(app.config['UPLOAD_FOLDER'], sec_filename)
+    if not os.path.exists(filepath):
+        # Redirigir al escudo oficial del club para evitar 404 en APIs de Meta o en la web
+        return redirect('https://www.cbcartama.com/img/logo.webp')
+
+    return send_from_directory(app.config['UPLOAD_FOLDER'], sec_filename)
 
 # ==============================================================================
 # RUTAS API PROTEGIDAS Y AUDITADAS
@@ -255,15 +322,15 @@ def upload_file():
         if file and allowed_file(file.filename):
             ext = file.filename.rsplit('.', 1)[1].lower()
             unique_name = f"{uuid.uuid4().hex[:12]}.{ext}"
-            filepath = os.path.join(app.config['UPLOAD_FOLDER'], unique_name)
-            file.save(filepath)
+            file_bytes = file.read()
+            guardar_archivo_persistente(unique_name, file_bytes)
             full_url = f"{base_url}/uploads/{unique_name}"
             saved_urls.append(full_url)
             saved_filenames.append(unique_name)
             registrar_auditoria(
                 user, 
                 "SUBIDA_ARCHIVO", 
-                f"Archivo: {file.filename} -> {unique_name}"
+                f"Archivo: {file.filename} -> {unique_name} (Persistido Supabase)"
             )
 
     if not saved_urls:
@@ -366,14 +433,18 @@ def publicar_web():
             header, encoded = url_imagen.split(',', 1)
             ext = 'jpg' if 'jpeg' in header.lower() else 'png'
             unique_name = f"web_{uuid.uuid4().hex[:10]}.{ext}"
-            filepath = os.path.join(app.config['UPLOAD_FOLDER'], unique_name)
-            with open(filepath, 'wb') as f:
-                f.write(base64.b64decode(encoded))
+            file_bytes = base64.b64decode(encoded)
+            guardar_archivo_persistente(unique_name, file_bytes)
             url_imagen = f"{base_url}/uploads/{unique_name}"
         except Exception as e:
             print(f"Aviso guardando imagen base64 para web: {e}")
     elif url_imagen.startswith('/'):
         url_imagen = f"{base_url}{url_imagen}"
+
+    # Si es una imagen en nuestro endpoint uploads, asegurar persistencia previa
+    if '/uploads/' in url_imagen:
+        nom_arch = url_imagen.split('/uploads/')[-1].split('?')[0]
+        recuperar_archivo_persistente(nom_arch)
 
     # Embed tag [IMAGEN: url] en contenido para compatibilidad total con la web
     contenido_con_imagen = contenido
@@ -443,15 +514,14 @@ def publicar_red():
             url_imagen += '&fm=jpg'
 
     if url_imagen.startswith('data:image'):
-        # Es un cartel generado en vivo en el Canvas (Base64) -> Guardarlo como archivo físico público
+        # Es un cartel generado en vivo en el Canvas (Base64) -> Guardarlo en disco y persistir en Supabase
         try:
             import base64
             header, encoded = url_imagen.split(',', 1)
             ext = 'jpg' if 'jpeg' in header.lower() else 'png'
             unique_name = f"cartel_{uuid.uuid4().hex[:10]}.{ext}"
-            filepath = os.path.join(app.config['UPLOAD_FOLDER'], unique_name)
-            with open(filepath, 'wb') as f:
-                f.write(base64.b64decode(encoded))
+            file_bytes = base64.b64decode(encoded)
+            guardar_archivo_persistente(unique_name, file_bytes)
             url_imagen = f"{base_url}/uploads/{unique_name}"
         except Exception as e:
             print(f"Aviso: error guardando canvas base64: {e}")
@@ -463,6 +533,11 @@ def publicar_red():
     elif url_imagen.endswith('.webp'):
         # Meta Instagram API sólo admite JPEG
         url_imagen = f"{base_url}/uploads/370c48698aeb.jpeg"
+
+    # Si apunta a /uploads/, asegurar que el archivo esté caliente en disco antes de enviar el webhook
+    if '/uploads/' in url_imagen:
+        nom_arch = url_imagen.split('/uploads/')[-1].split('?')[0]
+        recuperar_archivo_persistente(nom_arch)
 
     webhook_url = os.environ.get('WEBHOOK_PUBLICACION', '').strip()
     if not webhook_url or "5ej8g5r4wo6tc3lza1ruis3qfggzwcsg" in webhook_url:
