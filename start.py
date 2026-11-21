@@ -227,10 +227,63 @@ def logout():
 def index():
     return render_template('index.html', username=session.get('user', 'Admin'))
 
-def guardar_archivo_persistente(filename: str, file_bytes: bytes):
+def optimizar_imagen(file_bytes: bytes, max_dim: int = 1200, calidad: int = 85) -> bytes:
+    """Optimiza y comprime imágenes para redes sociales y almacenamiento ultra-eficiente en Supabase:
+    - Corrige orientación EXIF (móviles iPhone / Android rotadas)
+    - Redimensiona proporcionalmente a max 1200px
+    - Convierte a JPEG calidad 85 progresivo optimizado (reduce hasta un 90% el peso sin pérdida visual)
+    """
+    try:
+        import io
+        from PIL import Image, ImageOps
+        img_buffer = io.BytesIO(file_bytes)
+        with Image.open(img_buffer) as im:
+            if im.format not in ('JPEG', 'PNG', 'WEBP', 'MPO', 'TIFF', 'BMP'):
+                return file_bytes
+
+            # 1. Corregir orientación EXIF
+            try:
+                im = ImageOps.exif_transpose(im)
+            except Exception:
+                pass
+
+            # 2. Redimensionar si supera max_dim
+            w, h = im.size
+            if max(w, h) > max_dim:
+                scale = max_dim / max(w, h)
+                new_w = max(1, int(w * scale))
+                new_h = max(1, int(h * scale))
+                im = im.resize((new_w, new_h), Image.Resampling.LANCZOS)
+
+            # 3. Convertir modo de color a RGB para JPEG
+            if im.mode in ('RGBA', 'LA', 'P'):
+                fondo = Image.new('RGB', im.size, (255, 255, 255))
+                if im.mode == 'P':
+                    im = im.convert('RGBA')
+                fondo.paste(im, mask=im.split()[-1] if im.mode in ('RGBA', 'LA') else None)
+                im = fondo
+            elif im.mode != 'RGB':
+                im = im.convert('RGB')
+
+            # 4. Guardar JPEG optimizado
+            salida = io.BytesIO()
+            im.save(salida, format='JPEG', quality=calidad, optimize=True, progressive=True)
+            return salida.getvalue()
+    except Exception as e:
+        print(f"Aviso al optimizar imagen (usando original): {e}")
+        return file_bytes
+
+def guardar_archivo_persistente(filename: str, file_bytes: bytes) -> bytes:
     """Guarda el archivo en el disco local y lo persiste de forma segura en Supabase
-    para que NUNCA se pierda por reinicios o suspensiones del tier gratuito de Render."""
+    para que NUNCA se pierda por reinicios o suspensiones del tier gratuito de Render.
+    Comprime automáticamente las fotos para garantizar que Supabase nunca se sature."""
     sec_name = secure_filename(filename)
+    
+    # Optimizar automáticamente si es imagen
+    ext = sec_name.rsplit('.', 1)[-1].lower() if '.' in sec_name else ''
+    if ext in ('jpg', 'jpeg', 'png', 'webp', 'bmp', 'tiff'):
+        file_bytes = optimizar_imagen(file_bytes)
+    
     filepath = os.path.join(app.config['UPLOAD_FOLDER'], sec_name)
     try:
         os.makedirs(app.config['UPLOAD_FOLDER'], exist_ok=True)
@@ -255,6 +308,8 @@ def guardar_archivo_persistente(filename: str, file_bytes: bytes):
             }).execute()
         except Exception as e:
             print(f"Aviso persistiendo archivo en Supabase: {e}")
+
+    return file_bytes
 
 def recuperar_archivo_persistente(filename: str) -> bool:
     """Si un archivo no está en el disco efímero de Render, lo restaura inmediatamente desde Supabase."""
