@@ -125,7 +125,7 @@ def aplicar_cabeceras_seguridad(response):
     response.headers['X-Frame-Options'] = 'SAMEORIGIN'
     response.headers['X-XSS-Protection'] = '1; mode=block'
     # Evitar cualquier cacheado en navegador para que la app siempre arranque desde cero limpio
-    if request.path == '/' or request.path.startswith('/api/'):
+    if not request.path.startswith('/uploads/') and not request.path.startswith('/static/'):
         response.headers['Cache-Control'] = 'no-store, no-cache, must-revalidate, max-age=0, post-check=0, pre-check=0'
         response.headers['Pragma'] = 'no-cache'
         response.headers['Expires'] = '0'
